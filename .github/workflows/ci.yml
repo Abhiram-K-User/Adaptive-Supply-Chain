@@ -1,0 +1,38 @@
+name: CI Pipeline (Gate G1 Walking Skeleton)
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+jobs:
+  test:
+    name: Unit & Integration Tests (Python 3.11)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install -e .
+
+      - name: Verify Canonical Seeds & Schema Grounding
+        run: |
+          python -c "from asci.core.registry import get_canonical_registry; reg = get_canonical_registry(); print(f'Loaded {len(reg)} entities')"
+          python -c "from asci.uskl.graph_store import CorridorGraphStore; gs = CorridorGraphStore.load_from_json(); print(f'Loaded corridor graph with {len(gs.get_all_nodes())} nodes')"
+
+      - name: Run PyTest Test Suite (Gate G1)
+        run: |
+          pytest tests/ -v --durations=10
+
