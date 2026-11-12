@@ -1,58 +1,245 @@
-import { Activity, BarChart3, Clock, Lock, RefreshCcw } from "lucide-react";
+import { Activity, BarChart3, Clock, Loader2, RefreshCcw } from "lucide-react";
+import { useState } from "react";
+import type { CanonicalEntity } from "../types/asci";
 
-export function OutcomesMonitoringPlaceholderView() {
+interface OutcomeResult {
+  entity_id: string;
+  hazard_type: string;
+  day_offset: number;
+  observed_teu: number;
+  baseline_teu: number;
+  realized_multiplier: number;
+  deviation_pct: number;
+}
+
+interface OutcomesMonitoringPlaceholderViewProps {
+  entities: CanonicalEntity[];
+}
+
+export function OutcomesMonitoringPlaceholderView({
+  entities,
+}: OutcomesMonitoringPlaceholderViewProps) {
+  const portEntities = entities.filter((e) => e.entity_type === "PORT");
+
+  const [portId, setPortId] = useState(portEntities[0]?.id ?? "");
+  const [observedTeu, setObservedTeu] = useState<number>(5000);
+  const [vesselCalls, setVesselCalls] = useState<number>(12);
+  const [dayOffset, setDayOffset] = useState<number>(3);
+  const [hazardType, setHazardType] = useState<string>("HAZARD_PORT");
+  const [loading, setLoading] = useState(false);
+  const [result, setResult] = useState<OutcomeResult | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  const inputClass =
+    "border border-light-border dark:border-dark-border bg-light-bg dark:bg-dark-bg rounded px-2 py-1.5 text-xs w-full text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-1 focus:ring-google-blue";
+
+  const labelClass = "block text-[11px] font-medium text-slate-400 mb-0.5";
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setLoading(true);
+    setResult(null);
+    setError(null);
+
+    const obsDate = new Date().toISOString().slice(0, 10);
+    const params = new URLSearchParams({
+      entity_id: portId,
+      hazard_type: hazardType,
+      day_offset: String(dayOffset),
+      observed_teu: String(observedTeu),
+      vessel_calls: String(vesselCalls),
+      obs_date: obsDate,
+    });
+
+    try {
+      const resp = await fetch(`/outcomes?${params.toString()}`, {
+        method: "POST",
+      });
+      if (!resp.ok) {
+        const text = await resp.text();
+        throw new Error(`HTTP ${resp.status}: ${text}`);
+      }
+      const data: OutcomeResult = await resp.json();
+      setResult(data);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : String(err));
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  function deviationColor(pct: number) {
+    if (pct < -10) return "text-red-400";
+    if (pct < 0) return "text-yellow-400";
+    return "text-emerald-400";
+  }
+
   return (
     <div className="space-y-4">
-      <div className="rounded-xl border border-dashed border-amber-500/50 bg-amber-500/5 p-4">
+      <div className="rounded-xl border border-light-border dark:border-dark-border bg-light-surface dark:bg-dark-surface p-4 shadow-subtle">
         <div className="flex flex-wrap items-center justify-between gap-2">
-          <div className="flex items-center gap-2">
-            <RefreshCcw className="h-4 w-4 text-amber-300" />
-            <h2 className="text-sm font-bold text-amber-200">
-              Realized Outcomes (Loop L1) &amp; Scheduled Monitoring — Placeholders
-            </h2>
+          <div className="flex items-center gap-2.5">
+            <div className="flex h-7 w-7 items-center justify-center rounded-md bg-google-blue/15 text-google-blue">
+              <RefreshCcw className="h-4 w-4" />
+            </div>
+            <div>
+              <h2 className="text-sm font-bold text-light-text-primary dark:text-dark-text-primary">
+                Closed-Loop Trajectory Calibration &amp; Realized Outcomes (Loop L1)
+              </h2>
+              <p className="text-[11px] text-light-text-muted dark:text-dark-text-muted">
+                Ingest post-event port throughput observations to empirically recalibrate recovery curves in <code className="font-mono text-google-blue">TimeSeriesStore</code>.
+              </p>
+            </div>
           </div>
-          <span className="rounded-full border border-amber-500/40 bg-amber-500/15 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-amber-300">
-            Phases 4, 7 &amp; 8 Roadmap
+          <span className="rounded-full border border-google-green/40 bg-google-green/10 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-google-green">
+            POST /outcomes Active
           </span>
         </div>
-        <p className="mt-2 text-xs leading-relaxed text-slate-300">
-          These panels reflect features explicitly listed as pending in{" "}
-          <code className="text-slate-200">project_context.md</code> Sec. 2 &amp; Sec. 7.
-          They are surfaced here as honest UI placeholders until the corresponding backend
-          endpoints and background workers are implemented.
-        </p>
       </div>
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
-        {/* Loop L1 / POST /outcomes */}
-        <section className="rounded-xl border border-line bg-panel p-4">
+        {/* Loop L1 / POST /outcomes — REAL FORM */}
+        <section className="rounded-xl border border-light-border dark:border-dark-border bg-light-card dark:bg-dark-card p-4">
           <div className="flex items-center justify-between">
             <h3 className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-slate-200">
-              <Activity className="h-4 w-4 text-amber-400" />
+              <Activity className="h-4 w-4 text-google-blue" />
               Loop L1: Realized Outcomes
             </h3>
-            <span className="rounded bg-amber-500/15 px-1.5 py-0.5 font-mono text-[10px] text-amber-300">
+            <span className="rounded bg-google-blue/15 px-1.5 py-0.5 font-mono text-[10px] text-google-blue">
               POST /outcomes
             </span>
           </div>
-          <p className="mt-2 text-xs leading-relaxed text-slate-400">
-            Planned endpoint to ingest actual realized post-event port throughput and
-            recovery timestamps, recalibrating USKL{" "}
-            <code className="text-slate-300">TimeSeriesStore</code> recovery curves and
-            corridor link multipliers.
-          </p>
-          <div className="mt-3 space-y-2 rounded-lg border border-dashed border-line bg-[#0a1122] p-3 text-[11px] text-slate-400">
-            <div>Port Entity: <span className="font-mono text-slate-300">PORT_CHENNAI (placeholder)</span></div>
-            <div>Observed TEU/day vs Baseline: <span className="font-mono text-slate-300">—</span></div>
+
+          <form onSubmit={handleSubmit} className="mt-3 space-y-2.5">
+            {/* Port Selector */}
+            <div>
+              <label className={labelClass}>Port Selector</label>
+              <select
+                value={portId}
+                onChange={(e) => setPortId(e.target.value)}
+                className={inputClass}
+                required
+              >
+                {portEntities.length === 0 ? (
+                  <option value="">No PORT entities available</option>
+                ) : (
+                  portEntities.map((p) => (
+                    <option key={p.id} value={p.id}>
+                      {p.name} ({p.id})
+                    </option>
+                  ))
+                )}
+              </select>
+            </div>
+
+            {/* Observed TEU/day */}
+            <div>
+              <label className={labelClass}>Observed TEU/day</label>
+              <input
+                type="number"
+                min={0}
+                step={100}
+                value={observedTeu}
+                onChange={(e) => setObservedTeu(Number(e.target.value))}
+                className={inputClass}
+                required
+              />
+            </div>
+
+            {/* Vessel Calls */}
+            <div>
+              <label className={labelClass}>Vessel Calls</label>
+              <input
+                type="number"
+                min={0}
+                step={1}
+                value={vesselCalls}
+                onChange={(e) => setVesselCalls(Number(e.target.value))}
+                className={inputClass}
+                required
+              />
+            </div>
+
+            {/* Day Offset */}
+            <div>
+              <label className={labelClass}>Day Offset (since event)</label>
+              <input
+                type="number"
+                min={0}
+                max={90}
+                step={1}
+                value={dayOffset}
+                onChange={(e) => setDayOffset(Number(e.target.value))}
+                className={inputClass}
+                required
+              />
+            </div>
+
+            {/* Hazard Type */}
+            <div>
+              <label className={labelClass}>Hazard Type</label>
+              <select
+                value={hazardType}
+                onChange={(e) => setHazardType(e.target.value)}
+                className={inputClass}
+              >
+                <option value="HAZARD_PORT">HAZARD_PORT</option>
+                <option value="HAZARD_ROAD">HAZARD_ROAD</option>
+                <option value="HAZARD_RAIL">HAZARD_RAIL</option>
+                <option value="HAZARD_LABOUR">HAZARD_LABOUR</option>
+                <option value="HAZARD_WEATHER">HAZARD_WEATHER</option>
+              </select>
+            </div>
+
+            {/* Submit */}
             <button
-              type="button"
-              disabled
-              className="mt-1 flex w-full cursor-not-allowed items-center justify-center gap-1.5 rounded border border-line bg-panel2 py-1.5 font-semibold text-slate-500"
+              type="submit"
+              disabled={loading || portEntities.length === 0}
+              className="mt-1 flex w-full items-center justify-center gap-1.5 rounded bg-google-blue px-4 py-2 text-xs font-semibold text-white hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
             >
-              <Lock className="h-3 w-3" />
-              Ingest Outcome (Awaiting POST /outcomes)
+              {loading ? (
+                <>
+                  <Loader2 className="h-3 w-3 animate-spin" />
+                  Submitting…
+                </>
+              ) : (
+                "Record Realized Outcome (Loop L1 Calibrate)"
+              )}
             </button>
-          </div>
+          </form>
+
+          {/* Error */}
+          {error && (
+            <div className="mt-3 rounded border border-red-500/40 bg-red-500/10 px-3 py-2 text-[11px] text-red-400">
+              {error}
+            </div>
+          )}
+
+          {/* Result */}
+          {result && (
+            <div className="mt-3 space-y-1.5 rounded-lg border border-light-border dark:border-dark-border bg-[#0a1122] p-3 text-[11px]">
+              <div className="flex justify-between">
+                <span className="text-slate-400">Realized Multiplier</span>
+                <span className="font-mono font-semibold text-slate-200">
+                  {result.realized_multiplier.toFixed(2)}x&nbsp;
+                  <span className="text-slate-400 font-normal">
+                    ({result.baseline_teu.toLocaleString()} → {result.observed_teu.toLocaleString()} TEU)
+                  </span>
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-slate-400">Deviation</span>
+                <span className={`font-mono font-semibold ${deviationColor(result.deviation_pct)}`}>
+                  {result.deviation_pct > 0 ? "+" : ""}
+                  {result.deviation_pct.toFixed(1)}%
+                </span>
+              </div>
+              <div className="mt-1.5 flex items-center gap-1.5 rounded bg-emerald-500/10 px-2 py-1 text-emerald-300">
+                <RefreshCcw className="h-3 w-3 flex-shrink-0" />
+                <span>Recovery curve updated</span>
+              </div>
+            </div>
+          )}
         </section>
 
         {/* Live Feed Scheduler */}
@@ -124,4 +311,3 @@ export function OutcomesMonitoringPlaceholderView() {
     </div>
   );
 }
-
