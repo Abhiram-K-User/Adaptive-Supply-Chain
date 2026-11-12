@@ -60,3 +60,7 @@ venv.bak/
 *.log
 *.jsonl
 
+# Node / React frontend artifacts
+node_modules/
+frontend/dist/
+

@@ -1,0 +1,45 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background-color: #080d19;
+    color: #e2e8f0;
+  }
+}
+
+::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0a1020;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #273755;
+  border-radius: 9999px;
+}
+
+.leaflet-container {
+  background: #070c17 !important;
+  font-family: Inter, system-ui, sans-serif !important;
+}
+
+.asci-map-tooltip {
+  background: rgba(10, 17, 34, 0.94) !important;
+  border: 1px solid #2e4369 !important;
+  color: #f1f5f9 !important;
+  border-radius: 8px !important;
+  padding: 5px 8px !important;
+  font-size: 11px !important;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.45) !important;
+}
+
+.asci-map-tooltip::before {
+  display: none !important;
+}
+

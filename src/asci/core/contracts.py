@@ -52,6 +52,14 @@ class PipelineConfig(BaseModel):
         default=True,
         description="Enable cascading spillover propagation in Stage B",
     )
+    enable_llm: bool = Field(
+        default=False,
+        description="Enable optional live LLM extraction and Stage E briefing synthesis (falls back deterministically offline)",
+    )
+    llm_provider: Literal["auto", "groq", "gemini", "openai", "ollama", "deterministic"] | None = Field(
+        default=None,
+        description="Optional runtime LLM provider override",
+    )
     propagation_tier: Literal[1, 2] = Field(
         default=2,
         description="Propagation model tier: 1=BFS hop-decay, 2=dynamic BPR load redistribution",

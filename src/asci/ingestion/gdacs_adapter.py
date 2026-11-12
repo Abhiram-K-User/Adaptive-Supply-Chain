@@ -6,6 +6,7 @@ Parses GeoJSON cyclone/flood alerts and spatial footprints with local fallback r
 from __future__ import annotations
 
 import json
+import os
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
@@ -24,34 +25,49 @@ class GDACSAdapter:
     def __init__(
         self,
         fallback_path: str | Path | None = None,
-        timeout_sec: float = 5.0,
+        timeout_sec: float | None = None,
     ) -> None:
         self.fallback_path = (
             Path(fallback_path) if fallback_path else default_feeds_dir() / "gdacs_alerts_sample.json"
         )
-        self.timeout_sec = timeout_sec
+        env_timeout = os.environ.get("ASCI_FEED_TIMEOUT_SECONDS")
+        self.timeout_sec = (
+            timeout_sec
+            if timeout_sec is not None
+            else (float(env_timeout) if env_timeout else 6.0)
+        )
+        self.api_url = os.environ.get("ASCI_GDACS_API_URL") or GDACS_API_URL
+        self.last_fetch_mode: str = "uninitialized"
+        self.last_error: str | None = None
+        self.last_fetched_at: str | None = None
 
     def fetch(self, use_fallback: bool = True) -> list[RawSignal]:
         """Fetch alerts from GDACS API or local replay JSON."""
         data: dict[str, Any] | None = None
+        self.last_error = None
         if not use_fallback:
             try:
                 resp = httpx.get(
-                    GDACS_API_URL,
+                    self.api_url,
                     params={"eventlist": "TC,FL", "country": "India"},
+                    headers={"User-Agent": "ASCI-Control-Tower/2.0"},
                     timeout=self.timeout_sec,
                 )
                 resp.raise_for_status()
                 data = resp.json()
-            except (httpx.HTTPError, ValueError):
+                self.last_fetch_mode = "live"
+            except (httpx.HTTPError, ValueError) as exc:
                 data = None
+                self.last_error = f"{type(exc).__name__}: {exc}"
 
         if data is None:
+            self.last_fetch_mode = "fallback"
             if not self.fallback_path.exists():
                 return []
             with open(self.fallback_path, encoding="utf-8") as f:
                 data = json.load(f)
 
+        self.last_fetched_at = datetime.now(UTC).isoformat()
         return self.parse_feature_collection(data)
 
     @staticmethod

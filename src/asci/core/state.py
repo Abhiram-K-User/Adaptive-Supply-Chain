@@ -297,6 +297,7 @@ class DashboardPayload(BaseModel):
     evidence_provenance: list[dict[str, Any]]
     mitigation_summary: dict[str, Any]
     trace_timeline: list[dict[str, Any]]
+    executive_briefing: dict[str, Any] = Field(default_factory=dict)
 
 
 # ---------------------------------------------------------------------------

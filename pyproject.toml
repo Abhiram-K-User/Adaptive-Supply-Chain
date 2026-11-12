@@ -58,6 +58,9 @@ dev = [
 [tool.setuptools.packages.find]
 where = ["src"]
 
+[tool.setuptools.package-data]
+asci = ["ui/*.html"]
+
 [tool.pytest.ini_options]
 minversion = "8.0"
 testpaths = ["tests"]

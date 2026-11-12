@@ -364,6 +364,17 @@ class StageAEventPerception:
             coord_matches = self.registry.resolve_by_coordinates(
                 signal.latitude, signal.longitude, radius_km=45.0
             )
+            if (
+                not coord_matches
+                and signal.source_feed == "GDACS"
+                and extracted.event_type == DisruptionEventType.HAZARD_PORT
+            ):
+                offshore_matches = self.registry.resolve_by_coordinates(
+                    signal.latitude, signal.longitude, radius_km=220.0
+                )
+                coord_matches = [
+                    m for m in offshore_matches if m.entity.entity_type.value == "PORT"
+                ]
             matches.extend(coord_matches)
 
         # Deduplicate while preserving highest-ranked primary entity

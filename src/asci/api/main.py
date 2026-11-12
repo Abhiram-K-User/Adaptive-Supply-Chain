@@ -9,10 +9,14 @@ from __future__ import annotations
 import os
 import random
 import uuid
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Annotated, Any, Literal
 
 from fastapi import FastAPI, HTTPException, Query, status
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import HTMLResponse
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
 from asci.core.contracts import PipelineConfig
@@ -34,6 +38,12 @@ from asci.ingestion import (
     GDELTRSSAdapter,
     IMDWeatherAdapter,
     PortWatchAnomalyDetector,
+)
+from asci.llm import (
+    LLMExtractorBackend,
+    MultiProviderLLMClient,
+    PlanBriefingGenerator,
+    load_local_dotenv,
 )
 from asci.stages import (
     StageAEventPerception,
@@ -68,6 +78,8 @@ class IngestEventRequest(BaseModel):
     estimated_duration_days: float | None = Field(default=None, gt=0.0)
     latitude: float | None = None
     longitude: float | None = None
+    enable_llm: bool = False
+    llm_provider: Literal["auto", "groq", "gemini", "openai", "ollama", "deterministic"] | None = None
 
 
 class IngestEventResponse(BaseModel):
@@ -85,6 +97,9 @@ class ReplayIngestResponse(BaseModel):
     signals_collected: int
     events_persisted: int
     events: list[IngestEventResponse]
+    mode: str = "replay"
+    source_statuses: list[dict[str, Any]] = Field(default_factory=list)
+    weather_telemetry: list[dict[str, Any]] = Field(default_factory=list)
 
 
 class GeneratePlanRequest(BaseModel):
@@ -97,6 +112,8 @@ class GeneratePlanRequest(BaseModel):
     cvar_alpha: float = Field(default=0.90, ge=0.5, lt=1.0)
     solver_type: Literal["OR_TOOLS", "NETWORKX"] = Field(default="OR_TOOLS")
     propagation_tier: Literal[1, 2] = Field(default=2)
+    enable_llm: bool = Field(default=False)
+    llm_provider: Literal["auto", "groq", "gemini", "openai", "ollama", "deterministic"] | None = None
 
 
 class PlanResponse(BaseModel):
@@ -132,6 +149,7 @@ class RecordDecisionResponse(BaseModel):
 def create_app(
     data_dir: str | Path | None = None,
     network_scale: str | None = None,
+    llm_client: MultiProviderLLMClient | None = None,
 ) -> FastAPI:
     """
     Create configured FastAPI app.
@@ -142,6 +160,13 @@ def create_app(
         title="Adaptive Supply Chain Intelligence Platform API",
         description="Agentic-RAG Decision Support for South India Automotive Logistics Corridor",
         version="2.0.0",
+    )
+    api.add_middleware(
+        CORSMiddleware,
+        allow_origins=["*"],
+        allow_credentials=False,
+        allow_methods=["*"],
+        allow_headers=["*"],
     )
 
     resolved_scale = network_scale or os.environ.get("ASCI_NETWORK_SCALE", "v0_core")
@@ -161,6 +186,7 @@ def create_app(
         decision_db = ":memory:"
         trace_jsonl = None
 
+    active_llm_client = llm_client or MultiProviderLLMClient()
     registry = get_canonical_registry(network_scale=resolved_scale)
     event_store = SQLiteEventStore(db_path=event_db, registry=registry)
     decision_store = DecisionTraceStore(db_path=decision_db, jsonl_trace_path=trace_jsonl)
@@ -174,7 +200,12 @@ def create_app(
         vector_store=vector_store, timeseries_store=timeseries_store, registry=registry
     )
     stage_d = StageDOptimiserAndVerifier(registry=registry, graph_store=graph_store)
-    stage_e = StageEDashboard(registry=registry, graph_store=graph_store)
+    briefing_gen = PlanBriefingGenerator(llm_client=active_llm_client, registry=registry)
+    stage_e = StageEDashboard(
+        registry=registry,
+        graph_store=graph_store,
+        briefing_generator=briefing_gen,
+    )
     pipeline = WalkingSkeletonPipeline(
         stage_a=stage_a,
         stage_b=stage_b,
@@ -184,6 +215,42 @@ def create_app(
     )
 
     state_cache: dict[str, PipelineState] = {}
+    feed_status_cache: dict[str, Any] = {
+        "live_feeds_enabled": os.environ.get("ASCI_LIVE_FEEDS_ENABLED", "true").strip().lower()
+        not in ("0", "false", "no"),
+        "poll_interval_seconds": int(
+            os.environ.get("ASCI_LIVE_POLL_INTERVAL_SECONDS", "0") or "0"
+        ),
+        "last_polled_at": None,
+        "last_mode": "unpolled",
+        "source_statuses": [],
+        "weather_telemetry": [],
+    }
+    repo_root = Path(__file__).resolve().parents[3]
+    react_dist_dir = repo_root / "frontend" / "dist"
+    react_index_path = react_dist_dir / "index.html"
+    react_assets_dir = react_dist_dir / "assets"
+    ui_html_path = Path(__file__).resolve().parent.parent / "ui" / "dashboard.html"
+
+    if react_assets_dir.is_dir():
+        api.mount("/assets", StaticFiles(directory=str(react_assets_dir)), name="frontend_assets")
+
+    @api.get("/", response_class=HTMLResponse, include_in_schema=False)
+    def serve_dashboard() -> HTMLResponse:
+        """Serve the built React + TypeScript + Cytoscape.js dashboard (or fallback HTML)."""
+        if react_index_path.is_file():
+            return HTMLResponse(content=react_index_path.read_text(encoding="utf-8"))
+        if not ui_html_path.exists():
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Dashboard UI asset not found.",
+            )
+        return HTMLResponse(content=ui_html_path.read_text(encoding="utf-8"))
+
+    @api.get("/llm/status", tags=["System"])
+    def get_llm_status(provider: str | None = None) -> dict[str, Any]:
+        """Return active LLM provider readiness without exposing secrets."""
+        return active_llm_client.get_status(provider_override=provider)
 
     @api.get("/health", tags=["System"])
     def health_check() -> dict[str, str]:
@@ -192,6 +259,7 @@ def create_app(
             "status": "healthy",
             "corridor": "South India Automotive Logistics Corridor",
             "version": "2.0.0",
+            "network_scale": resolved_scale,
             "persistence": "sqlite_file" if data_dir else "in_memory",
         }
 
@@ -203,10 +271,21 @@ def create_app(
     @api.get("/network", tags=["Network"])
     def get_network_summary() -> dict[str, Any]:
         """Return active corridor graph nodes and edges."""
+        edges_list = [
+            {
+                "id": f"{u}_{v}_{attrs.get('key', 'default')}",
+                "source": u,
+                "target": v,
+                "mode": attrs.get("mode", "ROAD"),
+                "distance_km": attrs.get("distance_km", 0.0),
+            }
+            for u, v, attrs in graph_store.get_all_edges()
+        ]
         return {
             "node_count": len(graph_store.get_all_nodes()),
-            "edge_count": len(graph_store.get_all_edges()),
+            "edge_count": len(edges_list),
             "nodes": graph_store.get_all_nodes(),
+            "edges": edges_list,
         }
 
     @api.get("/evidence/search", tags=["USKL"])
@@ -261,8 +340,20 @@ def create_app(
             hint_duration_days=req.estimated_duration_days,
         )
 
+        active_stage_a = (
+            StageAEventPerception(
+                registry=registry,
+                extractor=LLMExtractorBackend(
+                    llm_client=active_llm_client,
+                    provider_override=req.llm_provider,
+                ),
+            )
+            if req.enable_llm
+            else stage_a
+        )
+
         try:
-            parsed_event = stage_a.parse_raw_signal(signal)
+            parsed_event = active_stage_a.parse_raw_signal(signal)
         except ValueError as exc:
             raise HTTPException(
                 status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
@@ -287,31 +378,49 @@ def create_app(
             status=saved_event.status,
         )
 
-    @api.post("/ingest/replay", response_model=ReplayIngestResponse, tags=["Events"])
-    def replay_ingestion_feeds(use_fallback: bool = True) -> ReplayIngestResponse:
-        """
-        Poll GDACS, GDELT/RSS, IMD Weather, and PortWatch anomaly detectors,
-        run Stage A perception, and upsert grounded events into SQLiteEventStore.
-        """
-        adapters = [
-            GDACSAdapter(),
-            GDELTRSSAdapter(registry=registry),
-            IMDWeatherAdapter(),
-            PortWatchAnomalyDetector(timeseries_store=timeseries_store, registry=registry),
+    def _run_feed_ingestion(use_fallback: bool) -> ReplayIngestResponse:
+        gdacs_adapter = GDACSAdapter()
+        gdelt_adapter = GDELTRSSAdapter(registry=registry)
+        weather_adapter = IMDWeatherAdapter()
+        portwatch_adapter = PortWatchAnomalyDetector(
+            timeseries_store=timeseries_store,
+            registry=registry,
+        )
+
+        adapter_specs: list[tuple[str, Any]] = [
+            ("GDACS Disasters", gdacs_adapter),
+            ("GDELT / India News RSS", gdelt_adapter),
+            ("IMD / Open-Meteo Weather", weather_adapter),
+            ("IMF PortWatch AIS", portwatch_adapter),
         ]
 
         all_signals: list[RawSignal] = []
-        for adapter in adapters:
-            all_signals.extend(adapter.fetch(use_fallback=use_fallback))
-
+        source_statuses: list[dict[str, Any]] = []
         persisted_by_id: dict[str, DisruptionEvent] = {}
-        for sig in all_signals:
-            try:
-                parsed = stage_a.parse_raw_signal(sig)
-            except ValueError:
-                continue
-            merged = event_store.upsert_with_corroboration(parsed)
-            persisted_by_id[merged.event_id] = merged
+
+        for label, adapter in adapter_specs:
+            sigs = adapter.fetch(use_fallback=use_fallback)
+            all_signals.extend(sigs)
+            grounded_count = 0
+            for sig in sigs:
+                try:
+                    parsed = stage_a.parse_raw_signal(sig)
+                except ValueError:
+                    continue
+                merged = event_store.upsert_with_corroboration(parsed)
+                persisted_by_id[merged.event_id] = merged
+                grounded_count += 1
+
+            source_statuses.append(
+                {
+                    "source": label,
+                    "fetch_mode": getattr(adapter, "last_fetch_mode", "fallback"),
+                    "signals_fetched": len(sigs),
+                    "corridor_events_grounded": grounded_count,
+                    "fetched_at": getattr(adapter, "last_fetched_at", None),
+                    "error": getattr(adapter, "last_error", None),
+                }
+            )
 
         responses = [
             IngestEventResponse(
@@ -327,11 +436,39 @@ def create_app(
             for e in persisted_by_id.values()
         ]
 
+        run_mode = "replay" if use_fallback else "live"
+        feed_status_cache["last_polled_at"] = datetime.now(UTC).isoformat()
+        feed_status_cache["last_mode"] = run_mode
+        feed_status_cache["source_statuses"] = source_statuses
+        if weather_adapter.last_telemetry:
+            feed_status_cache["weather_telemetry"] = weather_adapter.last_telemetry
+
         return ReplayIngestResponse(
             signals_collected=len(all_signals),
             events_persisted=len(responses),
             events=responses,
+            mode=run_mode,
+            source_statuses=source_statuses,
+            weather_telemetry=list(feed_status_cache["weather_telemetry"]),
         )
+
+    @api.get("/feeds/status", tags=["Events"])
+    def get_feeds_status() -> dict[str, Any]:
+        """Return live/replay ingestion feed status and South India weather telemetry."""
+        return dict(feed_status_cache)
+
+    @api.post("/ingest/replay", response_model=ReplayIngestResponse, tags=["Events"])
+    def replay_ingestion_feeds(use_fallback: bool = True) -> ReplayIngestResponse:
+        """
+        Poll GDACS, GDELT/RSS, IMD/Open-Meteo Weather, and PortWatch anomaly detectors,
+        run Stage A perception, and upsert grounded events into SQLiteEventStore.
+        """
+        return _run_feed_ingestion(use_fallback=use_fallback)
+
+    @api.post("/ingest/live", response_model=ReplayIngestResponse, tags=["Events"])
+    def poll_live_feeds() -> ReplayIngestResponse:
+        """Poll live internet feeds (GDACS, GDELT/Google News RSS, Open-Meteo, PortWatch)."""
+        return _run_feed_ingestion(use_fallback=False)
 
     @api.get("/events", tags=["Events"])
     def list_events(
@@ -371,6 +508,8 @@ def create_app(
             solver_type=req.solver_type,
             propagation_tier=req.propagation_tier,
             network_scale=resolved_scale,  # type: ignore[arg-type]
+            enable_llm=req.enable_llm,
+            llm_provider=req.llm_provider,
         )
         rng = random.Random(cfg.random_seed)
 
@@ -456,4 +595,5 @@ def create_app(
     return api
 
 
+load_local_dotenv()
 app = create_app(os.environ.get("ASCI_DATA_DIR"))

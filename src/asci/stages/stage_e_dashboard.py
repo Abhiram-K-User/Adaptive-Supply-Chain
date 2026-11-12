@@ -19,6 +19,7 @@ from asci.core.state import (
     PipelineState,
     PipelineStatus,
 )
+from asci.llm.explainer import PlanBriefingGenerator
 from asci.uskl.graph_store import CorridorGraphStore
 
 
@@ -32,9 +33,13 @@ class StageEDashboard:
         self,
         registry: CanonicalEntityRegistry | None = None,
         graph_store: CorridorGraphStore | None = None,
+        briefing_generator: PlanBriefingGenerator | None = None,
     ) -> None:
         self.registry = registry or get_canonical_registry()
         self.graph_store = graph_store or CorridorGraphStore.load_from_json(registry=self.registry)
+        self.briefing_generator = briefing_generator or PlanBriefingGenerator(
+            registry=self.registry
+        )
 
     def run(
         self,
@@ -159,8 +164,9 @@ class StageEDashboard:
                 "allocations": [a.model_dump(mode="json") for a in plan.allocations],
             }
 
-        # 6. Trace Timeline
+        # 6. Trace Timeline & Citation-Verified RAG/LLM Briefing
         trace_timeline = [t.model_dump(mode="json") for t in state.trace]
+        executive_briefing = self.briefing_generator.generate(state, cfg)
 
         dashboard_payload = DashboardPayload(
             event_summary=event_summary,
@@ -169,6 +175,7 @@ class StageEDashboard:
             evidence_provenance=evidence_provenance,
             mitigation_summary=mitigation_summary,
             trace_timeline=trace_timeline,
+            executive_briefing=executive_briefing,
         )
 
         duration_ms = (time.perf_counter() - t0) * 1000.0
