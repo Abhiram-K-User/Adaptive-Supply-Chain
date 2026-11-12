@@ -11,7 +11,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
-from asci.core.registry import CanonicalEntityRegistry, get_canonical_registry
+from asci.core.registry import CanonicalEntityRegistry, EntityType, get_canonical_registry
 
 
 @dataclass(frozen=True)
@@ -110,8 +110,10 @@ class TimeSeriesStore:
             ("PORT_NEW_MANGALORE", 3.2, 2500.0, 2.0, 0.9),
         ]
         with self._get_connection() as conn:
+            seeded_ids: set[str] = set()
             for entity_id, calls, teu, dwell, std in baselines:
                 if self.registry.validate_id(entity_id):
+                    seeded_ids.add(entity_id)
                     conn.execute(
                         """
                         INSERT OR REPLACE INTO port_baselines (
@@ -120,6 +122,20 @@ class TimeSeriesStore:
                         ) VALUES (?, ?, ?, ?, ?)
                         """,
                         (entity_id, calls, teu, dwell, std),
+                    )
+
+            for port_ent in self.registry.get_by_type(EntityType.PORT):
+                if port_ent.id not in seeded_ids:
+                    cap = float(port_ent.capacity_teu_per_day or 3000.0)
+                    calls = round(max(2.0, cap / 700.0), 1)
+                    conn.execute(
+                        """
+                        INSERT OR REPLACE INTO port_baselines (
+                            entity_id, daily_vessel_calls, daily_teu_capacity,
+                            avg_dwell_time_days, anomaly_std_threshold
+                        ) VALUES (?, ?, ?, ?, ?)
+                        """,
+                        (port_ent.id, calls, cap, 2.0, 1.0),
                     )
 
             recovery = [

@@ -1,0 +1,2272 @@
+{
+  "version": "2.1.0",
+  "corridor": "South India Automotive Logistics Corridor (Scaled v1)",
+  "entities": [
+    {
+      "id": "PORT_CHENNAI",
+      "name": "Chennai Port Trust",
+      "entity_type": "PORT",
+      "aliases": [
+        "Chennai Port",
+        "Madras Port",
+        "CPA",
+        "Chennai Harbour"
+      ],
+      "latitude": 13.0837,
+      "longitude": 80.2826,
+      "region": "Tamil Nadu",
+      "capacity_teu_per_day": 6000.0,
+      "days_of_cover": null,
+      "daily_demand_teu": null,
+      "metadata": {
+        "berths": 24,
+        "rail_connected": true,
+        "customs_edi": true,
+        "operating_agency": "Chennai Port Authority"
+      }
+    },
+    {
+      "id": "PORT_KAMARAJAR",
+      "name": "Kamarajar Port Limited (Ennore)",
+      "entity_type": "PORT",
+      "aliases": [
+        "Kamarajar Port",
+        "Ennore Port",
+        "KPL",
+        "Ennore"
+      ],
+      "latitude": 13.2611,
+      "longitude": 80.3314,
+      "region": "Tamil Nadu",
+      "capacity_teu_per_day": 4500.0,
+      "days_of_cover": null,
+      "daily_demand_teu": null,
+      "metadata": {
+        "berths": 8,
+        "rail_connected": true,
+        "customs_edi": true,
+        "operating_agency": "Kamarajar Port Limited"
+      }
+    },
+    {
+      "id": "PORT_KATTUPALLI",
+      "name": "Adani Kattupalli Port",
+      "entity_type": "PORT",
+      "aliases": [
+        "Kattupalli Port",
+        "Kattupalli",
+        "Adani Kattupalli"
+      ],
+      "latitude": 13.3106,
+      "longitude": 80.3444,
+      "region": "Tamil Nadu",
+      "capacity_teu_per_day": 3500.0,
+      "days_of_cover": null,
+      "daily_demand_teu": null,
+      "metadata": {
+        "berths": 3,
+        "rail_connected": true,
+        "customs_edi": true,
+        "operating_agency": "Adani Ports and SEZ"
+      }
+    },
+    {
+      "id": "PORT_KRISHNAPATNAM",
+      "name": "Adani Krishnapatnam Port",
+      "entity_type": "PORT",
+      "aliases": [
+        "Krishnapatnam Port",
+        "KPCL",
+        "Nellore Port"
+      ],
+      "latitude": 14.25,
+      "longitude": 80.12,
+      "region": "Andhra Pradesh",
+      "capacity_teu_per_day": 4000.0,
+      "days_of_cover": null,
+      "daily_demand_teu": null,
+      "metadata": {
+        "berths": 11,
+        "rail_connected": true,
+        "customs_edi": true,
+        "operating_agency": "Adani Ports and SEZ"
+      }
+    },
+    {
+      "id": "PORT_VOC",
+      "name": "V.O. Chidambaranar Port (Tuticorin)",
+      "entity_type": "PORT",
+      "aliases": [
+        "Tuticorin Port",
+        "VOC Port",
+        "VOCPT"
+      ],
+      "latitude": 8.7547,
+      "longitude": 78.1887,
+      "region": "Tamil Nadu",
+      "capacity_teu_per_day": 3000.0,
+      "days_of_cover": null,
+      "daily_demand_teu": null,
+      "metadata": {
+        "berths": 14,
+        "rail_connected": true,
+        "customs_edi": true,
+        "operating_agency": "V.O. Chidambaranar Port Authority"
+      }
+    },
+    {
+      "id": "PORT_COCHIN",
+      "name": "Cochin International Container Transshipment Terminal",
+      "entity_type": "PORT",
+      "aliases": [
+        "Cochin Port",
+        "Vallarpadam ICTT",
+        "Kochi Port",
+        "ICTT Vallarpadam"
+      ],
+      "latitude": 9.9667,
+      "longitude": 76.2667,
+      "region": "Kerala",
+      "capacity_teu_per_day": 3500.0,
+      "days_of_cover": null,
+      "daily_demand_teu": null,
+      "metadata": {
+        "berths": 4,
+        "rail_connected": true,
+        "customs_edi": true,
+        "operating_agency": "DP World Cochin"
+      }
+    },
+    {
+      "id": "PORT_NEW_MANGALORE",
+      "name": "New Mangalore Port",
+      "entity_type": "PORT",
+      "aliases": [
+        "New Mangalore Port",
+        "NMPT",
+        "Mangaluru Port",
+        "Panambur Port"
+      ],
+      "latitude": 12.9231,
+      "longitude": 74.8214,
+      "region": "Karnataka",
+      "capacity_teu_per_day": 2500.0,
+      "days_of_cover": null,
+      "daily_demand_teu": null,
+      "metadata": {
+        "berths": 15,
+        "rail_connected": true,
+        "customs_edi": true,
+        "operating_agency": "New Mangalore Port Authority"
+      }
+    },
+    {
+      "id": "PLANT_ORAGADAM",
+      "name": "Oragadam Automotive Cluster",
+      "entity_type": "PLANT",
+      "aliases": [
+        "Oragadam Plant",
+        "Oragadam Cluster",
+        "Oragadam",
+        "Renault Nissan Oragadam",
+        "Daimler Oragadam",
+        "RNAIPL Oragadam",
+        "DICV Oragadam"
+      ],
+      "latitude": 12.8342,
+      "longitude": 79.9547,
+      "region": "Tamil Nadu",
+      "capacity_teu_per_day": null,
+      "days_of_cover": 4.5,
+      "daily_demand_teu": 1200.0,
+      "metadata": {
+        "oems": [
+          "Renault-Nissan",
+          "Daimler India Commercial Vehicles"
+        ],
+        "critical_parts": [
+          "Transmissions",
+          "Engine ECUs",
+          "Sensor Suites"
+        ],
+        "tier1_suppliers": 45
+      }
+    },
+    {
+      "id": "PLANT_SRIPERUMBUDUR",
+      "name": "Sriperumbudur Automotive Assembly Hub",
+      "entity_type": "PLANT",
+      "aliases": [
+        "Sriperumbudur Plant",
+        "Hyundai Sriperumbudur",
+        "HMI Sriperumbudur",
+        "Sriperumbudur Hub"
+      ],
+      "latitude": 12.9719,
+      "longitude": 79.9419,
+      "region": "Tamil Nadu",
+      "capacity_teu_per_day": null,
+      "days_of_cover": 3.5,
+      "daily_demand_teu": 1500.0,
+      "metadata": {
+        "oems": [
+          "Hyundai Motor India"
+        ],
+        "critical_parts": [
+          "Steel Stampings",
+          "Infotainment Units",
+          "Airbag Assemblies"
+        ],
+        "tier1_suppliers": 60
+      }
+    },
+    {
+      "id": "PLANT_HOSUR",
+      "name": "Hosur Automotive Cluster",
+      "entity_type": "PLANT",
+      "aliases": [
+        "Hosur Plant",
+        "Ashok Leyland Hosur",
+        "TVS Hosur",
+        "Hosur Cluster"
+      ],
+      "latitude": 12.7409,
+      "longitude": 77.8253,
+      "region": "Tamil Nadu",
+      "capacity_teu_per_day": null,
+      "days_of_cover": 5.0,
+      "daily_demand_teu": 900.0,
+      "metadata": {
+        "oems": [
+          "Ashok Leyland",
+          "TVS Motor Company"
+        ],
+        "critical_parts": [
+          "Axle Housings",
+          "Fuel Injection Pumps",
+          "Braking Systems"
+        ],
+        "tier1_suppliers": 35
+      }
+    },
+    {
+      "id": "PLANT_BIDADI",
+      "name": "Bidadi Automotive Assembly Plant",
+      "entity_type": "PLANT",
+      "aliases": [
+        "Bidadi Plant",
+        "Toyota Bidadi",
+        "TKM Bidadi",
+        "Bidadi Hub"
+      ],
+      "latitude": 12.7984,
+      "longitude": 77.3824,
+      "region": "Karnataka",
+      "capacity_teu_per_day": null,
+      "days_of_cover": 4.0,
+      "daily_demand_teu": 800.0,
+      "metadata": {
+        "oems": [
+          "Toyota Kirloskar Motor"
+        ],
+        "critical_parts": [
+          "Hybrid Inverters",
+          "Battery Packs",
+          "Gearboxes"
+        ],
+        "tier1_suppliers": 30
+      }
+    },
+    {
+      "id": "PLANT_SRICITY",
+      "name": "Sri City Integrated Manufacturing Cluster",
+      "entity_type": "PLANT",
+      "aliases": [
+        "Sri City Plant",
+        "Isuzu Sri City",
+        "Sri City Cluster",
+        "Sri City SEZ"
+      ],
+      "latitude": 13.5333,
+      "longitude": 80.0167,
+      "region": "Andhra Pradesh",
+      "capacity_teu_per_day": null,
+      "days_of_cover": 6.0,
+      "daily_demand_teu": 500.0,
+      "metadata": {
+        "oems": [
+          "Isuzu Motors India",
+          "Kobelco"
+        ],
+        "critical_parts": [
+          "Chassis Rails",
+          "Engine Castings",
+          "Hydraulic Pumps"
+        ],
+        "tier1_suppliers": 20
+      }
+    },
+    {
+      "id": "PLANT_COIMBATORE",
+      "name": "Coimbatore Precision Automotive Hub",
+      "entity_type": "PLANT",
+      "aliases": [
+        "Coimbatore Plant",
+        "Coimbatore Hub",
+        "Pricol Coimbatore"
+      ],
+      "latitude": 11.0168,
+      "longitude": 76.9558,
+      "region": "Tamil Nadu",
+      "capacity_teu_per_day": null,
+      "days_of_cover": 5.5,
+      "daily_demand_teu": 400.0,
+      "metadata": {
+        "oems": [
+          "Tier-1 Component Tier Cluster"
+        ],
+        "critical_parts": [
+          "Precision Castings",
+          "Motors",
+          "Sensors"
+        ],
+        "tier1_suppliers": 40
+      }
+    },
+    {
+      "id": "ICD_WHITEFIELD",
+      "name": "CONCOR Whitefield Inland Container Depot",
+      "entity_type": "ICD",
+      "aliases": [
+        "Whitefield ICD",
+        "Bengaluru ICD",
+        "ICD Whitefield",
+        "CONCOR Bengaluru"
+      ],
+      "latitude": 12.9912,
+      "longitude": 77.7554,
+      "region": "Karnataka",
+      "capacity_teu_per_day": 2500.0,
+      "days_of_cover": null,
+      "daily_demand_teu": null,
+      "metadata": {
+        "rail_lines": 6,
+        "bonded_warehouse_sqft": 150000,
+        "customs_office": true
+      }
+    },
+    {
+      "id": "ICD_TONDIARPET",
+      "name": "CONCOR Tondiarpet Inland Container Depot",
+      "entity_type": "ICD",
+      "aliases": [
+        "Tondiarpet ICD",
+        "ICD Tondiarpet",
+        "Chennai ICD"
+      ],
+      "latitude": 13.125,
+      "longitude": 80.29,
+      "region": "Tamil Nadu",
+      "capacity_teu_per_day": 1800.0,
+      "days_of_cover": null,
+      "daily_demand_teu": null,
+      "metadata": {
+        "rail_lines": 4,
+        "bonded_warehouse_sqft": 90000,
+        "customs_office": true
+      }
+    },
+    {
+      "id": "ICD_IRUGUR",
+      "name": "CONCOR Irugur Inland Container Depot",
+      "entity_type": "ICD",
+      "aliases": [
+        "Irugur ICD",
+        "Coimbatore ICD",
+        "ICD Irugur"
+      ],
+      "latitude": 11.0264,
+      "longitude": 77.0682,
+      "region": "Tamil Nadu",
+      "capacity_teu_per_day": 1200.0,
+      "days_of_cover": null,
+      "daily_demand_teu": null,
+      "metadata": {
+        "rail_lines": 3,
+        "bonded_warehouse_sqft": 60000,
+        "customs_office": true
+      }
+    },
+    {
+      "id": "CFS_ENNORE_LOGISTICS",
+      "name": "Ennore Express Container Freight Station",
+      "entity_type": "CFS",
+      "aliases": [
+        "Ennore CFS",
+        "CFS Ennore"
+      ],
+      "latitude": 13.23,
+      "longitude": 80.31,
+      "region": "Tamil Nadu",
+      "capacity_teu_per_day": 1000.0,
+      "days_of_cover": null,
+      "daily_demand_teu": null,
+      "metadata": {
+        "yard_capacity_teu": 4000,
+        "reefer_plugs": 40
+      }
+    },
+    {
+      "id": "CFS_CHENNAI_CENTRAL",
+      "name": "Central Warehousing CFS Madhavaram",
+      "entity_type": "CFS",
+      "aliases": [
+        "Madhavaram CFS",
+        "Chennai Central CFS",
+        "CWC Madhavaram"
+      ],
+      "latitude": 13.148,
+      "longitude": 80.231,
+      "region": "Tamil Nadu",
+      "capacity_teu_per_day": 1500.0,
+      "days_of_cover": null,
+      "daily_demand_teu": null,
+      "metadata": {
+        "yard_capacity_teu": 6000,
+        "reefer_plugs": 60
+      }
+    },
+    {
+      "id": "CFS_WHITEFIELD",
+      "name": "Whitefield Freight & Transshipment Depot",
+      "entity_type": "CFS",
+      "aliases": [
+        "Whitefield CFS",
+        "Bengaluru Freight Depot"
+      ],
+      "latitude": 12.985,
+      "longitude": 77.74,
+      "region": "Karnataka",
+      "capacity_teu_per_day": 1200.0,
+      "days_of_cover": null,
+      "daily_demand_teu": null,
+      "metadata": {
+        "yard_capacity_teu": 5000,
+        "reefer_plugs": 30
+      }
+    },
+    {
+      "id": "JUNCTION_RANIPET",
+      "name": "Ranipet Corridor Bifurcation Node",
+      "entity_type": "CORRIDOR_JUNCTION",
+      "aliases": [
+        "Ranipet Junction",
+        "Ranipet Bypass",
+        "NH48 Ranipet"
+      ],
+      "latitude": 12.9272,
+      "longitude": 79.3333,
+      "region": "Tamil Nadu",
+      "capacity_teu_per_day": 5000.0,
+      "days_of_cover": null,
+      "daily_demand_teu": null,
+      "metadata": {
+        "highway": "NH48/NH40",
+        "lanes": 6
+      }
+    },
+    {
+      "id": "JUNCTION_VELLORE",
+      "name": "Vellore Transit Node",
+      "entity_type": "CORRIDOR_JUNCTION",
+      "aliases": [
+        "Vellore Node",
+        "Vellore Bypass",
+        "NH48 Vellore"
+      ],
+      "latitude": 12.9165,
+      "longitude": 79.1325,
+      "region": "Tamil Nadu",
+      "capacity_teu_per_day": 5000.0,
+      "days_of_cover": null,
+      "daily_demand_teu": null,
+      "metadata": {
+        "highway": "NH48",
+        "lanes": 6
+      }
+    },
+    {
+      "id": "JUNCTION_KRISHNAGIRI",
+      "name": "Krishnagiri Corridor Hub",
+      "entity_type": "CORRIDOR_JUNCTION",
+      "aliases": [
+        "Krishnagiri Junction",
+        "Krishnagiri Hub",
+        "NH48/NH44 Krishnagiri"
+      ],
+      "latitude": 12.5266,
+      "longitude": 78.2147,
+      "region": "Tamil Nadu",
+      "capacity_teu_per_day": 6000.0,
+      "days_of_cover": null,
+      "daily_demand_teu": null,
+      "metadata": {
+        "highway": "NH48/NH44 Intersection",
+        "lanes": 6
+      }
+    },
+    {
+      "id": "JUNCTION_CHITTOOR",
+      "name": "Chittoor Highway Interchange",
+      "entity_type": "CORRIDOR_JUNCTION",
+      "aliases": [
+        "Chittoor Node",
+        "Chittoor Interchange",
+        "NH40 Chittoor"
+      ],
+      "latitude": 13.2172,
+      "longitude": 79.1008,
+      "region": "Andhra Pradesh",
+      "capacity_teu_per_day": 3500.0,
+      "days_of_cover": null,
+      "daily_demand_teu": null,
+      "metadata": {
+        "highway": "NH40/NH69",
+        "lanes": 4
+      }
+    },
+    {
+      "id": "PORT_KARAIKAL",
+      "name": "Karaikal Port Terminal",
+      "entity_type": "PORT",
+      "aliases": [
+        "Karaikal Port",
+        "MARG Karaikal",
+        "Karaikal Terminal"
+      ],
+      "latitude": 10.9032,
+      "longitude": 79.8434,
+      "region": "Tamil Nadu",
+      "capacity_teu_per_day": 2500.0,
+      "days_of_cover": null,
+      "daily_demand_teu": null,
+      "metadata": {
+        "berths": 5,
+        "rail_connected": true,
+        "customs_edi": true
+      }
+    },
+    {
+      "id": "ICD_HOSUR",
+      "name": "CONCOR Hosur Multimodal ICD",
+      "entity_type": "ICD",
+      "aliases": [
+        "Hosur ICD",
+        "ICD Hosur",
+        "Sipcot Hosur Railhead"
+      ],
+      "latitude": 12.712,
+      "longitude": 77.845,
+      "region": "Tamil Nadu",
+      "capacity_teu_per_day": 2200.0,
+      "days_of_cover": null,
+      "daily_demand_teu": null,
+      "metadata": {
+        "rail_lines": 4,
+        "customs_office": true
+      }
+    },
+    {
+      "id": "ICD_KRISHNAPATNAM_RAIL",
+      "name": "Krishnapatnam Rail Transshipment Yard",
+      "entity_type": "ICD",
+      "aliases": [
+        "KPCL Rail Terminal",
+        "Krishnapatnam ICD"
+      ],
+      "latitude": 14.235,
+      "longitude": 80.065,
+      "region": "Andhra Pradesh",
+      "capacity_teu_per_day": 2500.0,
+      "days_of_cover": null,
+      "daily_demand_teu": null,
+      "metadata": {
+        "rail_lines": 5,
+        "customs_office": true
+      }
+    },
+    {
+      "id": "ICD_SALEM",
+      "name": "Salem Multimodal Logistics ICD",
+      "entity_type": "ICD",
+      "aliases": [
+        "Salem ICD",
+        "ICD Salem",
+        "CONCOR Salem"
+      ],
+      "latitude": 11.6643,
+      "longitude": 78.146,
+      "region": "Tamil Nadu",
+      "capacity_teu_per_day": 2000.0,
+      "days_of_cover": null,
+      "daily_demand_teu": null,
+      "metadata": {
+        "rail_lines": 3,
+        "customs_office": true
+      }
+    },
+    {
+      "id": "PLANT_MARAIMALAI",
+      "name": "Maraimalai Nagar Auto Ancillary Park",
+      "entity_type": "PLANT",
+      "aliases": [
+        "Maraimalai Nagar Plant",
+        "Ford Vendor Park"
+      ],
+      "latitude": 12.7925,
+      "longitude": 80.0252,
+      "region": "Tamil Nadu",
+      "capacity_teu_per_day": null,
+      "days_of_cover": 4.5,
+      "daily_demand_teu": 350.0,
+      "metadata": {
+        "tier": "TIER1_CLUSTER",
+        "oems": [
+          "Tier-1 Chassis"
+        ]
+      }
+    },
+    {
+      "id": "PLANT_AMBATTUR",
+      "name": "Ambattur Industrial Estate Auto Cluster",
+      "entity_type": "PLANT",
+      "aliases": [
+        "Ambattur Auto Estate",
+        "Ambattur Plant"
+      ],
+      "latitude": 13.1067,
+      "longitude": 80.161,
+      "region": "Tamil Nadu",
+      "capacity_teu_per_day": null,
+      "days_of_cover": 4.0,
+      "daily_demand_teu": 320.0,
+      "metadata": {
+        "tier": "TIER1_CLUSTER",
+        "oems": [
+          "Tier-1 Stamping"
+        ]
+      }
+    },
+    {
+      "id": "PLANT_GUMMIDIPOONDI",
+      "name": "Gummidipoondi Automotive SIPCOT",
+      "entity_type": "PLANT",
+      "aliases": [
+        "Gummidipoondi Plant",
+        "Gummidipoondi SIPCOT"
+      ],
+      "latitude": 13.4068,
+      "longitude": 80.1112,
+      "region": "Tamil Nadu",
+      "capacity_teu_per_day": null,
+      "days_of_cover": 5.0,
+      "daily_demand_teu": 300.0,
+      "metadata": {
+        "tier": "TIER1_CLUSTER",
+        "oems": [
+          "Tier-1 Forgings"
+        ]
+      }
+    },
+    {
+      "id": "PLANT_IRUNGATTUKOTTAI",
+      "name": "Irungattukottai Ancillary Supplier Hub",
+      "entity_type": "PLANT",
+      "aliases": [
+        "Irungattukottai Park",
+        "SIPCOT Irungattukottai"
+      ],
+      "latitude": 12.995,
+      "longitude": 79.992,
+      "region": "Tamil Nadu",
+      "capacity_teu_per_day": null,
+      "days_of_cover": 4.0,
+      "daily_demand_teu": 360.0,
+      "metadata": {
+        "tier": "TIER1_CLUSTER",
+        "oems": [
+          "Hyundai Ancillary"
+        ]
+      }
+    },
+    {
+      "id": "PLANT_VALLAM_VADAGAL",
+      "name": "Vallam Vadagal EV & Aero Park",
+      "entity_type": "PLANT",
+      "aliases": [
+        "Vallam Vadagal",
+        "SIPCOT Vallam"
+      ],
+      "latitude": 12.885,
+      "longitude": 79.908,
+      "region": "Tamil Nadu",
+      "capacity_teu_per_day": null,
+      "days_of_cover": 4.5,
+      "daily_demand_teu": 310.0,
+      "metadata": {
+        "tier": "TIER1_CLUSTER",
+        "oems": [
+          "EV Powertrain"
+        ]
+      }
+    },
+    {
+      "id": "PLANT_CHENGALPATTU",
+      "name": "Chengalpattu Mahindra Auto Hub",
+      "entity_type": "PLANT",
+      "aliases": [
+        "Chengalpattu Plant",
+        "MWC Chengalpattu"
+      ],
+      "latitude": 12.735,
+      "longitude": 79.998,
+      "region": "Tamil Nadu",
+      "capacity_teu_per_day": null,
+      "days_of_cover": 5.0,
+      "daily_demand_teu": 340.0,
+      "metadata": {
+        "tier": "TIER1_CLUSTER",
+        "oems": [
+          "Mahindra Ancillary"
+        ]
+      }
+    },
+    {
+      "id": "PLANT_THIRUVALLUR",
+      "name": "Thiruvallur Commercial Chassis Hub",
+      "entity_type": "PLANT",
+      "aliases": [
+        "Thiruvallur Plant",
+        "Kakkalur Auto Hub"
+      ],
+      "latitude": 13.143,
+      "longitude": 79.908,
+      "region": "Tamil Nadu",
+      "capacity_teu_per_day": null,
+      "days_of_cover": 4.5,
+      "daily_demand_teu": 280.0,
+      "metadata": {
+        "tier": "TIER1_CLUSTER",
+        "oems": [
+          "Commercial Axle"
+        ]
+      }
+    },
+    {
+      "id": "PLANT_CHEYYAR",
+      "name": "Cheyyar Industrial Auto Components",
+      "entity_type": "PLANT",
+      "aliases": [
+        "Cheyyar SIPCOT",
+        "Cheyyar Plant"
+      ],
+      "latitude": 12.66,
+      "longitude": 79.54,
+      "region": "Tamil Nadu",
+      "capacity_teu_per_day": null,
+      "days_of_cover": 5.5,
+      "daily_demand_teu": 260.0,
+      "metadata": {
+        "tier": "TIER1_CLUSTER",
+        "oems": [
+          "Braking Assemblies"
+        ]
+      }
+    },
+    {
+      "id": "PLANT_KRISHNAGIRI_TIER1",
+      "name": "Krishnagiri EV Two-Wheeler Cluster",
+      "entity_type": "PLANT",
+      "aliases": [
+        "Krishnagiri EV Hub",
+        "Bargur Auto Park"
+      ],
+      "latitude": 12.548,
+      "longitude": 78.315,
+      "region": "Tamil Nadu",
+      "capacity_teu_per_day": null,
+      "days_of_cover": 4.5,
+      "daily_demand_teu": 320.0,
+      "metadata": {
+        "tier": "TIER1_CLUSTER",
+        "oems": [
+          "EV Battery Pack"
+        ]
+      }
+    },
+    {
+      "id": "PLANT_PEENYA",
+      "name": "Peenya Precision Auto Engineering Hub",
+      "entity_type": "PLANT",
+      "aliases": [
+        "Peenya Industrial Hub",
+        "Peenya Plant"
+      ],
+      "latitude": 13.0285,
+      "longitude": 77.5197,
+      "region": "Karnataka",
+      "capacity_teu_per_day": null,
+      "days_of_cover": 4.0,
+      "daily_demand_teu": 350.0,
+      "metadata": {
+        "tier": "TIER1_CLUSTER",
+        "oems": [
+          "Bosch Peenya"
+        ]
+      }
+    },
+    {
+      "id": "PLANT_BOMMASANDRA",
+      "name": "Bommasandra Auto Electronics Cluster",
+      "entity_type": "PLANT",
+      "aliases": [
+        "Bommasandra Plant",
+        "Jigani Auto Hub"
+      ],
+      "latitude": 12.8162,
+      "longitude": 77.6975,
+      "region": "Karnataka",
+      "capacity_teu_per_day": null,
+      "days_of_cover": 4.5,
+      "daily_demand_teu": 340.0,
+      "metadata": {
+        "tier": "TIER1_CLUSTER",
+        "oems": [
+          "ECU Tier-1"
+        ]
+      }
+    },
+    {
+      "id": "PLANT_HAROHALLI",
+      "name": "Harohalli Phase-2 Supplier Park",
+      "entity_type": "PLANT",
+      "aliases": [
+        "Harohalli Auto Park",
+        "Harohalli KIADB"
+      ],
+      "latitude": 12.695,
+      "longitude": 77.468,
+      "region": "Karnataka",
+      "capacity_teu_per_day": null,
+      "days_of_cover": 5.0,
+      "daily_demand_teu": 280.0,
+      "metadata": {
+        "tier": "TIER1_CLUSTER",
+        "oems": [
+          "Toyota Vendor Park"
+        ]
+      }
+    },
+    {
+      "id": "PLANT_NARASAPURA",
+      "name": "Narasapura Kolar Auto Assembly Hub",
+      "entity_type": "PLANT",
+      "aliases": [
+        "Narasapura KIADB",
+        "Kolar Auto Hub"
+      ],
+      "latitude": 13.146,
+      "longitude": 78.005,
+      "region": "Karnataka",
+      "capacity_teu_per_day": null,
+      "days_of_cover": 4.5,
+      "daily_demand_teu": 330.0,
+      "metadata": {
+        "tier": "TIER1_CLUSTER",
+        "oems": [
+          "Honda/Scania Tier-1"
+        ]
+      }
+    },
+    {
+      "id": "PLANT_VEMAGAL",
+      "name": "Vemagal Tier-1 Driveline Cluster",
+      "entity_type": "PLANT",
+      "aliases": [
+        "Vemagal Industrial Area",
+        "Vemagal Plant"
+      ],
+      "latitude": 13.186,
+      "longitude": 78.034,
+      "region": "Karnataka",
+      "capacity_teu_per_day": null,
+      "days_of_cover": 5.0,
+      "daily_demand_teu": 260.0,
+      "metadata": {
+        "tier": "TIER1_CLUSTER",
+        "oems": [
+          "Driveline Tiers"
+        ]
+      }
+    },
+    {
+      "id": "PLANT_TUMAKURU",
+      "name": "Tumakuru NIMZ Component Park",
+      "entity_type": "PLANT",
+      "aliases": [
+        "Tumakuru Auto Hub",
+        "Vasanthanarasapura"
+      ],
+      "latitude": 13.428,
+      "longitude": 77.015,
+      "region": "Karnataka",
+      "capacity_teu_per_day": null,
+      "days_of_cover": 5.5,
+      "daily_demand_teu": 290.0,
+      "metadata": {
+        "tier": "TIER1_CLUSTER",
+        "oems": [
+          "Precision Forgings"
+        ]
+      }
+    },
+    {
+      "id": "PLANT_DOBBASPET",
+      "name": "Dobbaspet Automotive Castings Hub",
+      "entity_type": "PLANT",
+      "aliases": [
+        "Dobbaspet KIADB",
+        "Dobbaspet Plant"
+      ],
+      "latitude": 13.234,
+      "longitude": 77.235,
+      "region": "Karnataka",
+      "capacity_teu_per_day": null,
+      "days_of_cover": 5.0,
+      "daily_demand_teu": 250.0,
+      "metadata": {
+        "tier": "TIER1_CLUSTER",
+        "oems": [
+          "Iron Castings"
+        ]
+      }
+    },
+    {
+      "id": "PLANT_TADA",
+      "name": "Tada Automotive & Wiring Harness Hub",
+      "entity_type": "PLANT",
+      "aliases": [
+        "Tada Industrial Park",
+        "Tada Plant"
+      ],
+      "latitude": 13.591,
+      "longitude": 80.032,
+      "region": "Andhra Pradesh",
+      "capacity_teu_per_day": null,
+      "days_of_cover": 5.0,
+      "daily_demand_teu": 280.0,
+      "metadata": {
+        "tier": "TIER1_CLUSTER",
+        "oems": [
+          "Wiring Harness"
+        ]
+      }
+    },
+    {
+      "id": "PLANT_NAIDUPETA",
+      "name": "Naidupeta Multi-Product Auto SEZ",
+      "entity_type": "PLANT",
+      "aliases": [
+        "Naidupeta SEZ",
+        "Naidupeta Plant"
+      ],
+      "latitude": 13.902,
+      "longitude": 79.895,
+      "region": "Andhra Pradesh",
+      "capacity_teu_per_day": null,
+      "days_of_cover": 5.5,
+      "daily_demand_teu": 270.0,
+      "metadata": {
+        "tier": "TIER1_CLUSTER",
+        "oems": [
+          "Tyre & Alloy"
+        ]
+      }
+    },
+    {
+      "id": "PLANT_TIRUPATI_ELECTRONICS",
+      "name": "Tirupati EV Electronics Park",
+      "entity_type": "PLANT",
+      "aliases": [
+        "Tirupati EMC",
+        "Renigunta Auto Electronics"
+      ],
+      "latitude": 13.6288,
+      "longitude": 79.542,
+      "region": "Andhra Pradesh",
+      "capacity_teu_per_day": null,
+      "days_of_cover": 4.5,
+      "daily_demand_teu": 300.0,
+      "metadata": {
+        "tier": "TIER1_CLUSTER",
+        "oems": [
+          "EV Sensors"
+        ]
+      }
+    },
+    {
+      "id": "PLANT_CHITTOOR_AUTO",
+      "name": "Chittoor Foundry & Harness Plant",
+      "entity_type": "PLANT",
+      "aliases": [
+        "Chittoor Industrial Hub",
+        "Chittoor Auto"
+      ],
+      "latitude": 13.204,
+      "longitude": 79.092,
+      "region": "Andhra Pradesh",
+      "capacity_teu_per_day": null,
+      "days_of_cover": 5.5,
+      "daily_demand_teu": 250.0,
+      "metadata": {
+        "tier": "TIER1_CLUSTER",
+        "oems": [
+          "Fasteners & Wire"
+        ]
+      }
+    },
+    {
+      "id": "PLANT_NELLORE_TIER1",
+      "name": "Nellore Marine-Auto Fabrication Hub",
+      "entity_type": "PLANT",
+      "aliases": [
+        "Nellore Industrial Estate",
+        "Nellore Auto"
+      ],
+      "latitude": 14.4426,
+      "longitude": 79.9865,
+      "region": "Andhra Pradesh",
+      "capacity_teu_per_day": null,
+      "days_of_cover": 5.0,
+      "daily_demand_teu": 270.0,
+      "metadata": {
+        "tier": "TIER1_CLUSTER",
+        "oems": [
+          "Chassis Weldments"
+        ]
+      }
+    },
+    {
+      "id": "PLANT_KINATHUKADAVU",
+      "name": "Kinathukadavu Foundry & Forging Hub",
+      "entity_type": "PLANT",
+      "aliases": [
+        "Kinathukadavu Auto",
+        "Pollachi Tier-1"
+      ],
+      "latitude": 10.822,
+      "longitude": 77.018,
+      "region": "Tamil Nadu",
+      "capacity_teu_per_day": null,
+      "days_of_cover": 5.0,
+      "daily_demand_teu": 290.0,
+      "metadata": {
+        "tier": "TIER1_CLUSTER",
+        "oems": [
+          "Powertrain Castings"
+        ]
+      }
+    },
+    {
+      "id": "PLANT_SALEM_STEEL",
+      "name": "Salem Auto Steel & Bearing Plant",
+      "entity_type": "PLANT",
+      "aliases": [
+        "Salem Steel Auto",
+        "Mettur Auto Bearing"
+      ],
+      "latitude": 11.675,
+      "longitude": 78.082,
+      "region": "Tamil Nadu",
+      "capacity_teu_per_day": null,
+      "days_of_cover": 5.5,
+      "daily_demand_teu": 310.0,
+      "metadata": {
+        "tier": "TIER1_CLUSTER",
+        "oems": [
+          "Special Alloy Steel"
+        ]
+      }
+    },
+    {
+      "id": "PLANT_PALAKKAD_COMPONENTS",
+      "name": "Palakkad KINFRA Auto Component Park",
+      "entity_type": "PLANT",
+      "aliases": [
+        "Palakkad KINFRA",
+        "Kanjikode Auto Hub"
+      ],
+      "latitude": 10.7867,
+      "longitude": 76.742,
+      "region": "Kerala",
+      "capacity_teu_per_day": null,
+      "days_of_cover": 5.5,
+      "daily_demand_teu": 260.0,
+      "metadata": {
+        "tier": "TIER1_CLUSTER",
+        "oems": [
+          "Fluid Valves"
+        ]
+      }
+    },
+    {
+      "id": "CFS_PONNERI",
+      "name": "Ponneri North Gateway CFS",
+      "entity_type": "CFS",
+      "aliases": [
+        "Ponneri CFS"
+      ],
+      "latitude": 13.337,
+      "longitude": 80.194,
+      "region": "Tamil Nadu",
+      "capacity_teu_per_day": 2800.0,
+      "days_of_cover": null,
+      "daily_demand_teu": null,
+      "metadata": {
+        "yard_capacity_teu": 11200
+      }
+    },
+    {
+      "id": "CFS_MINJUR",
+      "name": "Minjur Outer Harbour CFS",
+      "entity_type": "CFS",
+      "aliases": [
+        "Minjur CFS"
+      ],
+      "latitude": 13.278,
+      "longitude": 80.264,
+      "region": "Tamil Nadu",
+      "capacity_teu_per_day": 2600.0,
+      "days_of_cover": null,
+      "daily_demand_teu": null,
+      "metadata": {
+        "yard_capacity_teu": 10400
+      }
+    },
+    {
+      "id": "CFS_SRIPERUMBUDUR",
+      "name": "Sriperumbudur Bonded Logistics CFS",
+      "entity_type": "CFS",
+      "aliases": [
+        "Sriperumbudur CFS"
+      ],
+      "latitude": 12.968,
+      "longitude": 79.915,
+      "region": "Tamil Nadu",
+      "capacity_teu_per_day": 3200.0,
+      "days_of_cover": null,
+      "daily_demand_teu": null,
+      "metadata": {
+        "yard_capacity_teu": 12800
+      }
+    },
+    {
+      "id": "CFS_ORAGADAM",
+      "name": "Oragadam JIT Consolidation CFS",
+      "entity_type": "CFS",
+      "aliases": [
+        "Oragadam CFS"
+      ],
+      "latitude": 12.842,
+      "longitude": 79.922,
+      "region": "Tamil Nadu",
+      "capacity_teu_per_day": 3200.0,
+      "days_of_cover": null,
+      "daily_demand_teu": null,
+      "metadata": {
+        "yard_capacity_teu": 12800
+      }
+    },
+    {
+      "id": "CFS_MANALI",
+      "name": "Manali Industrial CFS",
+      "entity_type": "CFS",
+      "aliases": [
+        "Manali CFS"
+      ],
+      "latitude": 13.168,
+      "longitude": 80.258,
+      "region": "Tamil Nadu",
+      "capacity_teu_per_day": 2800.0,
+      "days_of_cover": null,
+      "daily_demand_teu": null,
+      "metadata": {
+        "yard_capacity_teu": 11200
+      }
+    },
+    {
+      "id": "CFS_KRISHNAPATNAM",
+      "name": "Krishnapatnam Port Feeder CFS",
+      "entity_type": "CFS",
+      "aliases": [
+        "Krishnapatnam CFS"
+      ],
+      "latitude": 14.256,
+      "longitude": 80.098,
+      "region": "Andhra Pradesh",
+      "capacity_teu_per_day": 3400.0,
+      "days_of_cover": null,
+      "daily_demand_teu": null,
+      "metadata": {
+        "yard_capacity_teu": 13600
+      }
+    },
+    {
+      "id": "CFS_SULLURPETA",
+      "name": "Sullurpeta Border Customs CFS",
+      "entity_type": "CFS",
+      "aliases": [
+        "Sullurpeta CFS"
+      ],
+      "latitude": 13.702,
+      "longitude": 80.022,
+      "region": "Andhra Pradesh",
+      "capacity_teu_per_day": 2500.0,
+      "days_of_cover": null,
+      "daily_demand_teu": null,
+      "metadata": {
+        "yard_capacity_teu": 10000
+      }
+    },
+    {
+      "id": "CFS_KARAIKAL",
+      "name": "Karaikal Coastal Container CFS",
+      "entity_type": "CFS",
+      "aliases": [
+        "Karaikal CFS"
+      ],
+      "latitude": 10.915,
+      "longitude": 79.825,
+      "region": "Tamil Nadu",
+      "capacity_teu_per_day": 2400.0,
+      "days_of_cover": null,
+      "daily_demand_teu": null,
+      "metadata": {
+        "yard_capacity_teu": 9600
+      }
+    },
+    {
+      "id": "CFS_PONDICHERRY",
+      "name": "Puducherry NH32 Feeder CFS",
+      "entity_type": "CFS",
+      "aliases": [
+        "Pondicherry CFS"
+      ],
+      "latitude": 11.9416,
+      "longitude": 79.8083,
+      "region": "Tamil Nadu",
+      "capacity_teu_per_day": 2200.0,
+      "days_of_cover": null,
+      "daily_demand_teu": null,
+      "metadata": {
+        "yard_capacity_teu": 8800
+      }
+    },
+    {
+      "id": "CFS_TUTICORIN_BOND",
+      "name": "Tuticorin VOC Outer Bonded CFS",
+      "entity_type": "CFS",
+      "aliases": [
+        "Tuticorin CFS"
+      ],
+      "latitude": 8.789,
+      "longitude": 78.145,
+      "region": "Tamil Nadu",
+      "capacity_teu_per_day": 2600.0,
+      "days_of_cover": null,
+      "daily_demand_teu": null,
+      "metadata": {
+        "yard_capacity_teu": 10400
+      }
+    },
+    {
+      "id": "CFS_MADURAI_INLAND",
+      "name": "Madurai Kapalur Consolidation CFS",
+      "entity_type": "CFS",
+      "aliases": [
+        "Madurai CFS"
+      ],
+      "latitude": 9.865,
+      "longitude": 78.035,
+      "region": "Tamil Nadu",
+      "capacity_teu_per_day": 2400.0,
+      "days_of_cover": null,
+      "daily_demand_teu": null,
+      "metadata": {
+        "yard_capacity_teu": 9600
+      }
+    },
+    {
+      "id": "CFS_COCHIN_VALLARPADAM",
+      "name": "Cochin Ernakulam Feeder CFS",
+      "entity_type": "CFS",
+      "aliases": [
+        "Cochin Feeder CFS"
+      ],
+      "latitude": 9.992,
+      "longitude": 76.312,
+      "region": "Kerala",
+      "capacity_teu_per_day": 3000.0,
+      "days_of_cover": null,
+      "daily_demand_teu": null,
+      "metadata": {
+        "yard_capacity_teu": 12000
+      }
+    },
+    {
+      "id": "CFS_PALAKKAD_FREIGHT",
+      "name": "Palakkad Walayar Border CFS",
+      "entity_type": "CFS",
+      "aliases": [
+        "Palakkad CFS"
+      ],
+      "latitude": 10.818,
+      "longitude": 76.825,
+      "region": "Kerala",
+      "capacity_teu_per_day": 2500.0,
+      "days_of_cover": null,
+      "daily_demand_teu": null,
+      "metadata": {
+        "yard_capacity_teu": 10000
+      }
+    },
+    {
+      "id": "CFS_COIMBATORE_NEELAMBUR",
+      "name": "Coimbatore Neelambur Auto CFS",
+      "entity_type": "CFS",
+      "aliases": [
+        "Neelambur CFS"
+      ],
+      "latitude": 11.068,
+      "longitude": 77.088,
+      "region": "Tamil Nadu",
+      "capacity_teu_per_day": 2800.0,
+      "days_of_cover": null,
+      "daily_demand_teu": null,
+      "metadata": {
+        "yard_capacity_teu": 11200
+      }
+    },
+    {
+      "id": "CFS_SALEM_LOGISTICS",
+      "name": "Salem Sankari Road Auto CFS",
+      "entity_type": "CFS",
+      "aliases": [
+        "Salem CFS"
+      ],
+      "latitude": 11.648,
+      "longitude": 78.095,
+      "region": "Tamil Nadu",
+      "capacity_teu_per_day": 2600.0,
+      "days_of_cover": null,
+      "daily_demand_teu": null,
+      "metadata": {
+        "yard_capacity_teu": 10400
+      }
+    },
+    {
+      "id": "CFS_HOSUR_LOGISTICS",
+      "name": "Hosur Zuzuvadi Freight CFS",
+      "entity_type": "CFS",
+      "aliases": [
+        "Hosur CFS"
+      ],
+      "latitude": 12.765,
+      "longitude": 77.802,
+      "region": "Tamil Nadu",
+      "capacity_teu_per_day": 3000.0,
+      "days_of_cover": null,
+      "daily_demand_teu": null,
+      "metadata": {
+        "yard_capacity_teu": 12000
+      }
+    },
+    {
+      "id": "CFS_BOMMASANDRA",
+      "name": "Bommasandra Hebbagodi Auto CFS",
+      "entity_type": "CFS",
+      "aliases": [
+        "Bommasandra CFS"
+      ],
+      "latitude": 12.828,
+      "longitude": 77.685,
+      "region": "Karnataka",
+      "capacity_teu_per_day": 2600.0,
+      "days_of_cover": null,
+      "daily_demand_teu": null,
+      "metadata": {
+        "yard_capacity_teu": 10400
+      }
+    },
+    {
+      "id": "CFS_NELAMANGALA",
+      "name": "Nelamangala Tumkur Road CFS",
+      "entity_type": "CFS",
+      "aliases": [
+        "Nelamangala CFS"
+      ],
+      "latitude": 13.099,
+      "longitude": 77.392,
+      "region": "Karnataka",
+      "capacity_teu_per_day": 2800.0,
+      "days_of_cover": null,
+      "daily_demand_teu": null,
+      "metadata": {
+        "yard_capacity_teu": 11200
+      }
+    },
+    {
+      "id": "CFS_MANGALORE_PANAMBUR",
+      "name": "Mangalore Baikampady Export CFS",
+      "entity_type": "CFS",
+      "aliases": [
+        "Panambur CFS"
+      ],
+      "latitude": 12.948,
+      "longitude": 74.825,
+      "region": "Karnataka",
+      "capacity_teu_per_day": 2400.0,
+      "days_of_cover": null,
+      "daily_demand_teu": null,
+      "metadata": {
+        "yard_capacity_teu": 9600
+      }
+    },
+    {
+      "id": "JUNCTION_GUMMIDIPOONDI",
+      "name": "Gummidipoondi NH16 Interchange",
+      "entity_type": "CORRIDOR_JUNCTION",
+      "aliases": [
+        "Gummidipoondi NH16 Interchange"
+      ],
+      "latitude": 13.412,
+      "longitude": 80.125,
+      "region": "Tamil Nadu",
+      "capacity_teu_per_day": 5500.0,
+      "days_of_cover": null,
+      "daily_demand_teu": null,
+      "metadata": {
+        "highway": "NH16"
+      }
+    },
+    {
+      "id": "JUNCTION_TADA",
+      "name": "Tada Border NH16 Node",
+      "entity_type": "CORRIDOR_JUNCTION",
+      "aliases": [
+        "Tada Border NH16 Node"
+      ],
+      "latitude": 13.588,
+      "longitude": 80.025,
+      "region": "Andhra Pradesh",
+      "capacity_teu_per_day": 5000.0,
+      "days_of_cover": null,
+      "daily_demand_teu": null,
+      "metadata": {
+        "highway": "NH16"
+      }
+    },
+    {
+      "id": "JUNCTION_NAIDUPETA",
+      "name": "Naidupeta NH16/NH71 Spur",
+      "entity_type": "CORRIDOR_JUNCTION",
+      "aliases": [
+        "Naidupeta NH16/NH71 Spur"
+      ],
+      "latitude": 13.895,
+      "longitude": 79.908,
+      "region": "Andhra Pradesh",
+      "capacity_teu_per_day": 5000.0,
+      "days_of_cover": null,
+      "daily_demand_teu": null,
+      "metadata": {
+        "highway": "NH16/NH71"
+      }
+    },
+    {
+      "id": "JUNCTION_GUDUR",
+      "name": "Gudur Nellore Rail-Road Crossing",
+      "entity_type": "CORRIDOR_JUNCTION",
+      "aliases": [
+        "Gudur Nellore Rail-Road Crossing"
+      ],
+      "latitude": 14.148,
+      "longitude": 79.852,
+      "region": "Andhra Pradesh",
+      "capacity_teu_per_day": 5000.0,
+      "days_of_cover": null,
+      "daily_demand_teu": null,
+      "metadata": {
+        "highway": "NH16"
+      }
+    },
+    {
+      "id": "JUNCTION_TIRUVALLUR",
+      "name": "Tiruvallur NH716 Node",
+      "entity_type": "CORRIDOR_JUNCTION",
+      "aliases": [
+        "Tiruvallur NH716 Node"
+      ],
+      "latitude": 13.138,
+      "longitude": 79.915,
+      "region": "Tamil Nadu",
+      "capacity_teu_per_day": 4500.0,
+      "days_of_cover": null,
+      "daily_demand_teu": null,
+      "metadata": {
+        "highway": "NH716"
+      }
+    },
+    {
+      "id": "JUNCTION_TAMBARAM",
+      "name": "Tambaram Chennai Outer Ring Node",
+      "entity_type": "CORRIDOR_JUNCTION",
+      "aliases": [
+        "Tambaram Chennai Outer Ring Node"
+      ],
+      "latitude": 12.9249,
+      "longitude": 80.1,
+      "region": "Tamil Nadu",
+      "capacity_teu_per_day": 5500.0,
+      "days_of_cover": null,
+      "daily_demand_teu": null,
+      "metadata": {
+        "highway": "NH32/ORR"
+      }
+    },
+    {
+      "id": "JUNCTION_CHENGALPATTU",
+      "name": "Chengalpattu GST Road Interchange",
+      "entity_type": "CORRIDOR_JUNCTION",
+      "aliases": [
+        "Chengalpattu GST Road Interchange"
+      ],
+      "latitude": 12.6921,
+      "longitude": 79.976,
+      "region": "Tamil Nadu",
+      "capacity_teu_per_day": 5000.0,
+      "days_of_cover": null,
+      "daily_demand_teu": null,
+      "metadata": {
+        "highway": "NH32"
+      }
+    },
+    {
+      "id": "JUNCTION_TINDIVANAM",
+      "name": "Tindivanam NH32/NH77 Junction",
+      "entity_type": "CORRIDOR_JUNCTION",
+      "aliases": [
+        "Tindivanam NH32/NH77 Junction"
+      ],
+      "latitude": 12.23,
+      "longitude": 79.65,
+      "region": "Tamil Nadu",
+      "capacity_teu_per_day": 4500.0,
+      "days_of_cover": null,
+      "daily_demand_teu": null,
+      "metadata": {
+        "highway": "NH32"
+      }
+    },
+    {
+      "id": "JUNCTION_VILLUPURAM",
+      "name": "Villupuram Highway Bifurcation",
+      "entity_type": "CORRIDOR_JUNCTION",
+      "aliases": [
+        "Villupuram Highway Bifurcation"
+      ],
+      "latitude": 11.9401,
+      "longitude": 79.4861,
+      "region": "Tamil Nadu",
+      "capacity_teu_per_day": 4500.0,
+      "days_of_cover": null,
+      "daily_demand_teu": null,
+      "metadata": {
+        "highway": "NH32/NH38"
+      }
+    },
+    {
+      "id": "JUNCTION_ULUNDURPET",
+      "name": "Ulundurpet Central TN Node",
+      "entity_type": "CORRIDOR_JUNCTION",
+      "aliases": [
+        "Ulundurpet Central TN Node"
+      ],
+      "latitude": 11.69,
+      "longitude": 79.29,
+      "region": "Tamil Nadu",
+      "capacity_teu_per_day": 4500.0,
+      "days_of_cover": null,
+      "daily_demand_teu": null,
+      "metadata": {
+        "highway": "NH38/NH79"
+      }
+    },
+    {
+      "id": "JUNCTION_TRICHY",
+      "name": "Tiruchirappalli Central Corridor Hub",
+      "entity_type": "CORRIDOR_JUNCTION",
+      "aliases": [
+        "Tiruchirappalli Central Corridor Hub"
+      ],
+      "latitude": 10.7905,
+      "longitude": 78.7047,
+      "region": "Tamil Nadu",
+      "capacity_teu_per_day": 5000.0,
+      "days_of_cover": null,
+      "daily_demand_teu": null,
+      "metadata": {
+        "highway": "NH38/NH83"
+      }
+    },
+    {
+      "id": "JUNCTION_DINDIGUL",
+      "name": "Dindigul NH44/NH83 Junction",
+      "entity_type": "CORRIDOR_JUNCTION",
+      "aliases": [
+        "Dindigul NH44/NH83 Junction"
+      ],
+      "latitude": 10.3673,
+      "longitude": 77.9803,
+      "region": "Tamil Nadu",
+      "capacity_teu_per_day": 4500.0,
+      "days_of_cover": null,
+      "daily_demand_teu": null,
+      "metadata": {
+        "highway": "NH44"
+      }
+    },
+    {
+      "id": "JUNCTION_MADURAI",
+      "name": "Madurai Southern Logistics Ring",
+      "entity_type": "CORRIDOR_JUNCTION",
+      "aliases": [
+        "Madurai Southern Logistics Ring"
+      ],
+      "latitude": 9.9252,
+      "longitude": 78.1198,
+      "region": "Tamil Nadu",
+      "capacity_teu_per_day": 4500.0,
+      "days_of_cover": null,
+      "daily_demand_teu": null,
+      "metadata": {
+        "highway": "NH44"
+      }
+    },
+    {
+      "id": "JUNCTION_TIRUNELVELI",
+      "name": "Tirunelveli Tuticorin Feeder Hub",
+      "entity_type": "CORRIDOR_JUNCTION",
+      "aliases": [
+        "Tirunelveli Tuticorin Feeder Hub"
+      ],
+      "latitude": 8.7139,
+      "longitude": 77.7567,
+      "region": "Tamil Nadu",
+      "capacity_teu_per_day": 4000.0,
+      "days_of_cover": null,
+      "daily_demand_teu": null,
+      "metadata": {
+        "highway": "NH44"
+      }
+    },
+    {
+      "id": "JUNCTION_KARUR",
+      "name": "Karur Textile-Auto Corridor Node",
+      "entity_type": "CORRIDOR_JUNCTION",
+      "aliases": [
+        "Karur Textile-Auto Corridor Node"
+      ],
+      "latitude": 10.9601,
+      "longitude": 78.0766,
+      "region": "Tamil Nadu",
+      "capacity_teu_per_day": 4500.0,
+      "days_of_cover": null,
+      "daily_demand_teu": null,
+      "metadata": {
+        "highway": "NH44/NH81"
+      }
+    },
+    {
+      "id": "JUNCTION_ERODE",
+      "name": "Erode Perundurai NH544 Interchange",
+      "entity_type": "CORRIDOR_JUNCTION",
+      "aliases": [
+        "Erode Perundurai NH544 Interchange"
+      ],
+      "latitude": 11.341,
+      "longitude": 77.7172,
+      "region": "Tamil Nadu",
+      "capacity_teu_per_day": 4800.0,
+      "days_of_cover": null,
+      "daily_demand_teu": null,
+      "metadata": {
+        "highway": "NH544"
+      }
+    },
+    {
+      "id": "JUNCTION_AVINASHI",
+      "name": "Avinashi Coimbatore Bypass",
+      "entity_type": "CORRIDOR_JUNCTION",
+      "aliases": [
+        "Avinashi Coimbatore Bypass"
+      ],
+      "latitude": 11.192,
+      "longitude": 77.268,
+      "region": "Tamil Nadu",
+      "capacity_teu_per_day": 4800.0,
+      "days_of_cover": null,
+      "daily_demand_teu": null,
+      "metadata": {
+        "highway": "NH544"
+      }
+    },
+    {
+      "id": "JUNCTION_POLLACHI",
+      "name": "Pollachi Valparai Road Node",
+      "entity_type": "CORRIDOR_JUNCTION",
+      "aliases": [
+        "Pollachi Valparai Road Node"
+      ],
+      "latitude": 10.658,
+      "longitude": 77.008,
+      "region": "Tamil Nadu",
+      "capacity_teu_per_day": 4000.0,
+      "days_of_cover": null,
+      "daily_demand_teu": null,
+      "metadata": {
+        "highway": "NH83"
+      }
+    },
+    {
+      "id": "JUNCTION_WALAYAR",
+      "name": "Walayar TN-KL Freight Checkpost",
+      "entity_type": "CORRIDOR_JUNCTION",
+      "aliases": [
+        "Walayar TN-KL Freight Checkpost"
+      ],
+      "latitude": 10.838,
+      "longitude": 76.845,
+      "region": "Kerala",
+      "capacity_teu_per_day": 4500.0,
+      "days_of_cover": null,
+      "daily_demand_teu": null,
+      "metadata": {
+        "highway": "NH544"
+      }
+    },
+    {
+      "id": "JUNCTION_THRISSUR",
+      "name": "Thrissur Central Kerala NH544",
+      "entity_type": "CORRIDOR_JUNCTION",
+      "aliases": [
+        "Thrissur Central Kerala NH544"
+      ],
+      "latitude": 10.5276,
+      "longitude": 76.2144,
+      "region": "Kerala",
+      "capacity_teu_per_day": 4500.0,
+      "days_of_cover": null,
+      "daily_demand_teu": null,
+      "metadata": {
+        "highway": "NH544/NH66"
+      }
+    },
+    {
+      "id": "JUNCTION_PALAKKAD",
+      "name": "Palakkad Junction North Pass",
+      "entity_type": "CORRIDOR_JUNCTION",
+      "aliases": [
+        "Palakkad Junction North Pass"
+      ],
+      "latitude": 10.778,
+      "longitude": 76.654,
+      "region": "Kerala",
+      "capacity_teu_per_day": 4500.0,
+      "days_of_cover": null,
+      "daily_demand_teu": null,
+      "metadata": {
+        "highway": "NH544"
+      }
+    },
+    {
+      "id": "JUNCTION_SALEM_BYPASS",
+      "name": "Salem NH44/NH544 Interchange",
+      "entity_type": "CORRIDOR_JUNCTION",
+      "aliases": [
+        "Salem NH44/NH544 Interchange"
+      ],
+      "latitude": 11.652,
+      "longitude": 78.158,
+      "region": "Tamil Nadu",
+      "capacity_teu_per_day": 5500.0,
+      "days_of_cover": null,
+      "daily_demand_teu": null,
+      "metadata": {
+        "highway": "NH44/NH544"
+      }
+    },
+    {
+      "id": "JUNCTION_DHARMAPURI",
+      "name": "Dharmapuri NH44 Freight Link",
+      "entity_type": "CORRIDOR_JUNCTION",
+      "aliases": [
+        "Dharmapuri NH44 Freight Link"
+      ],
+      "latitude": 12.1211,
+      "longitude": 78.1582,
+      "region": "Tamil Nadu",
+      "capacity_teu_per_day": 5000.0,
+      "days_of_cover": null,
+      "daily_demand_teu": null,
+      "metadata": {
+        "highway": "NH44"
+      }
+    },
+    {
+      "id": "JUNCTION_AMBUR",
+      "name": "Ambur Palar Valley NH48 Node",
+      "entity_type": "CORRIDOR_JUNCTION",
+      "aliases": [
+        "Ambur Palar Valley NH48 Node"
+      ],
+      "latitude": 12.79,
+      "longitude": 78.716,
+      "region": "Tamil Nadu",
+      "capacity_teu_per_day": 5000.0,
+      "days_of_cover": null,
+      "daily_demand_teu": null,
+      "metadata": {
+        "highway": "NH48"
+      }
+    },
+    {
+      "id": "JUNCTION_WALAJAPET",
+      "name": "Walajapet Tolls NH48/NH40",
+      "entity_type": "CORRIDOR_JUNCTION",
+      "aliases": [
+        "Walajapet Tolls NH48/NH40"
+      ],
+      "latitude": 12.927,
+      "longitude": 79.366,
+      "region": "Tamil Nadu",
+      "capacity_teu_per_day": 5500.0,
+      "days_of_cover": null,
+      "daily_demand_teu": null,
+      "metadata": {
+        "highway": "NH48"
+      }
+    },
+    {
+      "id": "JUNCTION_KOLAR",
+      "name": "Kolar NH75 Express Interchange",
+      "entity_type": "CORRIDOR_JUNCTION",
+      "aliases": [
+        "Kolar NH75 Express Interchange"
+      ],
+      "latitude": 13.1362,
+      "longitude": 78.1292,
+      "region": "Karnataka",
+      "capacity_teu_per_day": 5000.0,
+      "days_of_cover": null,
+      "daily_demand_teu": null,
+      "metadata": {
+        "highway": "NH75"
+      }
+    },
+    {
+      "id": "JUNCTION_MULBAGAL",
+      "name": "Mulbagal KA-AP Border NH75",
+      "entity_type": "CORRIDOR_JUNCTION",
+      "aliases": [
+        "Mulbagal KA-AP Border NH75"
+      ],
+      "latitude": 13.164,
+      "longitude": 78.395,
+      "region": "Karnataka",
+      "capacity_teu_per_day": 4800.0,
+      "days_of_cover": null,
+      "daily_demand_teu": null,
+      "metadata": {
+        "highway": "NH75"
+      }
+    },
+    {
+      "id": "JUNCTION_HOSKOTE",
+      "name": "Hoskote East Bengaluru Ring",
+      "entity_type": "CORRIDOR_JUNCTION",
+      "aliases": [
+        "Hoskote East Bengaluru Ring"
+      ],
+      "latitude": 13.07,
+      "longitude": 77.798,
+      "region": "Karnataka",
+      "capacity_teu_per_day": 5500.0,
+      "days_of_cover": null,
+      "daily_demand_teu": null,
+      "metadata": {
+        "highway": "NH75/STRR"
+      }
+    },
+    {
+      "id": "JUNCTION_NELAMANGALA",
+      "name": "Nelamangala NH48/NH75 Spine",
+      "entity_type": "CORRIDOR_JUNCTION",
+      "aliases": [
+        "Nelamangala NH48/NH75 Spine"
+      ],
+      "latitude": 13.095,
+      "longitude": 77.388,
+      "region": "Karnataka",
+      "capacity_teu_per_day": 5500.0,
+      "days_of_cover": null,
+      "daily_demand_teu": null,
+      "metadata": {
+        "highway": "NH48/NH75"
+      }
+    },
+    {
+      "id": "JUNCTION_TUMAKURU_NH48",
+      "name": "Tumakuru North-West Bypass",
+      "entity_type": "CORRIDOR_JUNCTION",
+      "aliases": [
+        "Tumakuru North-West Bypass"
+      ],
+      "latitude": 13.3392,
+      "longitude": 77.114,
+      "region": "Karnataka",
+      "capacity_teu_per_day": 5000.0,
+      "days_of_cover": null,
+      "daily_demand_teu": null,
+      "metadata": {
+        "highway": "NH48"
+      }
+    },
+    {
+      "id": "JUNCTION_HASSAN",
+      "name": "Hassan Shiradi Ghat Feeder",
+      "entity_type": "CORRIDOR_JUNCTION",
+      "aliases": [
+        "Hassan Shiradi Ghat Feeder"
+      ],
+      "latitude": 13.0033,
+      "longitude": 76.1004,
+      "region": "Karnataka",
+      "capacity_teu_per_day": 4500.0,
+      "days_of_cover": null,
+      "daily_demand_teu": null,
+      "metadata": {
+        "highway": "NH75"
+      }
+    },
+    {
+      "id": "JUNCTION_KUNIGAL",
+      "name": "Kunigal Hassan-Bengaluru Spur",
+      "entity_type": "CORRIDOR_JUNCTION",
+      "aliases": [
+        "Kunigal Hassan-Bengaluru Spur"
+      ],
+      "latitude": 13.022,
+      "longitude": 77.025,
+      "region": "Karnataka",
+      "capacity_teu_per_day": 4500.0,
+      "days_of_cover": null,
+      "daily_demand_teu": null,
+      "metadata": {
+        "highway": "NH75"
+      }
+    },
+    {
+      "id": "JUNCTION_MYSURU_RING",
+      "name": "Mysuru Peripheral Highway Node",
+      "entity_type": "CORRIDOR_JUNCTION",
+      "aliases": [
+        "Mysuru Peripheral Highway Node"
+      ],
+      "latitude": 12.2958,
+      "longitude": 76.6394,
+      "region": "Karnataka",
+      "capacity_teu_per_day": 4200.0,
+      "days_of_cover": null,
+      "daily_demand_teu": null,
+      "metadata": {
+        "highway": "NH275"
+      }
+    },
+    {
+      "id": "JUNCTION_MANDYA",
+      "name": "Mandya Expressway Interchange",
+      "entity_type": "CORRIDOR_JUNCTION",
+      "aliases": [
+        "Mandya Expressway Interchange"
+      ],
+      "latitude": 12.5218,
+      "longitude": 76.8951,
+      "region": "Karnataka",
+      "capacity_teu_per_day": 4200.0,
+      "days_of_cover": null,
+      "daily_demand_teu": null,
+      "metadata": {
+        "highway": "NH275"
+      }
+    },
+    {
+      "id": "JUNCTION_RAMANAGARA",
+      "name": "Ramanagara Bidadi Feeder Node",
+      "entity_type": "CORRIDOR_JUNCTION",
+      "aliases": [
+        "Ramanagara Bidadi Feeder Node"
+      ],
+      "latitude": 12.715,
+      "longitude": 77.281,
+      "region": "Karnataka",
+      "capacity_teu_per_day": 4500.0,
+      "days_of_cover": null,
+      "daily_demand_teu": null,
+      "metadata": {
+        "highway": "NH275/STRR"
+      }
+    },
+    {
+      "id": "JUNCTION_ATTIBELE",
+      "name": "Attibele KA-TN Border NH44",
+      "entity_type": "CORRIDOR_JUNCTION",
+      "aliases": [
+        "Attibele KA-TN Border NH44"
+      ],
+      "latitude": 12.778,
+      "longitude": 77.772,
+      "region": "Karnataka",
+      "capacity_teu_per_day": 5500.0,
+      "days_of_cover": null,
+      "daily_demand_teu": null,
+      "metadata": {
+        "highway": "NH44"
+      }
+    },
+    {
+      "id": "JUNCTION_ELECTRONIC_CITY",
+      "name": "Electronic City NICE Junction",
+      "entity_type": "CORRIDOR_JUNCTION",
+      "aliases": [
+        "Electronic City NICE Junction"
+      ],
+      "latitude": 12.8452,
+      "longitude": 77.6602,
+      "region": "Karnataka",
+      "capacity_teu_per_day": 5500.0,
+      "days_of_cover": null,
+      "daily_demand_teu": null,
+      "metadata": {
+        "highway": "NH44/NICE"
+      }
+    },
+    {
+      "id": "JUNCTION_RENIGUNTA",
+      "name": "Renigunta Rail-Highway Triangle",
+      "entity_type": "CORRIDOR_JUNCTION",
+      "aliases": [
+        "Renigunta Rail-Highway Triangle"
+      ],
+      "latitude": 13.635,
+      "longitude": 79.512,
+      "region": "Andhra Pradesh",
+      "capacity_teu_per_day": 4800.0,
+      "days_of_cover": null,
+      "daily_demand_teu": null,
+      "metadata": {
+        "highway": "NH71/NH716"
+      }
+    },
+    {
+      "id": "OUTBOUND_HYDERABAD_NH44",
+      "name": "Hyderabad North Outbound Gateway",
+      "entity_type": "CORRIDOR_JUNCTION",
+      "aliases": [
+        "Hyderabad North Outbound Gateway"
+      ],
+      "latitude": 13.95,
+      "longitude": 77.65,
+      "region": "Andhra Pradesh",
+      "capacity_teu_per_day": 5000.0,
+      "days_of_cover": null,
+      "daily_demand_teu": null,
+      "metadata": {
+        "role": "outbound_gateway",
+        "corridor": "North-Central India"
+      }
+    },
+    {
+      "id": "OUTBOUND_PUNE_MUMBAI_NH48",
+      "name": "Pune-Mumbai NH48 Outbound Gateway",
+      "entity_type": "CORRIDOR_JUNCTION",
+      "aliases": [
+        "Pune-Mumbai NH48 Outbound Gateway"
+      ],
+      "latitude": 13.85,
+      "longitude": 76.45,
+      "region": "Karnataka",
+      "capacity_teu_per_day": 5000.0,
+      "days_of_cover": null,
+      "daily_demand_teu": null,
+      "metadata": {
+        "role": "outbound_gateway",
+        "corridor": "West India Auto Belt"
+      }
+    },
+    {
+      "id": "OUTBOUND_VIJAYAWADA_NH16",
+      "name": "Vijayawada-Vizag NH16 Gateway",
+      "entity_type": "CORRIDOR_JUNCTION",
+      "aliases": [
+        "Vijayawada-Vizag NH16 Gateway"
+      ],
+      "latitude": 14.75,
+      "longitude": 80.02,
+      "region": "Andhra Pradesh",
+      "capacity_teu_per_day": 5000.0,
+      "days_of_cover": null,
+      "daily_demand_teu": null,
+      "metadata": {
+        "role": "outbound_gateway",
+        "corridor": "East Coast NH16"
+      }
+    },
+    {
+      "id": "OUTBOUND_TIRUPATI_GATE",
+      "name": "Tirupati Rayalaseema Market Gate",
+      "entity_type": "CORRIDOR_JUNCTION",
+      "aliases": [
+        "Tirupati Rayalaseema Market Gate"
+      ],
+      "latitude": 13.69,
+      "longitude": 79.35,
+      "region": "Andhra Pradesh",
+      "capacity_teu_per_day": 4000.0,
+      "days_of_cover": null,
+      "daily_demand_teu": null,
+      "metadata": {
+        "role": "outbound_gateway",
+        "corridor": "Rayalaseema"
+      }
+    },
+    {
+      "id": "OUTBOUND_MANGALORE_COAST",
+      "name": "Konkan West Export Coastal Gate",
+      "entity_type": "CORRIDOR_JUNCTION",
+      "aliases": [
+        "Konkan West Export Coastal Gate"
+      ],
+      "latitude": 13.35,
+      "longitude": 74.75,
+      "region": "Karnataka",
+      "capacity_teu_per_day": 4000.0,
+      "days_of_cover": null,
+      "daily_demand_teu": null,
+      "metadata": {
+        "role": "outbound_gateway",
+        "corridor": "Konkan Rail/Port"
+      }
+    },
+    {
+      "id": "OUTBOUND_COCHIN_EXPORT_GATE",
+      "name": "Vallarpadam Arabian Sea Gate",
+      "entity_type": "CORRIDOR_JUNCTION",
+      "aliases": [
+        "Vallarpadam Arabian Sea Gate"
+      ],
+      "latitude": 9.96,
+      "longitude": 76.22,
+      "region": "Kerala",
+      "capacity_teu_per_day": 4500.0,
+      "days_of_cover": null,
+      "daily_demand_teu": null,
+      "metadata": {
+        "role": "outbound_gateway",
+        "corridor": "Europe/Middle East Sea"
+      }
+    },
+    {
+      "id": "OUTBOUND_TUTICORIN_DEEPSEA",
+      "name": "Tuticorin South Sea Export Gate",
+      "entity_type": "CORRIDOR_JUNCTION",
+      "aliases": [
+        "Tuticorin South Sea Export Gate"
+      ],
+      "latitude": 8.73,
+      "longitude": 78.22,
+      "region": "Tamil Nadu",
+      "capacity_teu_per_day": 4000.0,
+      "days_of_cover": null,
+      "daily_demand_teu": null,
+      "metadata": {
+        "role": "outbound_gateway",
+        "corridor": "Colombo/East Africa Feeder"
+      }
+    },
+    {
+      "id": "OUTBOUND_CHENNAI_EXPORT_GATE",
+      "name": "Ennore-Chennai Bay Export Gate",
+      "entity_type": "CORRIDOR_JUNCTION",
+      "aliases": [
+        "Ennore-Chennai Bay Export Gate"
+      ],
+      "latitude": 13.15,
+      "longitude": 80.35,
+      "region": "Tamil Nadu",
+      "capacity_teu_per_day": 6000.0,
+      "days_of_cover": null,
+      "daily_demand_teu": null,
+      "metadata": {
+        "role": "outbound_gateway",
+        "corridor": "APAC/ASEAN Maritime"
+      }
+    },
+    {
+      "id": "OUTBOUND_BENGALURU_NORTH_AIR",
+      "name": "Devanahalli Aero-Auto Express Gate",
+      "entity_type": "CORRIDOR_JUNCTION",
+      "aliases": [
+        "Devanahalli Aero-Auto Express Gate"
+      ],
+      "latitude": 13.21,
+      "longitude": 77.71,
+      "region": "Karnataka",
+      "capacity_teu_per_day": 4500.0,
+      "days_of_cover": null,
+      "daily_demand_teu": null,
+      "metadata": {
+        "role": "outbound_gateway",
+        "corridor": "Express Assembly Parts"
+      }
+    },
+    {
+      "id": "OUTBOUND_COIMBATORE_WEST_GATE",
+      "name": "Coimbatore West Industrial Gate",
+      "entity_type": "CORRIDOR_JUNCTION",
+      "aliases": [
+        "Coimbatore West Industrial Gate"
+      ],
+      "latitude": 11.04,
+      "longitude": 76.89,
+      "region": "Tamil Nadu",
+      "capacity_teu_per_day": 4000.0,
+      "days_of_cover": null,
+      "daily_demand_teu": null,
+      "metadata": {
+        "role": "outbound_gateway",
+        "corridor": "West TN/KL Market"
+      }
+    }
+  ]
+}

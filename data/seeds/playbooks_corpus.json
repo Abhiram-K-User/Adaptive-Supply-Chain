@@ -113,6 +113,20 @@
       "expires_at": "2025-01-01",
       "snippet": "Temporary 2024 customs EDI maintenance window at Chennai Port expired on January 1, 2025.",
       "supported_claims": []
+    },
+    {
+      "citation_id": "CIT_AP_SRICITY_009",
+      "source": "Andhra Pradesh Industrial Infrastructure & Port Diversion Contingency SOP",
+      "trust_tier": "TIER_A",
+      "region": "Andhra Pradesh",
+      "hazard_types": ["HAZARD_PORT", "HAZARD_ROAD", "PLANT_OUTAGE"],
+      "entity_ids": ["PORT_KRISHNAPATNAM", "PLANT_SRICITY", "JUNCTION_CHITTOOR", "JUNCTION_RANIPET"],
+      "publication_date": "2026-09-25",
+      "expires_at": null,
+      "snippet": "Sri City integrated automotive cluster (500 TEU/day) receives containerised imports via Krishnapatnam Port. During Nellore-Krishnapatnam disruptions or Chittoor NH40/NH69 highway closures, reroute Sri City components through Chennai Central CFS and Ranipet interchange.",
+      "supported_claims": [
+        "Sri City SEZ connects directly from Krishnapatnam Port and bypasses coastal bottlenecks via Chittoor and Ranipet."
+      ]
     }
   ]
 }

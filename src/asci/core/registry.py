@@ -189,16 +189,23 @@ class CanonicalEntityRegistry:
         return re.sub(r"[^a-zA-Z0-9]+", " ", text).strip().lower()
 
     @classmethod
-    def load_from_json(cls, seed_path: str | Path | None = None) -> CanonicalEntityRegistry:
-        """Load registry from JSON seed file."""
+    def load_from_json(
+        cls,
+        seed_path: str | Path | None = None,
+        network_scale: str = "v0_core",
+    ) -> CanonicalEntityRegistry:
+        """Load registry from JSON seed file for the requested network scale."""
+        filename = (
+            "corridor_registry_v1.json"
+            if network_scale == "v1_corridor"
+            else "corridor_registry.json"
+        )
         if seed_path is None:
-            candidate = (
-                Path(__file__).resolve().parents[3] / "data" / "seeds" / "corridor_registry.json"
-            )
+            candidate = Path(__file__).resolve().parents[3] / "data" / "seeds" / filename
             if not candidate.exists():
-                candidate = Path.cwd() / "data" / "seeds" / "corridor_registry.json"
+                candidate = Path.cwd() / "data" / "seeds" / filename
                 if not candidate.exists():
-                    candidate = Path.cwd() / "asci-core" / "data" / "seeds" / "corridor_registry.json"
+                    candidate = Path.cwd() / "asci-core" / "data" / "seeds" / filename
             seed_path = candidate
 
         path_obj = Path(seed_path)
@@ -494,12 +501,18 @@ class CanonicalEntityRegistry:
         return len(self._entities)
 
 
-_GLOBAL_REGISTRY: CanonicalEntityRegistry | None = None
+_REGISTRY_CACHE: dict[tuple[str, str | None], CanonicalEntityRegistry] = {}
 
 
-def get_canonical_registry() -> CanonicalEntityRegistry:
-    """Singleton getter for the global canonical entity registry."""
-    global _GLOBAL_REGISTRY
-    if _GLOBAL_REGISTRY is None:
-        _GLOBAL_REGISTRY = CanonicalEntityRegistry.load_from_json()
-    return _GLOBAL_REGISTRY
+def get_canonical_registry(
+    seed_path: str | Path | None = None,
+    network_scale: str = "v0_core",
+) -> CanonicalEntityRegistry:
+    """Cached getter for canonical entity registries keyed by seed path and network scale."""
+    key = (str(network_scale), str(Path(seed_path).resolve()) if seed_path is not None else None)
+    if key not in _REGISTRY_CACHE:
+        _REGISTRY_CACHE[key] = CanonicalEntityRegistry.load_from_json(
+            seed_path=seed_path,
+            network_scale=network_scale,
+        )
+    return _REGISTRY_CACHE[key]

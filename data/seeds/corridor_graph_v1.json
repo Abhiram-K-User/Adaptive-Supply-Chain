@@ -1,0 +1,4371 @@
+{
+  "directed": true,
+  "multigraph": true,
+  "graph": {
+    "name": "South India Automotive Logistics Corridor Multigraph v1 (100-150 Node Scale)",
+    "version": "2.1.0",
+    "crs": "EPSG:4326"
+  },
+  "nodes": [
+    {
+      "id": "PORT_CHENNAI"
+    },
+    {
+      "id": "PORT_KAMARAJAR"
+    },
+    {
+      "id": "PORT_KATTUPALLI"
+    },
+    {
+      "id": "PORT_KRISHNAPATNAM"
+    },
+    {
+      "id": "PORT_VOC"
+    },
+    {
+      "id": "PORT_COCHIN"
+    },
+    {
+      "id": "PORT_NEW_MANGALORE"
+    },
+    {
+      "id": "PLANT_ORAGADAM"
+    },
+    {
+      "id": "PLANT_SRIPERUMBUDUR"
+    },
+    {
+      "id": "PLANT_HOSUR"
+    },
+    {
+      "id": "PLANT_BIDADI"
+    },
+    {
+      "id": "PLANT_SRICITY"
+    },
+    {
+      "id": "PLANT_COIMBATORE"
+    },
+    {
+      "id": "ICD_WHITEFIELD"
+    },
+    {
+      "id": "ICD_TONDIARPET"
+    },
+    {
+      "id": "ICD_IRUGUR"
+    },
+    {
+      "id": "CFS_ENNORE_LOGISTICS"
+    },
+    {
+      "id": "CFS_CHENNAI_CENTRAL"
+    },
+    {
+      "id": "CFS_WHITEFIELD"
+    },
+    {
+      "id": "JUNCTION_RANIPET"
+    },
+    {
+      "id": "JUNCTION_VELLORE"
+    },
+    {
+      "id": "JUNCTION_KRISHNAGIRI"
+    },
+    {
+      "id": "JUNCTION_CHITTOOR"
+    },
+    {
+      "id": "PORT_KARAIKAL"
+    },
+    {
+      "id": "ICD_HOSUR"
+    },
+    {
+      "id": "ICD_KRISHNAPATNAM_RAIL"
+    },
+    {
+      "id": "ICD_SALEM"
+    },
+    {
+      "id": "PLANT_MARAIMALAI"
+    },
+    {
+      "id": "PLANT_AMBATTUR"
+    },
+    {
+      "id": "PLANT_GUMMIDIPOONDI"
+    },
+    {
+      "id": "PLANT_IRUNGATTUKOTTAI"
+    },
+    {
+      "id": "PLANT_VALLAM_VADAGAL"
+    },
+    {
+      "id": "PLANT_CHENGALPATTU"
+    },
+    {
+      "id": "PLANT_THIRUVALLUR"
+    },
+    {
+      "id": "PLANT_CHEYYAR"
+    },
+    {
+      "id": "PLANT_KRISHNAGIRI_TIER1"
+    },
+    {
+      "id": "PLANT_PEENYA"
+    },
+    {
+      "id": "PLANT_BOMMASANDRA"
+    },
+    {
+      "id": "PLANT_HAROHALLI"
+    },
+    {
+      "id": "PLANT_NARASAPURA"
+    },
+    {
+      "id": "PLANT_VEMAGAL"
+    },
+    {
+      "id": "PLANT_TUMAKURU"
+    },
+    {
+      "id": "PLANT_DOBBASPET"
+    },
+    {
+      "id": "PLANT_TADA"
+    },
+    {
+      "id": "PLANT_NAIDUPETA"
+    },
+    {
+      "id": "PLANT_TIRUPATI_ELECTRONICS"
+    },
+    {
+      "id": "PLANT_CHITTOOR_AUTO"
+    },
+    {
+      "id": "PLANT_NELLORE_TIER1"
+    },
+    {
+      "id": "PLANT_KINATHUKADAVU"
+    },
+    {
+      "id": "PLANT_SALEM_STEEL"
+    },
+    {
+      "id": "PLANT_PALAKKAD_COMPONENTS"
+    },
+    {
+      "id": "CFS_PONNERI"
+    },
+    {
+      "id": "CFS_MINJUR"
+    },
+    {
+      "id": "CFS_SRIPERUMBUDUR"
+    },
+    {
+      "id": "CFS_ORAGADAM"
+    },
+    {
+      "id": "CFS_MANALI"
+    },
+    {
+      "id": "CFS_KRISHNAPATNAM"
+    },
+    {
+      "id": "CFS_SULLURPETA"
+    },
+    {
+      "id": "CFS_KARAIKAL"
+    },
+    {
+      "id": "CFS_PONDICHERRY"
+    },
+    {
+      "id": "CFS_TUTICORIN_BOND"
+    },
+    {
+      "id": "CFS_MADURAI_INLAND"
+    },
+    {
+      "id": "CFS_COCHIN_VALLARPADAM"
+    },
+    {
+      "id": "CFS_PALAKKAD_FREIGHT"
+    },
+    {
+      "id": "CFS_COIMBATORE_NEELAMBUR"
+    },
+    {
+      "id": "CFS_SALEM_LOGISTICS"
+    },
+    {
+      "id": "CFS_HOSUR_LOGISTICS"
+    },
+    {
+      "id": "CFS_BOMMASANDRA"
+    },
+    {
+      "id": "CFS_NELAMANGALA"
+    },
+    {
+      "id": "CFS_MANGALORE_PANAMBUR"
+    },
+    {
+      "id": "JUNCTION_GUMMIDIPOONDI"
+    },
+    {
+      "id": "JUNCTION_TADA"
+    },
+    {
+      "id": "JUNCTION_NAIDUPETA"
+    },
+    {
+      "id": "JUNCTION_GUDUR"
+    },
+    {
+      "id": "JUNCTION_TIRUVALLUR"
+    },
+    {
+      "id": "JUNCTION_TAMBARAM"
+    },
+    {
+      "id": "JUNCTION_CHENGALPATTU"
+    },
+    {
+      "id": "JUNCTION_TINDIVANAM"
+    },
+    {
+      "id": "JUNCTION_VILLUPURAM"
+    },
+    {
+      "id": "JUNCTION_ULUNDURPET"
+    },
+    {
+      "id": "JUNCTION_TRICHY"
+    },
+    {
+      "id": "JUNCTION_DINDIGUL"
+    },
+    {
+      "id": "JUNCTION_MADURAI"
+    },
+    {
+      "id": "JUNCTION_TIRUNELVELI"
+    },
+    {
+      "id": "JUNCTION_KARUR"
+    },
+    {
+      "id": "JUNCTION_ERODE"
+    },
+    {
+      "id": "JUNCTION_AVINASHI"
+    },
+    {
+      "id": "JUNCTION_POLLACHI"
+    },
+    {
+      "id": "JUNCTION_WALAYAR"
+    },
+    {
+      "id": "JUNCTION_THRISSUR"
+    },
+    {
+      "id": "JUNCTION_PALAKKAD"
+    },
+    {
+      "id": "JUNCTION_SALEM_BYPASS"
+    },
+    {
+      "id": "JUNCTION_DHARMAPURI"
+    },
+    {
+      "id": "JUNCTION_AMBUR"
+    },
+    {
+      "id": "JUNCTION_WALAJAPET"
+    },
+    {
+      "id": "JUNCTION_KOLAR"
+    },
+    {
+      "id": "JUNCTION_MULBAGAL"
+    },
+    {
+      "id": "JUNCTION_HOSKOTE"
+    },
+    {
+      "id": "JUNCTION_NELAMANGALA"
+    },
+    {
+      "id": "JUNCTION_TUMAKURU_NH48"
+    },
+    {
+      "id": "JUNCTION_HASSAN"
+    },
+    {
+      "id": "JUNCTION_KUNIGAL"
+    },
+    {
+      "id": "JUNCTION_MYSURU_RING"
+    },
+    {
+      "id": "JUNCTION_MANDYA"
+    },
+    {
+      "id": "JUNCTION_RAMANAGARA"
+    },
+    {
+      "id": "JUNCTION_ATTIBELE"
+    },
+    {
+      "id": "JUNCTION_ELECTRONIC_CITY"
+    },
+    {
+      "id": "JUNCTION_RENIGUNTA"
+    },
+    {
+      "id": "OUTBOUND_HYDERABAD_NH44"
+    },
+    {
+      "id": "OUTBOUND_PUNE_MUMBAI_NH48"
+    },
+    {
+      "id": "OUTBOUND_VIJAYAWADA_NH16"
+    },
+    {
+      "id": "OUTBOUND_TIRUPATI_GATE"
+    },
+    {
+      "id": "OUTBOUND_MANGALORE_COAST"
+    },
+    {
+      "id": "OUTBOUND_COCHIN_EXPORT_GATE"
+    },
+    {
+      "id": "OUTBOUND_TUTICORIN_DEEPSEA"
+    },
+    {
+      "id": "OUTBOUND_CHENNAI_EXPORT_GATE"
+    },
+    {
+      "id": "OUTBOUND_BENGALURU_NORTH_AIR"
+    },
+    {
+      "id": "OUTBOUND_COIMBATORE_WEST_GATE"
+    }
+  ],
+  "links": [
+    {
+      "source": "PORT_KAMARAJAR",
+      "target": "CFS_ENNORE_LOGISTICS",
+      "key": "ROAD_0",
+      "mode": "ROAD",
+      "distance_km": 12.0,
+      "transit_time_hrs": 1.0,
+      "capacity_teu_per_day": 3500.0,
+      "base_cost_per_teu": 45.0,
+      "active": true
+    },
+    {
+      "source": "PORT_KAMARAJAR",
+      "target": "ICD_TONDIARPET",
+      "key": "RAIL_0",
+      "mode": "RAIL",
+      "distance_km": 22.0,
+      "transit_time_hrs": 2.0,
+      "capacity_teu_per_day": 2000.0,
+      "base_cost_per_teu": 35.0,
+      "active": true
+    },
+    {
+      "source": "PORT_KAMARAJAR",
+      "target": "ICD_WHITEFIELD",
+      "key": "RAIL_DIRECT",
+      "mode": "RAIL",
+      "distance_km": 360.0,
+      "transit_time_hrs": 14.0,
+      "capacity_teu_per_day": 1200.0,
+      "base_cost_per_teu": 210.0,
+      "active": true
+    },
+    {
+      "source": "PORT_KATTUPALLI",
+      "target": "CFS_ENNORE_LOGISTICS",
+      "key": "ROAD_0",
+      "mode": "ROAD",
+      "distance_km": 15.0,
+      "transit_time_hrs": 1.2,
+      "capacity_teu_per_day": 2500.0,
+      "base_cost_per_teu": 50.0,
+      "active": true
+    },
+    {
+      "source": "PORT_CHENNAI",
+      "target": "CFS_CHENNAI_CENTRAL",
+      "key": "ROAD_0",
+      "mode": "ROAD",
+      "distance_km": 18.0,
+      "transit_time_hrs": 1.5,
+      "capacity_teu_per_day": 4000.0,
+      "base_cost_per_teu": 55.0,
+      "active": true
+    },
+    {
+      "source": "PORT_CHENNAI",
+      "target": "ICD_TONDIARPET",
+      "key": "RAIL_0",
+      "mode": "RAIL",
+      "distance_km": 8.0,
+      "transit_time_hrs": 1.0,
+      "capacity_teu_per_day": 2500.0,
+      "base_cost_per_teu": 30.0,
+      "active": true
+    },
+    {
+      "source": "PORT_CHENNAI",
+      "target": "ICD_WHITEFIELD",
+      "key": "RAIL_DIRECT",
+      "mode": "RAIL",
+      "distance_km": 355.0,
+      "transit_time_hrs": 13.0,
+      "capacity_teu_per_day": 1800.0,
+      "base_cost_per_teu": 200.0,
+      "active": true
+    },
+    {
+      "source": "CFS_ENNORE_LOGISTICS",
+      "target": "PLANT_SRIPERUMBUDUR",
+      "key": "ROAD_0",
+      "mode": "ROAD",
+      "distance_km": 62.0,
+      "transit_time_hrs": 3.0,
+      "capacity_teu_per_day": 2000.0,
+      "base_cost_per_teu": 120.0,
+      "active": true
+    },
+    {
+      "source": "CFS_ENNORE_LOGISTICS",
+      "target": "PLANT_ORAGADAM",
+      "key": "ROAD_0",
+      "mode": "ROAD",
+      "distance_km": 68.0,
+      "transit_time_hrs": 3.2,
+      "capacity_teu_per_day": 2200.0,
+      "base_cost_per_teu": 130.0,
+      "active": true
+    },
+    {
+      "source": "CFS_CHENNAI_CENTRAL",
+      "target": "PLANT_SRIPERUMBUDUR",
+      "key": "ROAD_0",
+      "mode": "ROAD",
+      "distance_km": 48.0,
+      "transit_time_hrs": 2.2,
+      "capacity_teu_per_day": 2500.0,
+      "base_cost_per_teu": 95.0,
+      "active": true
+    },
+    {
+      "source": "CFS_CHENNAI_CENTRAL",
+      "target": "PLANT_ORAGADAM",
+      "key": "ROAD_0",
+      "mode": "ROAD",
+      "distance_km": 54.0,
+      "transit_time_hrs": 2.5,
+      "capacity_teu_per_day": 2600.0,
+      "base_cost_per_teu": 105.0,
+      "active": true
+    },
+    {
+      "source": "PLANT_SRIPERUMBUDUR",
+      "target": "PLANT_ORAGADAM",
+      "key": "ROAD_LINK",
+      "mode": "ROAD",
+      "distance_km": 18.0,
+      "transit_time_hrs": 0.8,
+      "capacity_teu_per_day": 3000.0,
+      "base_cost_per_teu": 40.0,
+      "active": true
+    },
+    {
+      "source": "PLANT_ORAGADAM",
+      "target": "PLANT_SRIPERUMBUDUR",
+      "key": "ROAD_LINK",
+      "mode": "ROAD",
+      "distance_km": 18.0,
+      "transit_time_hrs": 0.8,
+      "capacity_teu_per_day": 3000.0,
+      "base_cost_per_teu": 40.0,
+      "active": true
+    },
+    {
+      "source": "PORT_KRISHNAPATNAM",
+      "target": "PLANT_SRICITY",
+      "key": "ROAD_0",
+      "mode": "ROAD",
+      "distance_km": 95.0,
+      "transit_time_hrs": 3.0,
+      "capacity_teu_per_day": 1800.0,
+      "base_cost_per_teu": 140.0,
+      "active": true
+    },
+    {
+      "source": "PLANT_SRICITY",
+      "target": "PLANT_SRIPERUMBUDUR",
+      "key": "ROAD_0",
+      "mode": "ROAD",
+      "distance_km": 85.0,
+      "transit_time_hrs": 2.8,
+      "capacity_teu_per_day": 1500.0,
+      "base_cost_per_teu": 135.0,
+      "active": true
+    },
+    {
+      "source": "PLANT_SRIPERUMBUDUR",
+      "target": "JUNCTION_RANIPET",
+      "key": "ROAD_NH48",
+      "mode": "ROAD",
+      "distance_km": 72.0,
+      "transit_time_hrs": 2.0,
+      "capacity_teu_per_day": 3500.0,
+      "base_cost_per_teu": 110.0,
+      "active": true
+    },
+    {
+      "source": "PLANT_ORAGADAM",
+      "target": "JUNCTION_RANIPET",
+      "key": "ROAD_NH48",
+      "mode": "ROAD",
+      "distance_km": 76.0,
+      "transit_time_hrs": 2.1,
+      "capacity_teu_per_day": 3500.0,
+      "base_cost_per_teu": 115.0,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_RANIPET",
+      "target": "JUNCTION_VELLORE",
+      "key": "ROAD_NH48",
+      "mode": "ROAD",
+      "distance_km": 28.0,
+      "transit_time_hrs": 0.8,
+      "capacity_teu_per_day": 4000.0,
+      "base_cost_per_teu": 50.0,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_VELLORE",
+      "target": "JUNCTION_KRISHNAGIRI",
+      "key": "ROAD_NH48",
+      "mode": "ROAD",
+      "distance_km": 115.0,
+      "transit_time_hrs": 2.5,
+      "capacity_teu_per_day": 4000.0,
+      "base_cost_per_teu": 160.0,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_KRISHNAGIRI",
+      "target": "PLANT_HOSUR",
+      "key": "ROAD_NH44",
+      "mode": "ROAD",
+      "distance_km": 50.0,
+      "transit_time_hrs": 1.2,
+      "capacity_teu_per_day": 3800.0,
+      "base_cost_per_teu": 85.0,
+      "active": true
+    },
+    {
+      "source": "PLANT_HOSUR",
+      "target": "CFS_WHITEFIELD",
+      "key": "ROAD_0",
+      "mode": "ROAD",
+      "distance_km": 42.0,
+      "transit_time_hrs": 1.5,
+      "capacity_teu_per_day": 2000.0,
+      "base_cost_per_teu": 80.0,
+      "active": true
+    },
+    {
+      "source": "CFS_WHITEFIELD",
+      "target": "ICD_WHITEFIELD",
+      "key": "ROAD_LOCAL",
+      "mode": "ROAD",
+      "distance_km": 5.0,
+      "transit_time_hrs": 0.3,
+      "capacity_teu_per_day": 3000.0,
+      "base_cost_per_teu": 20.0,
+      "active": true
+    },
+    {
+      "source": "ICD_WHITEFIELD",
+      "target": "PLANT_BIDADI",
+      "key": "ROAD_NICE",
+      "mode": "ROAD",
+      "distance_km": 58.0,
+      "transit_time_hrs": 2.0,
+      "capacity_teu_per_day": 2200.0,
+      "base_cost_per_teu": 110.0,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_KRISHNAGIRI",
+      "target": "ICD_IRUGUR",
+      "key": "ROAD_NH544",
+      "mode": "ROAD",
+      "distance_km": 240.0,
+      "transit_time_hrs": 5.5,
+      "capacity_teu_per_day": 2500.0,
+      "base_cost_per_teu": 290.0,
+      "active": true
+    },
+    {
+      "source": "ICD_IRUGUR",
+      "target": "PLANT_COIMBATORE",
+      "key": "ROAD_0",
+      "mode": "ROAD",
+      "distance_km": 16.0,
+      "transit_time_hrs": 0.7,
+      "capacity_teu_per_day": 1800.0,
+      "base_cost_per_teu": 40.0,
+      "active": true
+    },
+    {
+      "source": "PORT_COCHIN",
+      "target": "ICD_IRUGUR",
+      "key": "RAIL_CONCOR",
+      "mode": "RAIL",
+      "distance_km": 190.0,
+      "transit_time_hrs": 6.5,
+      "capacity_teu_per_day": 1500.0,
+      "base_cost_per_teu": 175.0,
+      "active": true
+    },
+    {
+      "source": "PORT_NEW_MANGALORE",
+      "target": "ICD_WHITEFIELD",
+      "key": "RAIL_GHAT",
+      "mode": "RAIL",
+      "distance_km": 370.0,
+      "transit_time_hrs": 12.0,
+      "capacity_teu_per_day": 1200.0,
+      "base_cost_per_teu": 230.0,
+      "active": true
+    },
+    {
+      "source": "PORT_VOC",
+      "target": "ICD_IRUGUR",
+      "key": "RAIL_CONCOR",
+      "mode": "RAIL",
+      "distance_km": 320.0,
+      "transit_time_hrs": 9.0,
+      "capacity_teu_per_day": 1200.0,
+      "base_cost_per_teu": 195.0,
+      "active": true
+    },
+    {
+      "source": "ICD_TONDIARPET",
+      "target": "PLANT_SRIPERUMBUDUR",
+      "key": "ROAD_0",
+      "mode": "ROAD",
+      "distance_km": 46.0,
+      "transit_time_hrs": 2.0,
+      "capacity_teu_per_day": 1800.0,
+      "base_cost_per_teu": 90.0,
+      "active": true
+    },
+    {
+      "source": "ICD_TONDIARPET",
+      "target": "PLANT_ORAGADAM",
+      "key": "ROAD_0",
+      "mode": "ROAD",
+      "distance_km": 52.0,
+      "transit_time_hrs": 2.3,
+      "capacity_teu_per_day": 1800.0,
+      "base_cost_per_teu": 100.0,
+      "active": true
+    },
+    {
+      "source": "ICD_TONDIARPET",
+      "target": "ICD_WHITEFIELD",
+      "key": "RAIL_CONCOR",
+      "mode": "RAIL",
+      "distance_km": 350.0,
+      "transit_time_hrs": 12.5,
+      "capacity_teu_per_day": 1500.0,
+      "base_cost_per_teu": 190.0,
+      "active": true
+    },
+    {
+      "source": "ICD_WHITEFIELD",
+      "target": "CFS_WHITEFIELD",
+      "key": "ROAD_LOCAL",
+      "mode": "ROAD",
+      "distance_km": 5.0,
+      "transit_time_hrs": 0.3,
+      "capacity_teu_per_day": 2500.0,
+      "base_cost_per_teu": 20.0,
+      "active": true
+    },
+    {
+      "source": "CFS_WHITEFIELD",
+      "target": "PLANT_HOSUR",
+      "key": "ROAD_0",
+      "mode": "ROAD",
+      "distance_km": 42.0,
+      "transit_time_hrs": 1.5,
+      "capacity_teu_per_day": 2000.0,
+      "base_cost_per_teu": 80.0,
+      "active": true
+    },
+    {
+      "source": "PORT_KRISHNAPATNAM",
+      "target": "JUNCTION_CHITTOOR",
+      "key": "ROAD_NH71",
+      "mode": "ROAD",
+      "distance_km": 175.0,
+      "transit_time_hrs": 4.2,
+      "capacity_teu_per_day": 2000.0,
+      "base_cost_per_teu": 215.0,
+      "active": true
+    },
+    {
+      "source": "PLANT_SRICITY",
+      "target": "JUNCTION_CHITTOOR",
+      "key": "ROAD_0",
+      "mode": "ROAD",
+      "distance_km": 115.0,
+      "transit_time_hrs": 3.0,
+      "capacity_teu_per_day": 1500.0,
+      "base_cost_per_teu": 155.0,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_CHITTOOR",
+      "target": "JUNCTION_RANIPET",
+      "key": "ROAD_NH40",
+      "mode": "ROAD",
+      "distance_km": 45.0,
+      "transit_time_hrs": 1.2,
+      "capacity_teu_per_day": 2500.0,
+      "base_cost_per_teu": 75.0,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_CHITTOOR",
+      "target": "PLANT_HOSUR",
+      "key": "ROAD_NH69",
+      "mode": "ROAD",
+      "distance_km": 170.0,
+      "transit_time_hrs": 4.0,
+      "capacity_teu_per_day": 2200.0,
+      "base_cost_per_teu": 210.0,
+      "active": true
+    },
+    {
+      "source": "ICD_IRUGUR",
+      "target": "JUNCTION_KRISHNAGIRI",
+      "key": "ROAD_NH544",
+      "mode": "ROAD",
+      "distance_km": 240.0,
+      "transit_time_hrs": 5.5,
+      "capacity_teu_per_day": 1200.0,
+      "base_cost_per_teu": 280.0,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_RANIPET",
+      "target": "PLANT_SRIPERUMBUDUR",
+      "key": "ROAD_NH48_EB",
+      "mode": "ROAD",
+      "distance_km": 72.0,
+      "transit_time_hrs": 2.0,
+      "capacity_teu_per_day": 3500.0,
+      "base_cost_per_teu": 110.0,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_RANIPET",
+      "target": "PLANT_ORAGADAM",
+      "key": "ROAD_NH48_EB",
+      "mode": "ROAD",
+      "distance_km": 76.0,
+      "transit_time_hrs": 2.1,
+      "capacity_teu_per_day": 3500.0,
+      "base_cost_per_teu": 115.0,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_VELLORE",
+      "target": "JUNCTION_RANIPET",
+      "key": "ROAD_NH48_EB",
+      "mode": "ROAD",
+      "distance_km": 28.0,
+      "transit_time_hrs": 0.8,
+      "capacity_teu_per_day": 4000.0,
+      "base_cost_per_teu": 50.0,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_KRISHNAGIRI",
+      "target": "JUNCTION_VELLORE",
+      "key": "ROAD_NH48_EB",
+      "mode": "ROAD",
+      "distance_km": 115.0,
+      "transit_time_hrs": 2.5,
+      "capacity_teu_per_day": 4000.0,
+      "base_cost_per_teu": 160.0,
+      "active": true
+    },
+    {
+      "source": "PORT_KAMARAJAR",
+      "target": "CFS_MINJUR",
+      "key": "ROAD_0",
+      "mode": "ROAD",
+      "distance_km": 9.3,
+      "transit_time_hrs": 0.52,
+      "capacity_teu_per_day": 3200.0,
+      "base_cost_per_teu": 29.9,
+      "active": true
+    },
+    {
+      "source": "PORT_KAMARAJAR",
+      "target": "CFS_PONNERI",
+      "key": "ROAD_1",
+      "mode": "ROAD",
+      "distance_km": 21.2,
+      "transit_time_hrs": 0.74,
+      "capacity_teu_per_day": 2800.0,
+      "base_cost_per_teu": 45.1,
+      "active": true
+    },
+    {
+      "source": "PORT_KAMARAJAR",
+      "target": "JUNCTION_GUMMIDIPOONDI",
+      "key": "ROAD_NH16",
+      "mode": "ROAD",
+      "distance_km": 34.6,
+      "transit_time_hrs": 0.99,
+      "capacity_teu_per_day": 3200.0,
+      "base_cost_per_teu": 62.3,
+      "active": true
+    },
+    {
+      "source": "PORT_KAMARAJAR",
+      "target": "ICD_KRISHNAPATNAM_RAIL",
+      "key": "RAIL_COASTAL",
+      "mode": "RAIL",
+      "distance_km": 132.2,
+      "transit_time_hrs": 3.95,
+      "capacity_teu_per_day": 2200.0,
+      "base_cost_per_teu": 86.0,
+      "active": true
+    },
+    {
+      "source": "PORT_KAMARAJAR",
+      "target": "ICD_HOSUR",
+      "key": "RAIL_BLOCK",
+      "mode": "RAIL",
+      "distance_km": 326.0,
+      "transit_time_hrs": 8.56,
+      "capacity_teu_per_day": 1800.0,
+      "base_cost_per_teu": 194.6,
+      "active": true
+    },
+    {
+      "source": "PORT_KATTUPALLI",
+      "target": "CFS_MINJUR",
+      "key": "ROAD_0",
+      "mode": "ROAD",
+      "distance_km": 11.7,
+      "transit_time_hrs": 0.57,
+      "capacity_teu_per_day": 2600.0,
+      "base_cost_per_teu": 33.0,
+      "active": true
+    },
+    {
+      "source": "PORT_KATTUPALLI",
+      "target": "CFS_PONNERI",
+      "key": "ROAD_1",
+      "mode": "ROAD",
+      "distance_km": 20.5,
+      "transit_time_hrs": 0.73,
+      "capacity_teu_per_day": 2600.0,
+      "base_cost_per_teu": 44.2,
+      "active": true
+    },
+    {
+      "source": "PORT_KATTUPALLI",
+      "target": "ICD_TONDIARPET",
+      "key": "RAIL_0",
+      "mode": "RAIL",
+      "distance_km": 25.3,
+      "transit_time_hrs": 1.4,
+      "capacity_teu_per_day": 2000.0,
+      "base_cost_per_teu": 26.2,
+      "active": true
+    },
+    {
+      "source": "PORT_KATTUPALLI",
+      "target": "JUNCTION_GUMMIDIPOONDI",
+      "key": "ROAD_NH16",
+      "mode": "ROAD",
+      "distance_km": 32.6,
+      "transit_time_hrs": 0.95,
+      "capacity_teu_per_day": 2800.0,
+      "base_cost_per_teu": 59.7,
+      "active": true
+    },
+    {
+      "source": "PORT_CHENNAI",
+      "target": "CFS_MANALI",
+      "key": "ROAD_1",
+      "mode": "ROAD",
+      "distance_km": 12.1,
+      "transit_time_hrs": 0.57,
+      "capacity_teu_per_day": 3200.0,
+      "base_cost_per_teu": 33.5,
+      "active": true
+    },
+    {
+      "source": "PORT_CHENNAI",
+      "target": "JUNCTION_TAMBARAM",
+      "key": "ROAD_BYPASS",
+      "mode": "ROAD",
+      "distance_km": 32.9,
+      "transit_time_hrs": 0.96,
+      "capacity_teu_per_day": 3400.0,
+      "base_cost_per_teu": 60.1,
+      "active": true
+    },
+    {
+      "source": "PORT_CHENNAI",
+      "target": "ICD_HOSUR",
+      "key": "RAIL_BLOCK",
+      "mode": "RAIL",
+      "distance_km": 315.6,
+      "transit_time_hrs": 8.31,
+      "capacity_teu_per_day": 2000.0,
+      "base_cost_per_teu": 188.7,
+      "active": true
+    },
+    {
+      "source": "PORT_CHENNAI",
+      "target": "ICD_SALEM",
+      "key": "RAIL_SOUTH",
+      "mode": "RAIL",
+      "distance_km": 331.2,
+      "transit_time_hrs": 8.69,
+      "capacity_teu_per_day": 1800.0,
+      "base_cost_per_teu": 197.5,
+      "active": true
+    },
+    {
+      "source": "PORT_KRISHNAPATNAM",
+      "target": "CFS_KRISHNAPATNAM",
+      "key": "ROAD_LOCAL",
+      "mode": "ROAD",
+      "distance_km": 4.0,
+      "transit_time_hrs": 0.42,
+      "capacity_teu_per_day": 3500.0,
+      "base_cost_per_teu": 23.1,
+      "active": true
+    },
+    {
+      "source": "PORT_KRISHNAPATNAM",
+      "target": "ICD_KRISHNAPATNAM_RAIL",
+      "key": "RAIL_0",
+      "mode": "RAIL",
+      "distance_km": 7.3,
+      "transit_time_hrs": 0.97,
+      "capacity_teu_per_day": 2800.0,
+      "base_cost_per_teu": 20.0,
+      "active": true
+    },
+    {
+      "source": "PORT_KRISHNAPATNAM",
+      "target": "JUNCTION_GUDUR",
+      "key": "ROAD_SPUR",
+      "mode": "ROAD",
+      "distance_km": 38.5,
+      "transit_time_hrs": 1.06,
+      "capacity_teu_per_day": 3200.0,
+      "base_cost_per_teu": 67.3,
+      "active": true
+    },
+    {
+      "source": "PORT_KARAIKAL",
+      "target": "CFS_KARAIKAL",
+      "key": "ROAD_0",
+      "mode": "ROAD",
+      "distance_km": 4.0,
+      "transit_time_hrs": 0.42,
+      "capacity_teu_per_day": 2400.0,
+      "base_cost_per_teu": 23.1,
+      "active": true
+    },
+    {
+      "source": "PORT_KARAIKAL",
+      "target": "CFS_PONDICHERRY",
+      "key": "ROAD_EC",
+      "mode": "ROAD",
+      "distance_km": 143.3,
+      "transit_time_hrs": 3.0,
+      "capacity_teu_per_day": 2000.0,
+      "base_cost_per_teu": 201.4,
+      "active": true
+    },
+    {
+      "source": "PORT_KARAIKAL",
+      "target": "JUNCTION_TRICHY",
+      "key": "RAIL_BRANCH",
+      "mode": "RAIL",
+      "distance_km": 147.5,
+      "transit_time_hrs": 4.31,
+      "capacity_teu_per_day": 1800.0,
+      "base_cost_per_teu": 94.6,
+      "active": true
+    },
+    {
+      "source": "PORT_VOC",
+      "target": "CFS_TUTICORIN_BOND",
+      "key": "ROAD_0",
+      "mode": "ROAD",
+      "distance_km": 7.6,
+      "transit_time_hrs": 0.49,
+      "capacity_teu_per_day": 2800.0,
+      "base_cost_per_teu": 27.7,
+      "active": true
+    },
+    {
+      "source": "PORT_VOC",
+      "target": "JUNCTION_TIRUNELVELI",
+      "key": "ROAD_NH44",
+      "mode": "ROAD",
+      "distance_km": 59.1,
+      "transit_time_hrs": 1.44,
+      "capacity_teu_per_day": 2400.0,
+      "base_cost_per_teu": 93.6,
+      "active": true
+    },
+    {
+      "source": "PORT_VOC",
+      "target": "JUNCTION_MADURAI",
+      "key": "RAIL_SOUTH",
+      "mode": "RAIL",
+      "distance_km": 153.8,
+      "transit_time_hrs": 4.46,
+      "capacity_teu_per_day": 1800.0,
+      "base_cost_per_teu": 98.1,
+      "active": true
+    },
+    {
+      "source": "PORT_COCHIN",
+      "target": "CFS_COCHIN_VALLARPADAM",
+      "key": "ROAD_0",
+      "mode": "ROAD",
+      "distance_km": 7.1,
+      "transit_time_hrs": 0.48,
+      "capacity_teu_per_day": 3200.0,
+      "base_cost_per_teu": 27.1,
+      "active": true
+    },
+    {
+      "source": "PORT_COCHIN",
+      "target": "JUNCTION_THRISSUR",
+      "key": "ROAD_NH544",
+      "mode": "ROAD",
+      "distance_km": 77.7,
+      "transit_time_hrs": 1.79,
+      "capacity_teu_per_day": 3000.0,
+      "base_cost_per_teu": 117.5,
+      "active": true
+    },
+    {
+      "source": "PORT_COCHIN",
+      "target": "JUNCTION_PALAKKAD",
+      "key": "RAIL_WEST",
+      "mode": "RAIL",
+      "distance_km": 117.6,
+      "transit_time_hrs": 3.6,
+      "capacity_teu_per_day": 2000.0,
+      "base_cost_per_teu": 77.9,
+      "active": true
+    },
+    {
+      "source": "PORT_NEW_MANGALORE",
+      "target": "CFS_MANGALORE_PANAMBUR",
+      "key": "ROAD_0",
+      "mode": "ROAD",
+      "distance_km": 4.0,
+      "transit_time_hrs": 0.42,
+      "capacity_teu_per_day": 2500.0,
+      "base_cost_per_teu": 23.1,
+      "active": true
+    },
+    {
+      "source": "PORT_NEW_MANGALORE",
+      "target": "JUNCTION_HASSAN",
+      "key": "ROAD_NH75",
+      "mode": "ROAD",
+      "distance_km": 172.2,
+      "transit_time_hrs": 3.54,
+      "capacity_teu_per_day": 2400.0,
+      "base_cost_per_teu": 238.4,
+      "active": true
+    },
+    {
+      "source": "PORT_NEW_MANGALORE",
+      "target": "ICD_HOSUR",
+      "key": "RAIL_GHAT",
+      "mode": "RAIL",
+      "distance_km": 387.8,
+      "transit_time_hrs": 10.03,
+      "capacity_teu_per_day": 1500.0,
+      "base_cost_per_teu": 229.2,
+      "active": true
+    },
+    {
+      "source": "CFS_ENNORE_LOGISTICS",
+      "target": "CFS_MANALI",
+      "key": "ROAD_0",
+      "mode": "ROAD",
+      "distance_km": 11.0,
+      "transit_time_hrs": 0.55,
+      "capacity_teu_per_day": 2500.0,
+      "base_cost_per_teu": 32.1,
+      "active": true
+    },
+    {
+      "source": "CFS_ENNORE_LOGISTICS",
+      "target": "CFS_SRIPERUMBUDUR",
+      "key": "ROAD_OR",
+      "mode": "ROAD",
+      "distance_km": 64.2,
+      "transit_time_hrs": 1.54,
+      "capacity_teu_per_day": 2500.0,
+      "base_cost_per_teu": 100.2,
+      "active": true
+    },
+    {
+      "source": "CFS_MINJUR",
+      "target": "CFS_PONNERI",
+      "key": "ROAD_0",
+      "mode": "ROAD",
+      "distance_km": 12.4,
+      "transit_time_hrs": 0.58,
+      "capacity_teu_per_day": 2500.0,
+      "base_cost_per_teu": 33.9,
+      "active": true
+    },
+    {
+      "source": "CFS_MINJUR",
+      "target": "CFS_MANALI",
+      "key": "ROAD_0",
+      "mode": "ROAD",
+      "distance_km": 15.2,
+      "transit_time_hrs": 0.63,
+      "capacity_teu_per_day": 2500.0,
+      "base_cost_per_teu": 37.5,
+      "active": true
+    },
+    {
+      "source": "CFS_PONNERI",
+      "target": "JUNCTION_GUMMIDIPOONDI",
+      "key": "ROAD_0",
+      "mode": "ROAD",
+      "distance_km": 13.9,
+      "transit_time_hrs": 0.61,
+      "capacity_teu_per_day": 2800.0,
+      "base_cost_per_teu": 35.8,
+      "active": true
+    },
+    {
+      "source": "CFS_PONNERI",
+      "target": "PLANT_GUMMIDIPOONDI",
+      "key": "ROAD_0",
+      "mode": "ROAD",
+      "distance_km": 14.7,
+      "transit_time_hrs": 0.62,
+      "capacity_teu_per_day": 2000.0,
+      "base_cost_per_teu": 36.8,
+      "active": true
+    },
+    {
+      "source": "CFS_PONNERI",
+      "target": "PLANT_AMBATTUR",
+      "key": "ROAD_0",
+      "mode": "ROAD",
+      "distance_km": 32.1,
+      "transit_time_hrs": 0.94,
+      "capacity_teu_per_day": 2000.0,
+      "base_cost_per_teu": 59.1,
+      "active": true
+    },
+    {
+      "source": "CFS_MANALI",
+      "target": "CFS_CHENNAI_CENTRAL",
+      "key": "ROAD_0",
+      "mode": "ROAD",
+      "distance_km": 4.6,
+      "transit_time_hrs": 0.44,
+      "capacity_teu_per_day": 3000.0,
+      "base_cost_per_teu": 23.9,
+      "active": true
+    },
+    {
+      "source": "CFS_MANALI",
+      "target": "PLANT_AMBATTUR",
+      "key": "ROAD_0",
+      "mode": "ROAD",
+      "distance_km": 15.5,
+      "transit_time_hrs": 0.64,
+      "capacity_teu_per_day": 2200.0,
+      "base_cost_per_teu": 37.8,
+      "active": true
+    },
+    {
+      "source": "CFS_MANALI",
+      "target": "JUNCTION_TIRUVALLUR",
+      "key": "ROAD_0",
+      "mode": "ROAD",
+      "distance_km": 46.2,
+      "transit_time_hrs": 1.21,
+      "capacity_teu_per_day": 2600.0,
+      "base_cost_per_teu": 77.1,
+      "active": true
+    },
+    {
+      "source": "CFS_CHENNAI_CENTRAL",
+      "target": "CFS_SRIPERUMBUDUR",
+      "key": "ROAD_0",
+      "mode": "ROAD",
+      "distance_km": 49.2,
+      "transit_time_hrs": 1.26,
+      "capacity_teu_per_day": 2800.0,
+      "base_cost_per_teu": 81.0,
+      "active": true
+    },
+    {
+      "source": "CFS_CHENNAI_CENTRAL",
+      "target": "CFS_ORAGADAM",
+      "key": "ROAD_0",
+      "mode": "ROAD",
+      "distance_km": 59.2,
+      "transit_time_hrs": 1.45,
+      "capacity_teu_per_day": 2800.0,
+      "base_cost_per_teu": 93.8,
+      "active": true
+    },
+    {
+      "source": "CFS_CHENNAI_CENTRAL",
+      "target": "PLANT_AMBATTUR",
+      "key": "ROAD_0",
+      "mode": "ROAD",
+      "distance_km": 11.0,
+      "transit_time_hrs": 0.55,
+      "capacity_teu_per_day": 2200.0,
+      "base_cost_per_teu": 32.1,
+      "active": true
+    },
+    {
+      "source": "CFS_CHENNAI_CENTRAL",
+      "target": "JUNCTION_TAMBARAM",
+      "key": "ROAD_0",
+      "mode": "ROAD",
+      "distance_km": 35.4,
+      "transit_time_hrs": 1.01,
+      "capacity_teu_per_day": 2800.0,
+      "base_cost_per_teu": 63.3,
+      "active": true
+    },
+    {
+      "source": "ICD_TONDIARPET",
+      "target": "CFS_MANALI",
+      "key": "ROAD_0",
+      "mode": "ROAD",
+      "distance_km": 7.3,
+      "transit_time_hrs": 0.49,
+      "capacity_teu_per_day": 2400.0,
+      "base_cost_per_teu": 27.3,
+      "active": true
+    },
+    {
+      "source": "ICD_TONDIARPET",
+      "target": "CFS_SRIPERUMBUDUR",
+      "key": "ROAD_0",
+      "mode": "ROAD",
+      "distance_km": 54.8,
+      "transit_time_hrs": 1.36,
+      "capacity_teu_per_day": 2500.0,
+      "base_cost_per_teu": 88.1,
+      "active": true
+    },
+    {
+      "source": "ICD_TONDIARPET",
+      "target": "ICD_HOSUR",
+      "key": "RAIL_CONCOR",
+      "mode": "RAIL",
+      "distance_km": 317.3,
+      "transit_time_hrs": 8.35,
+      "capacity_teu_per_day": 2000.0,
+      "base_cost_per_teu": 189.7,
+      "active": true
+    },
+    {
+      "source": "ICD_TONDIARPET",
+      "target": "ICD_SALEM",
+      "key": "RAIL_CONCOR",
+      "mode": "RAIL",
+      "distance_km": 335.0,
+      "transit_time_hrs": 8.78,
+      "capacity_teu_per_day": 1800.0,
+      "base_cost_per_teu": 199.6,
+      "active": true
+    },
+    {
+      "source": "ICD_TONDIARPET",
+      "target": "ICD_KRISHNAPATNAM_RAIL",
+      "key": "RAIL_NORTH",
+      "mode": "RAIL",
+      "distance_km": 148.4,
+      "transit_time_hrs": 4.33,
+      "capacity_teu_per_day": 2200.0,
+      "base_cost_per_teu": 95.1,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_TAMBARAM",
+      "target": "CFS_ORAGADAM",
+      "key": "ROAD_0",
+      "mode": "ROAD",
+      "distance_km": 26.5,
+      "transit_time_hrs": 0.84,
+      "capacity_teu_per_day": 3000.0,
+      "base_cost_per_teu": 51.9,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_TAMBARAM",
+      "target": "JUNCTION_CHENGALPATTU",
+      "key": "ROAD_NH32",
+      "mode": "ROAD",
+      "distance_km": 36.2,
+      "transit_time_hrs": 1.02,
+      "capacity_teu_per_day": 4000.0,
+      "base_cost_per_teu": 64.3,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_TAMBARAM",
+      "target": "PLANT_MARAIMALAI",
+      "key": "ROAD_NH32",
+      "mode": "ROAD",
+      "distance_km": 20.8,
+      "transit_time_hrs": 0.74,
+      "capacity_teu_per_day": 2200.0,
+      "base_cost_per_teu": 44.6,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_CHENGALPATTU",
+      "target": "PLANT_MARAIMALAI",
+      "key": "ROAD_0",
+      "mode": "ROAD",
+      "distance_km": 15.3,
+      "transit_time_hrs": 0.63,
+      "capacity_teu_per_day": 2200.0,
+      "base_cost_per_teu": 37.6,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_CHENGALPATTU",
+      "target": "PLANT_CHENGALPATTU",
+      "key": "ROAD_0",
+      "mode": "ROAD",
+      "distance_km": 6.6,
+      "transit_time_hrs": 0.47,
+      "capacity_teu_per_day": 2200.0,
+      "base_cost_per_teu": 26.4,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_CHENGALPATTU",
+      "target": "CFS_ORAGADAM",
+      "key": "ROAD_SPUR",
+      "mode": "ROAD",
+      "distance_km": 21.9,
+      "transit_time_hrs": 0.76,
+      "capacity_teu_per_day": 2500.0,
+      "base_cost_per_teu": 46.0,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_CHENGALPATTU",
+      "target": "PLANT_CHEYYAR",
+      "key": "ROAD_0",
+      "mode": "ROAD",
+      "distance_km": 58.8,
+      "transit_time_hrs": 1.44,
+      "capacity_teu_per_day": 2000.0,
+      "base_cost_per_teu": 93.3,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_CHENGALPATTU",
+      "target": "JUNCTION_TINDIVANAM",
+      "key": "ROAD_NH32",
+      "mode": "ROAD",
+      "distance_km": 77.4,
+      "transit_time_hrs": 1.78,
+      "capacity_teu_per_day": 3800.0,
+      "base_cost_per_teu": 117.1,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_TIRUVALLUR",
+      "target": "PLANT_THIRUVALLUR",
+      "key": "ROAD_0",
+      "mode": "ROAD",
+      "distance_km": 4.0,
+      "transit_time_hrs": 0.42,
+      "capacity_teu_per_day": 2200.0,
+      "base_cost_per_teu": 23.1,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_TIRUVALLUR",
+      "target": "CFS_SRIPERUMBUDUR",
+      "key": "ROAD_0",
+      "mode": "ROAD",
+      "distance_km": 23.4,
+      "transit_time_hrs": 0.78,
+      "capacity_teu_per_day": 2600.0,
+      "base_cost_per_teu": 48.0,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_TIRUVALLUR",
+      "target": "JUNCTION_RANIPET",
+      "key": "ROAD_NH716",
+      "mode": "ROAD",
+      "distance_km": 83.4,
+      "transit_time_hrs": 1.89,
+      "capacity_teu_per_day": 3200.0,
+      "base_cost_per_teu": 124.8,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_TIRUVALLUR",
+      "target": "JUNCTION_RENIGUNTA",
+      "key": "RAIL_TRUNK",
+      "mode": "RAIL",
+      "distance_km": 83.1,
+      "transit_time_hrs": 2.78,
+      "capacity_teu_per_day": 2200.0,
+      "base_cost_per_teu": 58.5,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_GUMMIDIPOONDI",
+      "target": "PLANT_GUMMIDIPOONDI",
+      "key": "ROAD_LOCAL",
+      "mode": "ROAD",
+      "distance_km": 4.0,
+      "transit_time_hrs": 0.42,
+      "capacity_teu_per_day": 2000.0,
+      "base_cost_per_teu": 23.1,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_GUMMIDIPOONDI",
+      "target": "JUNCTION_TADA",
+      "key": "ROAD_NH16",
+      "mode": "ROAD",
+      "distance_km": 27.7,
+      "transit_time_hrs": 0.86,
+      "capacity_teu_per_day": 4200.0,
+      "base_cost_per_teu": 53.5,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_GUMMIDIPOONDI",
+      "target": "CFS_SULLURPETA",
+      "key": "ROAD_NH16",
+      "mode": "ROAD",
+      "distance_km": 42.3,
+      "transit_time_hrs": 1.13,
+      "capacity_teu_per_day": 3200.0,
+      "base_cost_per_teu": 72.1,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_TADA",
+      "target": "PLANT_SRICITY",
+      "key": "ROAD_DIRECT",
+      "mode": "ROAD",
+      "distance_km": 7.6,
+      "transit_time_hrs": 0.49,
+      "capacity_teu_per_day": 2600.0,
+      "base_cost_per_teu": 27.7,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_TADA",
+      "target": "PLANT_TADA",
+      "key": "ROAD_0",
+      "mode": "ROAD",
+      "distance_km": 4.0,
+      "transit_time_hrs": 0.42,
+      "capacity_teu_per_day": 2200.0,
+      "base_cost_per_teu": 23.1,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_TADA",
+      "target": "CFS_SULLURPETA",
+      "key": "ROAD_NH16",
+      "mode": "ROAD",
+      "distance_km": 15.7,
+      "transit_time_hrs": 0.64,
+      "capacity_teu_per_day": 3500.0,
+      "base_cost_per_teu": 38.1,
+      "active": true
+    },
+    {
+      "source": "CFS_SULLURPETA",
+      "target": "PLANT_SRICITY",
+      "key": "ROAD_FEED",
+      "mode": "ROAD",
+      "distance_km": 23.3,
+      "transit_time_hrs": 0.78,
+      "capacity_teu_per_day": 2200.0,
+      "base_cost_per_teu": 47.8,
+      "active": true
+    },
+    {
+      "source": "CFS_SULLURPETA",
+      "target": "PLANT_TADA",
+      "key": "ROAD_0",
+      "mode": "ROAD",
+      "distance_km": 15.4,
+      "transit_time_hrs": 0.64,
+      "capacity_teu_per_day": 2000.0,
+      "base_cost_per_teu": 37.7,
+      "active": true
+    },
+    {
+      "source": "CFS_SULLURPETA",
+      "target": "JUNCTION_NAIDUPETA",
+      "key": "ROAD_NH16",
+      "mode": "ROAD",
+      "distance_km": 30.7,
+      "transit_time_hrs": 0.92,
+      "capacity_teu_per_day": 3500.0,
+      "base_cost_per_teu": 57.3,
+      "active": true
+    },
+    {
+      "source": "CFS_SULLURPETA",
+      "target": "PLANT_NAIDUPETA",
+      "key": "ROAD_0",
+      "mode": "ROAD",
+      "distance_km": 32.4,
+      "transit_time_hrs": 0.95,
+      "capacity_teu_per_day": 2000.0,
+      "base_cost_per_teu": 59.5,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_NAIDUPETA",
+      "target": "PLANT_NAIDUPETA",
+      "key": "ROAD_LOCAL",
+      "mode": "ROAD",
+      "distance_km": 4.0,
+      "transit_time_hrs": 0.42,
+      "capacity_teu_per_day": 2000.0,
+      "base_cost_per_teu": 23.1,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_NAIDUPETA",
+      "target": "JUNCTION_GUDUR",
+      "key": "ROAD_NH16",
+      "mode": "ROAD",
+      "distance_km": 35.7,
+      "transit_time_hrs": 1.01,
+      "capacity_teu_per_day": 3800.0,
+      "base_cost_per_teu": 63.7,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_NAIDUPETA",
+      "target": "JUNCTION_RENIGUNTA",
+      "key": "ROAD_NH71",
+      "mode": "ROAD",
+      "distance_km": 64.0,
+      "transit_time_hrs": 1.54,
+      "capacity_teu_per_day": 3200.0,
+      "base_cost_per_teu": 99.9,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_GUDUR",
+      "target": "CFS_KRISHNAPATNAM",
+      "key": "ROAD_0",
+      "mode": "ROAD",
+      "distance_km": 36.1,
+      "transit_time_hrs": 1.02,
+      "capacity_teu_per_day": 3400.0,
+      "base_cost_per_teu": 64.2,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_GUDUR",
+      "target": "PLANT_NELLORE_TIER1",
+      "key": "ROAD_NH16",
+      "mode": "ROAD",
+      "distance_km": 44.4,
+      "transit_time_hrs": 1.17,
+      "capacity_teu_per_day": 2200.0,
+      "base_cost_per_teu": 74.8,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_GUDUR",
+      "target": "JUNCTION_NAIDUPETA",
+      "key": "ROAD_NH16_SB",
+      "mode": "ROAD",
+      "distance_km": 35.7,
+      "transit_time_hrs": 1.01,
+      "capacity_teu_per_day": 3800.0,
+      "base_cost_per_teu": 63.7,
+      "active": true
+    },
+    {
+      "source": "CFS_KRISHNAPATNAM",
+      "target": "ICD_KRISHNAPATNAM_RAIL",
+      "key": "ROAD_LOCAL",
+      "mode": "ROAD",
+      "distance_km": 5.3,
+      "transit_time_hrs": 0.45,
+      "capacity_teu_per_day": 3000.0,
+      "base_cost_per_teu": 24.8,
+      "active": true
+    },
+    {
+      "source": "CFS_KRISHNAPATNAM",
+      "target": "PLANT_NELLORE_TIER1",
+      "key": "ROAD_0",
+      "mode": "ROAD",
+      "distance_km": 29.7,
+      "transit_time_hrs": 0.9,
+      "capacity_teu_per_day": 2200.0,
+      "base_cost_per_teu": 56.0,
+      "active": true
+    },
+    {
+      "source": "CFS_KRISHNAPATNAM",
+      "target": "JUNCTION_GUDUR",
+      "key": "ROAD_0",
+      "mode": "ROAD",
+      "distance_km": 36.1,
+      "transit_time_hrs": 1.02,
+      "capacity_teu_per_day": 3400.0,
+      "base_cost_per_teu": 64.2,
+      "active": true
+    },
+    {
+      "source": "CFS_KRISHNAPATNAM",
+      "target": "CFS_SULLURPETA",
+      "key": "ROAD_NH16_SB",
+      "mode": "ROAD",
+      "distance_km": 77.1,
+      "transit_time_hrs": 1.78,
+      "capacity_teu_per_day": 3000.0,
+      "base_cost_per_teu": 116.7,
+      "active": true
+    },
+    {
+      "source": "ICD_KRISHNAPATNAM_RAIL",
+      "target": "JUNCTION_RENIGUNTA",
+      "key": "RAIL_AP",
+      "mode": "RAIL",
+      "distance_km": 105.6,
+      "transit_time_hrs": 3.31,
+      "capacity_teu_per_day": 2400.0,
+      "base_cost_per_teu": 71.1,
+      "active": true
+    },
+    {
+      "source": "ICD_KRISHNAPATNAM_RAIL",
+      "target": "JUNCTION_CHITTOOR",
+      "key": "ROAD_NH71",
+      "mode": "ROAD",
+      "distance_km": 190.7,
+      "transit_time_hrs": 3.88,
+      "capacity_teu_per_day": 2600.0,
+      "base_cost_per_teu": 262.1,
+      "active": true
+    },
+    {
+      "source": "ICD_KRISHNAPATNAM_RAIL",
+      "target": "PLANT_TIRUPATI_ELECTRONICS",
+      "key": "RAIL_FEED",
+      "mode": "RAIL",
+      "distance_km": 103.7,
+      "transit_time_hrs": 3.27,
+      "capacity_teu_per_day": 1800.0,
+      "base_cost_per_teu": 70.1,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_RENIGUNTA",
+      "target": "PLANT_TIRUPATI_ELECTRONICS",
+      "key": "ROAD_0",
+      "mode": "ROAD",
+      "distance_km": 4.1,
+      "transit_time_hrs": 0.43,
+      "capacity_teu_per_day": 2200.0,
+      "base_cost_per_teu": 23.2,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_RENIGUNTA",
+      "target": "PLANT_SRICITY",
+      "key": "ROAD_AP_BYPASS",
+      "mode": "ROAD",
+      "distance_km": 69.1,
+      "transit_time_hrs": 1.63,
+      "capacity_teu_per_day": 2200.0,
+      "base_cost_per_teu": 106.4,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_RENIGUNTA",
+      "target": "JUNCTION_CHITTOOR",
+      "key": "ROAD_NH40",
+      "mode": "ROAD",
+      "distance_km": 79.7,
+      "transit_time_hrs": 1.83,
+      "capacity_teu_per_day": 3200.0,
+      "base_cost_per_teu": 120.0,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_RENIGUNTA",
+      "target": "JUNCTION_TADA",
+      "key": "ROAD_SPUR",
+      "mode": "ROAD",
+      "distance_km": 69.1,
+      "transit_time_hrs": 1.63,
+      "capacity_teu_per_day": 2800.0,
+      "base_cost_per_teu": 106.4,
+      "active": true
+    },
+    {
+      "source": "CFS_SRIPERUMBUDUR",
+      "target": "PLANT_SRIPERUMBUDUR",
+      "key": "ROAD_0",
+      "mode": "ROAD",
+      "distance_km": 4.0,
+      "transit_time_hrs": 0.42,
+      "capacity_teu_per_day": 3200.0,
+      "base_cost_per_teu": 23.1,
+      "active": true
+    },
+    {
+      "source": "CFS_SRIPERUMBUDUR",
+      "target": "PLANT_IRUNGATTUKOTTAI",
+      "key": "ROAD_0",
+      "mode": "ROAD",
+      "distance_km": 11.0,
+      "transit_time_hrs": 0.55,
+      "capacity_teu_per_day": 2200.0,
+      "base_cost_per_teu": 32.1,
+      "active": true
+    },
+    {
+      "source": "CFS_SRIPERUMBUDUR",
+      "target": "PLANT_VALLAM_VADAGAL",
+      "key": "ROAD_0",
+      "mode": "ROAD",
+      "distance_km": 11.5,
+      "transit_time_hrs": 0.56,
+      "capacity_teu_per_day": 2200.0,
+      "base_cost_per_teu": 32.7,
+      "active": true
+    },
+    {
+      "source": "CFS_SRIPERUMBUDUR",
+      "target": "PLANT_THIRUVALLUR",
+      "key": "ROAD_0",
+      "mode": "ROAD",
+      "distance_km": 24.1,
+      "transit_time_hrs": 0.8,
+      "capacity_teu_per_day": 2000.0,
+      "base_cost_per_teu": 48.8,
+      "active": true
+    },
+    {
+      "source": "CFS_SRIPERUMBUDUR",
+      "target": "JUNCTION_RANIPET",
+      "key": "ROAD_NH48",
+      "mode": "ROAD",
+      "distance_km": 78.4,
+      "transit_time_hrs": 1.8,
+      "capacity_teu_per_day": 3600.0,
+      "base_cost_per_teu": 118.4,
+      "active": true
+    },
+    {
+      "source": "CFS_ORAGADAM",
+      "target": "PLANT_ORAGADAM",
+      "key": "ROAD_0",
+      "mode": "ROAD",
+      "distance_km": 4.5,
+      "transit_time_hrs": 0.43,
+      "capacity_teu_per_day": 3200.0,
+      "base_cost_per_teu": 23.8,
+      "active": true
+    },
+    {
+      "source": "CFS_ORAGADAM",
+      "target": "PLANT_VALLAM_VADAGAL",
+      "key": "ROAD_0",
+      "mode": "ROAD",
+      "distance_km": 6.2,
+      "transit_time_hrs": 0.46,
+      "capacity_teu_per_day": 2200.0,
+      "base_cost_per_teu": 25.9,
+      "active": true
+    },
+    {
+      "source": "CFS_ORAGADAM",
+      "target": "PLANT_CHENGALPATTU",
+      "key": "ROAD_0",
+      "mode": "ROAD",
+      "distance_km": 17.9,
+      "transit_time_hrs": 0.68,
+      "capacity_teu_per_day": 2200.0,
+      "base_cost_per_teu": 40.9,
+      "active": true
+    },
+    {
+      "source": "CFS_ORAGADAM",
+      "target": "PLANT_CHEYYAR",
+      "key": "ROAD_0",
+      "mode": "ROAD",
+      "distance_km": 57.2,
+      "transit_time_hrs": 1.41,
+      "capacity_teu_per_day": 2000.0,
+      "base_cost_per_teu": 91.2,
+      "active": true
+    },
+    {
+      "source": "CFS_ORAGADAM",
+      "target": "JUNCTION_WALAJAPET",
+      "key": "ROAD_NH48",
+      "mode": "ROAD",
+      "distance_km": 75.6,
+      "transit_time_hrs": 1.75,
+      "capacity_teu_per_day": 3400.0,
+      "base_cost_per_teu": 114.8,
+      "active": true
+    },
+    {
+      "source": "PLANT_SRIPERUMBUDUR",
+      "target": "PLANT_IRUNGATTUKOTTAI",
+      "key": "ROAD_LOCAL",
+      "mode": "ROAD",
+      "distance_km": 7.4,
+      "transit_time_hrs": 0.49,
+      "capacity_teu_per_day": 2200.0,
+      "base_cost_per_teu": 27.5,
+      "active": true
+    },
+    {
+      "source": "PLANT_ORAGADAM",
+      "target": "PLANT_MARAIMALAI",
+      "key": "ROAD_LOCAL",
+      "mode": "ROAD",
+      "distance_km": 11.1,
+      "transit_time_hrs": 0.56,
+      "capacity_teu_per_day": 2200.0,
+      "base_cost_per_teu": 32.2,
+      "active": true
+    },
+    {
+      "source": "CFS_KARAIKAL",
+      "target": "CFS_PONDICHERRY",
+      "key": "ROAD_0",
+      "mode": "ROAD",
+      "distance_km": 141.6,
+      "transit_time_hrs": 2.97,
+      "capacity_teu_per_day": 2400.0,
+      "base_cost_per_teu": 199.2,
+      "active": true
+    },
+    {
+      "source": "CFS_KARAIKAL",
+      "target": "JUNCTION_TRICHY",
+      "key": "ROAD_NH83",
+      "mode": "ROAD",
+      "distance_km": 152.7,
+      "transit_time_hrs": 3.18,
+      "capacity_teu_per_day": 2800.0,
+      "base_cost_per_teu": 213.5,
+      "active": true
+    },
+    {
+      "source": "CFS_PONDICHERRY",
+      "target": "JUNCTION_TINDIVANAM",
+      "key": "ROAD_0",
+      "mode": "ROAD",
+      "distance_km": 45.1,
+      "transit_time_hrs": 1.19,
+      "capacity_teu_per_day": 2600.0,
+      "base_cost_per_teu": 75.7,
+      "active": true
+    },
+    {
+      "source": "CFS_PONDICHERRY",
+      "target": "JUNCTION_VILLUPURAM",
+      "key": "ROAD_0",
+      "mode": "ROAD",
+      "distance_km": 43.5,
+      "transit_time_hrs": 1.16,
+      "capacity_teu_per_day": 2600.0,
+      "base_cost_per_teu": 73.7,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_TINDIVANAM",
+      "target": "JUNCTION_CHENGALPATTU",
+      "key": "ROAD_NH32_NB",
+      "mode": "ROAD",
+      "distance_km": 77.4,
+      "transit_time_hrs": 1.78,
+      "capacity_teu_per_day": 3600.0,
+      "base_cost_per_teu": 117.1,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_TINDIVANAM",
+      "target": "JUNCTION_VILLUPURAM",
+      "key": "ROAD_NH32",
+      "mode": "ROAD",
+      "distance_km": 45.7,
+      "transit_time_hrs": 1.2,
+      "capacity_teu_per_day": 3800.0,
+      "base_cost_per_teu": 76.5,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_VILLUPURAM",
+      "target": "JUNCTION_ULUNDURPET",
+      "key": "ROAD_NH38",
+      "mode": "ROAD",
+      "distance_km": 43.5,
+      "transit_time_hrs": 1.16,
+      "capacity_teu_per_day": 3800.0,
+      "base_cost_per_teu": 73.7,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_VILLUPURAM",
+      "target": "JUNCTION_TINDIVANAM",
+      "key": "ROAD_NH32_NB",
+      "mode": "ROAD",
+      "distance_km": 45.7,
+      "transit_time_hrs": 1.2,
+      "capacity_teu_per_day": 3600.0,
+      "base_cost_per_teu": 76.5,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_ULUNDURPET",
+      "target": "JUNCTION_SALEM_BYPASS",
+      "key": "ROAD_NH79",
+      "mode": "ROAD",
+      "distance_km": 152.9,
+      "transit_time_hrs": 3.18,
+      "capacity_teu_per_day": 3400.0,
+      "base_cost_per_teu": 213.7,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_ULUNDURPET",
+      "target": "JUNCTION_TRICHY",
+      "key": "ROAD_NH38",
+      "mode": "ROAD",
+      "distance_km": 147.1,
+      "transit_time_hrs": 3.07,
+      "capacity_teu_per_day": 3600.0,
+      "base_cost_per_teu": 206.3,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_ULUNDURPET",
+      "target": "JUNCTION_VILLUPURAM",
+      "key": "ROAD_NH38_NB",
+      "mode": "ROAD",
+      "distance_km": 43.5,
+      "transit_time_hrs": 1.16,
+      "capacity_teu_per_day": 3600.0,
+      "base_cost_per_teu": 73.7,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_TRICHY",
+      "target": "JUNCTION_KARUR",
+      "key": "ROAD_NH81",
+      "mode": "ROAD",
+      "distance_km": 88.2,
+      "transit_time_hrs": 1.98,
+      "capacity_teu_per_day": 3600.0,
+      "base_cost_per_teu": 130.9,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_TRICHY",
+      "target": "JUNCTION_DINDIGUL",
+      "key": "ROAD_NH83",
+      "mode": "ROAD",
+      "distance_km": 114.2,
+      "transit_time_hrs": 2.46,
+      "capacity_teu_per_day": 3400.0,
+      "base_cost_per_teu": 164.2,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_TRICHY",
+      "target": "JUNCTION_ULUNDURPET",
+      "key": "ROAD_NH38_NB",
+      "mode": "ROAD",
+      "distance_km": 147.1,
+      "transit_time_hrs": 3.07,
+      "capacity_teu_per_day": 3400.0,
+      "base_cost_per_teu": 206.3,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_KARUR",
+      "target": "JUNCTION_ERODE",
+      "key": "ROAD_NH81",
+      "mode": "ROAD",
+      "distance_km": 71.6,
+      "transit_time_hrs": 1.68,
+      "capacity_teu_per_day": 3400.0,
+      "base_cost_per_teu": 109.6,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_KARUR",
+      "target": "JUNCTION_SALEM_BYPASS",
+      "key": "ROAD_NH44",
+      "mode": "ROAD",
+      "distance_km": 96.0,
+      "transit_time_hrs": 2.13,
+      "capacity_teu_per_day": 3400.0,
+      "base_cost_per_teu": 140.9,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_KARUR",
+      "target": "JUNCTION_DINDIGUL",
+      "key": "ROAD_NH44_SB",
+      "mode": "ROAD",
+      "distance_km": 82.8,
+      "transit_time_hrs": 1.88,
+      "capacity_teu_per_day": 3200.0,
+      "base_cost_per_teu": 124.0,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_DINDIGUL",
+      "target": "JUNCTION_POLLACHI",
+      "key": "ROAD_NH83",
+      "mode": "ROAD",
+      "distance_km": 137.8,
+      "transit_time_hrs": 2.9,
+      "capacity_teu_per_day": 3000.0,
+      "base_cost_per_teu": 194.4,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_DINDIGUL",
+      "target": "JUNCTION_KARUR",
+      "key": "ROAD_NH44_NB",
+      "mode": "ROAD",
+      "distance_km": 82.8,
+      "transit_time_hrs": 1.88,
+      "capacity_teu_per_day": 3400.0,
+      "base_cost_per_teu": 124.0,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_DINDIGUL",
+      "target": "JUNCTION_MADURAI",
+      "key": "ROAD_NH44_SB",
+      "mode": "ROAD",
+      "distance_km": 63.8,
+      "transit_time_hrs": 1.53,
+      "capacity_teu_per_day": 3200.0,
+      "base_cost_per_teu": 99.7,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_MADURAI",
+      "target": "JUNCTION_DINDIGUL",
+      "key": "ROAD_NH44_NB",
+      "mode": "ROAD",
+      "distance_km": 63.8,
+      "transit_time_hrs": 1.53,
+      "capacity_teu_per_day": 3600.0,
+      "base_cost_per_teu": 99.7,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_MADURAI",
+      "target": "CFS_MADURAI_INLAND",
+      "key": "ROAD_0",
+      "mode": "ROAD",
+      "distance_km": 14.2,
+      "transit_time_hrs": 0.61,
+      "capacity_teu_per_day": 2800.0,
+      "base_cost_per_teu": 36.2,
+      "active": true
+    },
+    {
+      "source": "CFS_MADURAI_INLAND",
+      "target": "JUNCTION_DINDIGUL",
+      "key": "ROAD_NH44_NB",
+      "mode": "ROAD",
+      "distance_km": 69.7,
+      "transit_time_hrs": 1.64,
+      "capacity_teu_per_day": 3200.0,
+      "base_cost_per_teu": 107.2,
+      "active": true
+    },
+    {
+      "source": "CFS_TUTICORIN_BOND",
+      "target": "JUNCTION_MADURAI",
+      "key": "ROAD_NH38_NB",
+      "mode": "ROAD",
+      "distance_km": 156.7,
+      "transit_time_hrs": 3.25,
+      "capacity_teu_per_day": 2800.0,
+      "base_cost_per_teu": 218.6,
+      "active": true
+    },
+    {
+      "source": "CFS_TUTICORIN_BOND",
+      "target": "JUNCTION_TIRUNELVELI",
+      "key": "ROAD_0",
+      "mode": "ROAD",
+      "distance_km": 53.9,
+      "transit_time_hrs": 1.35,
+      "capacity_teu_per_day": 2800.0,
+      "base_cost_per_teu": 87.0,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_TIRUNELVELI",
+      "target": "JUNCTION_MADURAI",
+      "key": "ROAD_NH44_NB",
+      "mode": "ROAD",
+      "distance_km": 174.2,
+      "transit_time_hrs": 3.58,
+      "capacity_teu_per_day": 3000.0,
+      "base_cost_per_teu": 241.0,
+      "active": true
+    },
+    {
+      "source": "CFS_COCHIN_VALLARPADAM",
+      "target": "JUNCTION_THRISSUR",
+      "key": "ROAD_0",
+      "mode": "ROAD",
+      "distance_km": 75.0,
+      "transit_time_hrs": 1.74,
+      "capacity_teu_per_day": 3200.0,
+      "base_cost_per_teu": 114.0,
+      "active": true
+    },
+    {
+      "source": "CFS_COCHIN_VALLARPADAM",
+      "target": "ICD_IRUGUR",
+      "key": "RAIL_CONCOR",
+      "mode": "RAIL",
+      "distance_km": 167.1,
+      "transit_time_hrs": 4.78,
+      "capacity_teu_per_day": 2000.0,
+      "base_cost_per_teu": 105.6,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_THRISSUR",
+      "target": "JUNCTION_PALAKKAD",
+      "key": "ROAD_NH544",
+      "mode": "ROAD",
+      "distance_km": 68.9,
+      "transit_time_hrs": 1.63,
+      "capacity_teu_per_day": 3800.0,
+      "base_cost_per_teu": 106.2,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_PALAKKAD",
+      "target": "PLANT_PALAKKAD_COMPONENTS",
+      "key": "ROAD_0",
+      "mode": "ROAD",
+      "distance_km": 12.0,
+      "transit_time_hrs": 0.57,
+      "capacity_teu_per_day": 2200.0,
+      "base_cost_per_teu": 33.4,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_PALAKKAD",
+      "target": "CFS_PALAKKAD_FREIGHT",
+      "key": "ROAD_0",
+      "mode": "ROAD",
+      "distance_km": 23.8,
+      "transit_time_hrs": 0.79,
+      "capacity_teu_per_day": 2800.0,
+      "base_cost_per_teu": 48.5,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_PALAKKAD",
+      "target": "JUNCTION_WALAYAR",
+      "key": "ROAD_NH544",
+      "mode": "ROAD",
+      "distance_km": 27.2,
+      "transit_time_hrs": 0.85,
+      "capacity_teu_per_day": 3800.0,
+      "base_cost_per_teu": 52.8,
+      "active": true
+    },
+    {
+      "source": "CFS_PALAKKAD_FREIGHT",
+      "target": "PLANT_PALAKKAD_COMPONENTS",
+      "key": "ROAD_FEED",
+      "mode": "ROAD",
+      "distance_km": 12.0,
+      "transit_time_hrs": 0.57,
+      "capacity_teu_per_day": 2000.0,
+      "base_cost_per_teu": 33.4,
+      "active": true
+    },
+    {
+      "source": "CFS_PALAKKAD_FREIGHT",
+      "target": "JUNCTION_WALAYAR",
+      "key": "ROAD_0",
+      "mode": "ROAD",
+      "distance_km": 4.0,
+      "transit_time_hrs": 0.42,
+      "capacity_teu_per_day": 2800.0,
+      "base_cost_per_teu": 23.1,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_WALAYAR",
+      "target": "PLANT_COIMBATORE",
+      "key": "ROAD_BYPASS",
+      "mode": "ROAD",
+      "distance_km": 28.9,
+      "transit_time_hrs": 0.89,
+      "capacity_teu_per_day": 2600.0,
+      "base_cost_per_teu": 55.0,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_WALAYAR",
+      "target": "PLANT_KINATHUKADAVU",
+      "key": "ROAD_0",
+      "mode": "ROAD",
+      "distance_km": 23.5,
+      "transit_time_hrs": 0.79,
+      "capacity_teu_per_day": 2000.0,
+      "base_cost_per_teu": 48.1,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_WALAYAR",
+      "target": "CFS_COIMBATORE_NEELAMBUR",
+      "key": "ROAD_BYPASS",
+      "mode": "ROAD",
+      "distance_km": 45.7,
+      "transit_time_hrs": 1.2,
+      "capacity_teu_per_day": 3000.0,
+      "base_cost_per_teu": 76.5,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_POLLACHI",
+      "target": "PLANT_KINATHUKADAVU",
+      "key": "ROAD_0",
+      "mode": "ROAD",
+      "distance_km": 22.7,
+      "transit_time_hrs": 0.77,
+      "capacity_teu_per_day": 2200.0,
+      "base_cost_per_teu": 47.1,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_POLLACHI",
+      "target": "PLANT_COIMBATORE",
+      "key": "ROAD_SOUTH",
+      "mode": "ROAD",
+      "distance_km": 50.0,
+      "transit_time_hrs": 1.28,
+      "capacity_teu_per_day": 2200.0,
+      "base_cost_per_teu": 82.0,
+      "active": true
+    },
+    {
+      "source": "ICD_IRUGUR",
+      "target": "CFS_COIMBATORE_NEELAMBUR",
+      "key": "ROAD_0",
+      "mode": "ROAD",
+      "distance_km": 6.3,
+      "transit_time_hrs": 0.47,
+      "capacity_teu_per_day": 2800.0,
+      "base_cost_per_teu": 26.1,
+      "active": true
+    },
+    {
+      "source": "ICD_IRUGUR",
+      "target": "JUNCTION_AVINASHI",
+      "key": "ROAD_NH544",
+      "mode": "ROAD",
+      "distance_km": 35.4,
+      "transit_time_hrs": 1.01,
+      "capacity_teu_per_day": 3000.0,
+      "base_cost_per_teu": 63.3,
+      "active": true
+    },
+    {
+      "source": "CFS_COIMBATORE_NEELAMBUR",
+      "target": "PLANT_COIMBATORE",
+      "key": "ROAD_DIRECT",
+      "mode": "ROAD",
+      "distance_km": 19.2,
+      "transit_time_hrs": 0.71,
+      "capacity_teu_per_day": 2600.0,
+      "base_cost_per_teu": 42.6,
+      "active": true
+    },
+    {
+      "source": "CFS_COIMBATORE_NEELAMBUR",
+      "target": "JUNCTION_AVINASHI",
+      "key": "ROAD_NH544",
+      "mode": "ROAD",
+      "distance_km": 29.8,
+      "transit_time_hrs": 0.9,
+      "capacity_teu_per_day": 3200.0,
+      "base_cost_per_teu": 56.1,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_AVINASHI",
+      "target": "PLANT_COIMBATORE",
+      "key": "ROAD_EAST_BYPASS",
+      "mode": "ROAD",
+      "distance_km": 48.7,
+      "transit_time_hrs": 1.25,
+      "capacity_teu_per_day": 2400.0,
+      "base_cost_per_teu": 80.3,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_AVINASHI",
+      "target": "CFS_COIMBATORE_NEELAMBUR",
+      "key": "ROAD_NH544_WB",
+      "mode": "ROAD",
+      "distance_km": 29.8,
+      "transit_time_hrs": 0.9,
+      "capacity_teu_per_day": 3000.0,
+      "base_cost_per_teu": 56.1,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_AVINASHI",
+      "target": "JUNCTION_ERODE",
+      "key": "ROAD_NH544",
+      "mode": "ROAD",
+      "distance_km": 64.1,
+      "transit_time_hrs": 1.54,
+      "capacity_teu_per_day": 3600.0,
+      "base_cost_per_teu": 100.0,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_ERODE",
+      "target": "JUNCTION_AVINASHI",
+      "key": "ROAD_NH544_WB",
+      "mode": "ROAD",
+      "distance_km": 64.1,
+      "transit_time_hrs": 1.54,
+      "capacity_teu_per_day": 3600.0,
+      "base_cost_per_teu": 100.0,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_ERODE",
+      "target": "ICD_SALEM",
+      "key": "ROAD_NH544",
+      "mode": "ROAD",
+      "distance_km": 73.1,
+      "transit_time_hrs": 1.7,
+      "capacity_teu_per_day": 3400.0,
+      "base_cost_per_teu": 111.6,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_ERODE",
+      "target": "CFS_SALEM_LOGISTICS",
+      "key": "ROAD_0",
+      "mode": "ROAD",
+      "distance_km": 66.3,
+      "transit_time_hrs": 1.58,
+      "capacity_teu_per_day": 3000.0,
+      "base_cost_per_teu": 102.9,
+      "active": true
+    },
+    {
+      "source": "ICD_SALEM",
+      "target": "PLANT_SALEM_STEEL",
+      "key": "ROAD_0",
+      "mode": "ROAD",
+      "distance_km": 8.8,
+      "transit_time_hrs": 0.51,
+      "capacity_teu_per_day": 2200.0,
+      "base_cost_per_teu": 29.3,
+      "active": true
+    },
+    {
+      "source": "ICD_SALEM",
+      "target": "CFS_SALEM_LOGISTICS",
+      "key": "ROAD_0",
+      "mode": "ROAD",
+      "distance_km": 7.2,
+      "transit_time_hrs": 0.48,
+      "capacity_teu_per_day": 2800.0,
+      "base_cost_per_teu": 27.2,
+      "active": true
+    },
+    {
+      "source": "ICD_SALEM",
+      "target": "JUNCTION_SALEM_BYPASS",
+      "key": "ROAD_0",
+      "mode": "ROAD",
+      "distance_km": 4.0,
+      "transit_time_hrs": 0.42,
+      "capacity_teu_per_day": 3200.0,
+      "base_cost_per_teu": 23.1,
+      "active": true
+    },
+    {
+      "source": "ICD_SALEM",
+      "target": "ICD_IRUGUR",
+      "key": "RAIL_CONCOR",
+      "mode": "RAIL",
+      "distance_km": 162.0,
+      "transit_time_hrs": 4.66,
+      "capacity_teu_per_day": 2000.0,
+      "base_cost_per_teu": 102.7,
+      "active": true
+    },
+    {
+      "source": "ICD_SALEM",
+      "target": "ICD_HOSUR",
+      "key": "RAIL_CONCOR",
+      "mode": "RAIL",
+      "distance_km": 142.8,
+      "transit_time_hrs": 4.2,
+      "capacity_teu_per_day": 2200.0,
+      "base_cost_per_teu": 92.0,
+      "active": true
+    },
+    {
+      "source": "CFS_SALEM_LOGISTICS",
+      "target": "PLANT_SALEM_STEEL",
+      "key": "ROAD_0",
+      "mode": "ROAD",
+      "distance_km": 4.1,
+      "transit_time_hrs": 0.43,
+      "capacity_teu_per_day": 2000.0,
+      "base_cost_per_teu": 23.2,
+      "active": true
+    },
+    {
+      "source": "CFS_SALEM_LOGISTICS",
+      "target": "JUNCTION_SALEM_BYPASS",
+      "key": "ROAD_0",
+      "mode": "ROAD",
+      "distance_km": 8.5,
+      "transit_time_hrs": 0.51,
+      "capacity_teu_per_day": 3200.0,
+      "base_cost_per_teu": 28.9,
+      "active": true
+    },
+    {
+      "source": "CFS_SALEM_LOGISTICS",
+      "target": "JUNCTION_ERODE",
+      "key": "ROAD_NH544_WB",
+      "mode": "ROAD",
+      "distance_km": 66.3,
+      "transit_time_hrs": 1.58,
+      "capacity_teu_per_day": 3200.0,
+      "base_cost_per_teu": 102.9,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_SALEM_BYPASS",
+      "target": "JUNCTION_DHARMAPURI",
+      "key": "ROAD_NH44",
+      "mode": "ROAD",
+      "distance_km": 64.7,
+      "transit_time_hrs": 1.55,
+      "capacity_teu_per_day": 4200.0,
+      "base_cost_per_teu": 100.8,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_SALEM_BYPASS",
+      "target": "JUNCTION_ERODE",
+      "key": "ROAD_NH544_WB",
+      "mode": "ROAD",
+      "distance_km": 73.4,
+      "transit_time_hrs": 1.71,
+      "capacity_teu_per_day": 3600.0,
+      "base_cost_per_teu": 112.0,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_SALEM_BYPASS",
+      "target": "JUNCTION_ULUNDURPET",
+      "key": "ROAD_NH79_EB",
+      "mode": "ROAD",
+      "distance_km": 152.9,
+      "transit_time_hrs": 3.18,
+      "capacity_teu_per_day": 3200.0,
+      "base_cost_per_teu": 213.7,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_DHARMAPURI",
+      "target": "JUNCTION_KRISHNAGIRI",
+      "key": "ROAD_NH44_NB",
+      "mode": "ROAD",
+      "distance_km": 56.4,
+      "transit_time_hrs": 1.39,
+      "capacity_teu_per_day": 4200.0,
+      "base_cost_per_teu": 90.2,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_DHARMAPURI",
+      "target": "JUNCTION_SALEM_BYPASS",
+      "key": "ROAD_NH44_SB",
+      "mode": "ROAD",
+      "distance_km": 64.7,
+      "transit_time_hrs": 1.55,
+      "capacity_teu_per_day": 4000.0,
+      "base_cost_per_teu": 100.8,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_RANIPET",
+      "target": "JUNCTION_WALAJAPET",
+      "key": "ROAD_LOCAL",
+      "mode": "ROAD",
+      "distance_km": 4.4,
+      "transit_time_hrs": 0.43,
+      "capacity_teu_per_day": 4500.0,
+      "base_cost_per_teu": 23.6,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_RANIPET",
+      "target": "PLANT_CHEYYAR",
+      "key": "ROAD_0",
+      "mode": "ROAD",
+      "distance_km": 46.1,
+      "transit_time_hrs": 1.2,
+      "capacity_teu_per_day": 2000.0,
+      "base_cost_per_teu": 77.0,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_WALAJAPET",
+      "target": "JUNCTION_VELLORE",
+      "key": "ROAD_NH48",
+      "mode": "ROAD",
+      "distance_km": 31.4,
+      "transit_time_hrs": 0.93,
+      "capacity_teu_per_day": 4500.0,
+      "base_cost_per_teu": 58.2,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_WALAJAPET",
+      "target": "JUNCTION_RANIPET",
+      "key": "ROAD_NH48_EB",
+      "mode": "ROAD",
+      "distance_km": 4.4,
+      "transit_time_hrs": 0.43,
+      "capacity_teu_per_day": 4500.0,
+      "base_cost_per_teu": 23.6,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_WALAJAPET",
+      "target": "JUNCTION_CHITTOOR",
+      "key": "ROAD_NH40",
+      "mode": "ROAD",
+      "distance_km": 53.6,
+      "transit_time_hrs": 1.34,
+      "capacity_teu_per_day": 3800.0,
+      "base_cost_per_teu": 86.6,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_CHITTOOR",
+      "target": "PLANT_CHITTOOR_AUTO",
+      "key": "ROAD_0",
+      "mode": "ROAD",
+      "distance_km": 4.0,
+      "transit_time_hrs": 0.42,
+      "capacity_teu_per_day": 2200.0,
+      "base_cost_per_teu": 23.1,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_CHITTOOR",
+      "target": "PLANT_SRICITY",
+      "key": "ROAD_AP_BYPASS",
+      "mode": "ROAD",
+      "distance_km": 130.4,
+      "transit_time_hrs": 2.76,
+      "capacity_teu_per_day": 2400.0,
+      "base_cost_per_teu": 184.9,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_CHITTOOR",
+      "target": "JUNCTION_MULBAGAL",
+      "key": "ROAD_NH69",
+      "mode": "ROAD",
+      "distance_km": 95.0,
+      "transit_time_hrs": 2.11,
+      "capacity_teu_per_day": 3600.0,
+      "base_cost_per_teu": 139.6,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_CHITTOOR",
+      "target": "JUNCTION_VELLORE",
+      "key": "ROAD_LOCAL",
+      "mode": "ROAD",
+      "distance_km": 41.7,
+      "transit_time_hrs": 1.12,
+      "capacity_teu_per_day": 3400.0,
+      "base_cost_per_teu": 71.4,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_CHITTOOR",
+      "target": "JUNCTION_WALAJAPET",
+      "key": "ROAD_NH40_SB",
+      "mode": "ROAD",
+      "distance_km": 53.6,
+      "transit_time_hrs": 1.34,
+      "capacity_teu_per_day": 3600.0,
+      "base_cost_per_teu": 86.6,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_VELLORE",
+      "target": "PLANT_CHITTOOR_AUTO",
+      "key": "ROAD_0",
+      "mode": "ROAD",
+      "distance_km": 40.0,
+      "transit_time_hrs": 1.09,
+      "capacity_teu_per_day": 2000.0,
+      "base_cost_per_teu": 69.2,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_VELLORE",
+      "target": "JUNCTION_AMBUR",
+      "key": "ROAD_NH48",
+      "mode": "ROAD",
+      "distance_km": 58.6,
+      "transit_time_hrs": 1.44,
+      "capacity_teu_per_day": 4500.0,
+      "base_cost_per_teu": 93.0,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_AMBUR",
+      "target": "JUNCTION_KRISHNAGIRI",
+      "key": "ROAD_NH48",
+      "mode": "ROAD",
+      "distance_km": 76.6,
+      "transit_time_hrs": 1.77,
+      "capacity_teu_per_day": 4500.0,
+      "base_cost_per_teu": 116.0,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_AMBUR",
+      "target": "JUNCTION_VELLORE",
+      "key": "ROAD_NH48_EB",
+      "mode": "ROAD",
+      "distance_km": 58.6,
+      "transit_time_hrs": 1.44,
+      "capacity_teu_per_day": 4500.0,
+      "base_cost_per_teu": 93.0,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_KRISHNAGIRI",
+      "target": "PLANT_KRISHNAGIRI_TIER1",
+      "key": "ROAD_0",
+      "mode": "ROAD",
+      "distance_km": 13.8,
+      "transit_time_hrs": 0.61,
+      "capacity_teu_per_day": 2400.0,
+      "base_cost_per_teu": 35.7,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_KRISHNAGIRI",
+      "target": "JUNCTION_AMBUR",
+      "key": "ROAD_NH48_EB",
+      "mode": "ROAD",
+      "distance_km": 76.6,
+      "transit_time_hrs": 1.77,
+      "capacity_teu_per_day": 4500.0,
+      "base_cost_per_teu": 116.0,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_KRISHNAGIRI",
+      "target": "JUNCTION_DHARMAPURI",
+      "key": "ROAD_NH44_SB",
+      "mode": "ROAD",
+      "distance_km": 56.4,
+      "transit_time_hrs": 1.39,
+      "capacity_teu_per_day": 4200.0,
+      "base_cost_per_teu": 90.2,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_KRISHNAGIRI",
+      "target": "JUNCTION_KOLAR",
+      "key": "ROAD_SPUR",
+      "mode": "ROAD",
+      "distance_km": 84.8,
+      "transit_time_hrs": 1.92,
+      "capacity_teu_per_day": 3400.0,
+      "base_cost_per_teu": 126.5,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_KRISHNAGIRI",
+      "target": "ICD_HOSUR",
+      "key": "ROAD_NH44",
+      "mode": "ROAD",
+      "distance_km": 55.9,
+      "transit_time_hrs": 1.39,
+      "capacity_teu_per_day": 3800.0,
+      "base_cost_per_teu": 89.6,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_KRISHNAGIRI",
+      "target": "CFS_HOSUR_LOGISTICS",
+      "key": "ROAD_NH44",
+      "mode": "ROAD",
+      "distance_km": 64.5,
+      "transit_time_hrs": 1.54,
+      "capacity_teu_per_day": 3800.0,
+      "base_cost_per_teu": 100.6,
+      "active": true
+    },
+    {
+      "source": "ICD_HOSUR",
+      "target": "PLANT_HOSUR",
+      "key": "ROAD_0",
+      "mode": "ROAD",
+      "distance_km": 4.8,
+      "transit_time_hrs": 0.44,
+      "capacity_teu_per_day": 2800.0,
+      "base_cost_per_teu": 24.1,
+      "active": true
+    },
+    {
+      "source": "ICD_HOSUR",
+      "target": "CFS_HOSUR_LOGISTICS",
+      "key": "ROAD_0",
+      "mode": "ROAD",
+      "distance_km": 9.3,
+      "transit_time_hrs": 0.52,
+      "capacity_teu_per_day": 3200.0,
+      "base_cost_per_teu": 29.9,
+      "active": true
+    },
+    {
+      "source": "ICD_HOSUR",
+      "target": "ICD_WHITEFIELD",
+      "key": "RAIL_CONCOR",
+      "mode": "RAIL",
+      "distance_km": 38.4,
+      "transit_time_hrs": 1.71,
+      "capacity_teu_per_day": 2400.0,
+      "base_cost_per_teu": 33.5,
+      "active": true
+    },
+    {
+      "source": "ICD_HOSUR",
+      "target": "JUNCTION_ATTIBELE",
+      "key": "ROAD_NH44",
+      "mode": "ROAD",
+      "distance_km": 13.4,
+      "transit_time_hrs": 0.6,
+      "capacity_teu_per_day": 3600.0,
+      "base_cost_per_teu": 35.2,
+      "active": true
+    },
+    {
+      "source": "CFS_HOSUR_LOGISTICS",
+      "target": "PLANT_HOSUR",
+      "key": "ROAD_0",
+      "mode": "ROAD",
+      "distance_km": 4.6,
+      "transit_time_hrs": 0.44,
+      "capacity_teu_per_day": 2800.0,
+      "base_cost_per_teu": 23.9,
+      "active": true
+    },
+    {
+      "source": "CFS_HOSUR_LOGISTICS",
+      "target": "PLANT_KRISHNAGIRI_TIER1",
+      "key": "ROAD_SPUR",
+      "mode": "ROAD",
+      "distance_km": 75.2,
+      "transit_time_hrs": 1.74,
+      "capacity_teu_per_day": 2200.0,
+      "base_cost_per_teu": 114.3,
+      "active": true
+    },
+    {
+      "source": "CFS_HOSUR_LOGISTICS",
+      "target": "JUNCTION_ATTIBELE",
+      "key": "ROAD_NH44",
+      "mode": "ROAD",
+      "distance_km": 4.4,
+      "transit_time_hrs": 0.43,
+      "capacity_teu_per_day": 3800.0,
+      "base_cost_per_teu": 23.6,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_ATTIBELE",
+      "target": "PLANT_BOMMASANDRA",
+      "key": "ROAD_0",
+      "mode": "ROAD",
+      "distance_km": 11.3,
+      "transit_time_hrs": 0.56,
+      "capacity_teu_per_day": 2400.0,
+      "base_cost_per_teu": 32.5,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_ATTIBELE",
+      "target": "CFS_BOMMASANDRA",
+      "key": "ROAD_0",
+      "mode": "ROAD",
+      "distance_km": 13.6,
+      "transit_time_hrs": 0.6,
+      "capacity_teu_per_day": 3200.0,
+      "base_cost_per_teu": 35.4,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_ATTIBELE",
+      "target": "JUNCTION_ELECTRONIC_CITY",
+      "key": "ROAD_NH44",
+      "mode": "ROAD",
+      "distance_km": 17.7,
+      "transit_time_hrs": 0.68,
+      "capacity_teu_per_day": 4500.0,
+      "base_cost_per_teu": 40.7,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_ATTIBELE",
+      "target": "JUNCTION_HOSKOTE",
+      "key": "ROAD_STRR",
+      "mode": "ROAD",
+      "distance_km": 40.4,
+      "transit_time_hrs": 1.1,
+      "capacity_teu_per_day": 3600.0,
+      "base_cost_per_teu": 69.7,
+      "active": true
+    },
+    {
+      "source": "CFS_BOMMASANDRA",
+      "target": "PLANT_BOMMASANDRA",
+      "key": "ROAD_0",
+      "mode": "ROAD",
+      "distance_km": 4.0,
+      "transit_time_hrs": 0.42,
+      "capacity_teu_per_day": 2400.0,
+      "base_cost_per_teu": 23.1,
+      "active": true
+    },
+    {
+      "source": "CFS_BOMMASANDRA",
+      "target": "PLANT_HAROHALLI",
+      "key": "ROAD_STRR",
+      "mode": "ROAD",
+      "distance_km": 34.5,
+      "transit_time_hrs": 0.99,
+      "capacity_teu_per_day": 2200.0,
+      "base_cost_per_teu": 62.2,
+      "active": true
+    },
+    {
+      "source": "CFS_BOMMASANDRA",
+      "target": "JUNCTION_ELECTRONIC_CITY",
+      "key": "ROAD_0",
+      "mode": "ROAD",
+      "distance_km": 4.1,
+      "transit_time_hrs": 0.43,
+      "capacity_teu_per_day": 3200.0,
+      "base_cost_per_teu": 23.2,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_ELECTRONIC_CITY",
+      "target": "PLANT_BIDADI",
+      "key": "ROAD_NICE",
+      "mode": "ROAD",
+      "distance_km": 37.9,
+      "transit_time_hrs": 1.05,
+      "capacity_teu_per_day": 2800.0,
+      "base_cost_per_teu": 66.5,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_ELECTRONIC_CITY",
+      "target": "PLANT_HAROHALLI",
+      "key": "ROAD_SOUTH",
+      "mode": "ROAD",
+      "distance_km": 33.1,
+      "transit_time_hrs": 0.96,
+      "capacity_teu_per_day": 2200.0,
+      "base_cost_per_teu": 60.4,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_ELECTRONIC_CITY",
+      "target": "CFS_WHITEFIELD",
+      "key": "ROAD_ORR",
+      "mode": "ROAD",
+      "distance_km": 22.1,
+      "transit_time_hrs": 0.76,
+      "capacity_teu_per_day": 3200.0,
+      "base_cost_per_teu": 46.3,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_MULBAGAL",
+      "target": "PLANT_VEMAGAL",
+      "key": "ROAD_NH75",
+      "mode": "ROAD",
+      "distance_km": 48.6,
+      "transit_time_hrs": 1.25,
+      "capacity_teu_per_day": 2200.0,
+      "base_cost_per_teu": 80.2,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_MULBAGAL",
+      "target": "JUNCTION_KOLAR",
+      "key": "ROAD_NH75",
+      "mode": "ROAD",
+      "distance_km": 35.9,
+      "transit_time_hrs": 1.01,
+      "capacity_teu_per_day": 4000.0,
+      "base_cost_per_teu": 64.0,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_KOLAR",
+      "target": "PLANT_NARASAPURA",
+      "key": "ROAD_0",
+      "mode": "ROAD",
+      "distance_km": 16.7,
+      "transit_time_hrs": 0.66,
+      "capacity_teu_per_day": 2400.0,
+      "base_cost_per_teu": 39.4,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_KOLAR",
+      "target": "PLANT_VEMAGAL",
+      "key": "ROAD_0",
+      "mode": "ROAD",
+      "distance_km": 14.5,
+      "transit_time_hrs": 0.62,
+      "capacity_teu_per_day": 2200.0,
+      "base_cost_per_teu": 36.6,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_KOLAR",
+      "target": "JUNCTION_HOSKOTE",
+      "key": "ROAD_NH75",
+      "mode": "ROAD",
+      "distance_km": 45.4,
+      "transit_time_hrs": 1.19,
+      "capacity_teu_per_day": 4200.0,
+      "base_cost_per_teu": 76.1,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_HOSKOTE",
+      "target": "CFS_WHITEFIELD",
+      "key": "ROAD_0",
+      "mode": "ROAD",
+      "distance_km": 14.1,
+      "transit_time_hrs": 0.61,
+      "capacity_teu_per_day": 3400.0,
+      "base_cost_per_teu": 36.0,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_HOSKOTE",
+      "target": "ICD_WHITEFIELD",
+      "key": "ROAD_0",
+      "mode": "ROAD",
+      "distance_km": 12.3,
+      "transit_time_hrs": 0.58,
+      "capacity_teu_per_day": 3400.0,
+      "base_cost_per_teu": 33.7,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_HOSKOTE",
+      "target": "PLANT_NARASAPURA",
+      "key": "ROAD_EB",
+      "mode": "ROAD",
+      "distance_km": 29.7,
+      "transit_time_hrs": 0.9,
+      "capacity_teu_per_day": 2400.0,
+      "base_cost_per_teu": 56.0,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_HOSKOTE",
+      "target": "JUNCTION_NELAMANGALA",
+      "key": "ROAD_STRR",
+      "mode": "ROAD",
+      "distance_km": 55.2,
+      "transit_time_hrs": 1.37,
+      "capacity_teu_per_day": 3800.0,
+      "base_cost_per_teu": 88.7,
+      "active": true
+    },
+    {
+      "source": "CFS_WHITEFIELD",
+      "target": "PLANT_PEENYA",
+      "key": "ROAD_ORR",
+      "mode": "ROAD",
+      "distance_km": 30.2,
+      "transit_time_hrs": 0.91,
+      "capacity_teu_per_day": 2400.0,
+      "base_cost_per_teu": 56.7,
+      "active": true
+    },
+    {
+      "source": "CFS_WHITEFIELD",
+      "target": "CFS_BOMMASANDRA",
+      "key": "ROAD_0",
+      "mode": "ROAD",
+      "distance_km": 22.9,
+      "transit_time_hrs": 0.77,
+      "capacity_teu_per_day": 2800.0,
+      "base_cost_per_teu": 47.3,
+      "active": true
+    },
+    {
+      "source": "CFS_MANGALORE_PANAMBUR",
+      "target": "JUNCTION_HASSAN",
+      "key": "ROAD_NH75",
+      "mode": "ROAD",
+      "distance_km": 171.5,
+      "transit_time_hrs": 3.53,
+      "capacity_teu_per_day": 2800.0,
+      "base_cost_per_teu": 237.5,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_HASSAN",
+      "target": "JUNCTION_KUNIGAL",
+      "key": "ROAD_NH75",
+      "mode": "ROAD",
+      "distance_km": 124.2,
+      "transit_time_hrs": 2.65,
+      "capacity_teu_per_day": 3400.0,
+      "base_cost_per_teu": 177.0,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_HASSAN",
+      "target": "JUNCTION_MYSURU_RING",
+      "key": "ROAD_SOUTH",
+      "mode": "ROAD",
+      "distance_km": 121.6,
+      "transit_time_hrs": 2.6,
+      "capacity_teu_per_day": 3000.0,
+      "base_cost_per_teu": 173.6,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_HASSAN",
+      "target": "PLANT_TUMAKURU",
+      "key": "ROAD_SPUR",
+      "mode": "ROAD",
+      "distance_km": 136.0,
+      "transit_time_hrs": 2.87,
+      "capacity_teu_per_day": 2200.0,
+      "base_cost_per_teu": 192.1,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_KUNIGAL",
+      "target": "JUNCTION_NELAMANGALA",
+      "key": "ROAD_NH75",
+      "mode": "ROAD",
+      "distance_km": 49.8,
+      "transit_time_hrs": 1.27,
+      "capacity_teu_per_day": 3600.0,
+      "base_cost_per_teu": 81.7,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_KUNIGAL",
+      "target": "JUNCTION_RAMANAGARA",
+      "key": "ROAD_SPUR",
+      "mode": "ROAD",
+      "distance_km": 54.6,
+      "transit_time_hrs": 1.36,
+      "capacity_teu_per_day": 3000.0,
+      "base_cost_per_teu": 87.9,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_KUNIGAL",
+      "target": "PLANT_TUMAKURU",
+      "key": "ROAD_NORTH",
+      "mode": "ROAD",
+      "distance_km": 56.0,
+      "transit_time_hrs": 1.39,
+      "capacity_teu_per_day": 2200.0,
+      "base_cost_per_teu": 89.7,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_MYSURU_RING",
+      "target": "JUNCTION_MANDYA",
+      "key": "ROAD_NH275",
+      "mode": "ROAD",
+      "distance_km": 46.4,
+      "transit_time_hrs": 1.21,
+      "capacity_teu_per_day": 3200.0,
+      "base_cost_per_teu": 77.4,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_MYSURU_RING",
+      "target": "JUNCTION_PALAKKAD",
+      "key": "ROAD_NH766",
+      "mode": "ROAD",
+      "distance_km": 209.3,
+      "transit_time_hrs": 4.23,
+      "capacity_teu_per_day": 2800.0,
+      "base_cost_per_teu": 285.9,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_MANDYA",
+      "target": "JUNCTION_RAMANAGARA",
+      "key": "ROAD_NH275",
+      "mode": "ROAD",
+      "distance_km": 58.4,
+      "transit_time_hrs": 1.43,
+      "capacity_teu_per_day": 3400.0,
+      "base_cost_per_teu": 92.8,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_MANDYA",
+      "target": "PLANT_HAROHALLI",
+      "key": "ROAD_SOUTH",
+      "mode": "ROAD",
+      "distance_km": 80.7,
+      "transit_time_hrs": 1.84,
+      "capacity_teu_per_day": 2200.0,
+      "base_cost_per_teu": 121.3,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_RAMANAGARA",
+      "target": "PLANT_BIDADI",
+      "key": "ROAD_NH275",
+      "mode": "ROAD",
+      "distance_km": 17.8,
+      "transit_time_hrs": 0.68,
+      "capacity_teu_per_day": 2800.0,
+      "base_cost_per_teu": 40.8,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_RAMANAGARA",
+      "target": "PLANT_HAROHALLI",
+      "key": "ROAD_STRR",
+      "mode": "ROAD",
+      "distance_km": 25.3,
+      "transit_time_hrs": 0.82,
+      "capacity_teu_per_day": 2200.0,
+      "base_cost_per_teu": 50.4,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_NELAMANGALA",
+      "target": "CFS_NELAMANGALA",
+      "key": "ROAD_0",
+      "mode": "ROAD",
+      "distance_km": 4.0,
+      "transit_time_hrs": 0.42,
+      "capacity_teu_per_day": 3400.0,
+      "base_cost_per_teu": 23.1,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_NELAMANGALA",
+      "target": "JUNCTION_TUMAKURU_NH48",
+      "key": "ROAD_NH48_NB",
+      "mode": "ROAD",
+      "distance_km": 49.9,
+      "transit_time_hrs": 1.27,
+      "capacity_teu_per_day": 3600.0,
+      "base_cost_per_teu": 81.9,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_NELAMANGALA",
+      "target": "PLANT_PEENYA",
+      "key": "ROAD_NH48",
+      "mode": "ROAD",
+      "distance_km": 19.9,
+      "transit_time_hrs": 0.72,
+      "capacity_teu_per_day": 2600.0,
+      "base_cost_per_teu": 43.5,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_NELAMANGALA",
+      "target": "PLANT_BIDADI",
+      "key": "ROAD_NICE_WEST",
+      "mode": "ROAD",
+      "distance_km": 40.9,
+      "transit_time_hrs": 1.11,
+      "capacity_teu_per_day": 2600.0,
+      "base_cost_per_teu": 70.4,
+      "active": true
+    },
+    {
+      "source": "CFS_NELAMANGALA",
+      "target": "PLANT_PEENYA",
+      "key": "ROAD_0",
+      "mode": "ROAD",
+      "distance_km": 19.7,
+      "transit_time_hrs": 0.71,
+      "capacity_teu_per_day": 2600.0,
+      "base_cost_per_teu": 43.2,
+      "active": true
+    },
+    {
+      "source": "CFS_NELAMANGALA",
+      "target": "PLANT_DOBBASPET",
+      "key": "ROAD_NH48",
+      "mode": "ROAD",
+      "distance_km": 28.1,
+      "transit_time_hrs": 0.87,
+      "capacity_teu_per_day": 2200.0,
+      "base_cost_per_teu": 54.0,
+      "active": true
+    },
+    {
+      "source": "CFS_NELAMANGALA",
+      "target": "PLANT_TUMAKURU",
+      "key": "ROAD_NH48_FEED",
+      "mode": "ROAD",
+      "distance_km": 68.0,
+      "transit_time_hrs": 1.61,
+      "capacity_teu_per_day": 2200.0,
+      "base_cost_per_teu": 105.0,
+      "active": true
+    },
+    {
+      "source": "CFS_NELAMANGALA",
+      "target": "CFS_WHITEFIELD",
+      "key": "ROAD_RING",
+      "mode": "ROAD",
+      "distance_km": 49.3,
+      "transit_time_hrs": 1.26,
+      "capacity_teu_per_day": 3000.0,
+      "base_cost_per_teu": 81.1,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_TUMAKURU_NH48",
+      "target": "PLANT_DOBBASPET",
+      "key": "ROAD_0",
+      "mode": "ROAD",
+      "distance_km": 21.8,
+      "transit_time_hrs": 0.75,
+      "capacity_teu_per_day": 2200.0,
+      "base_cost_per_teu": 45.9,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_TUMAKURU_NH48",
+      "target": "PLANT_TUMAKURU",
+      "key": "ROAD_0",
+      "mode": "ROAD",
+      "distance_km": 18.1,
+      "transit_time_hrs": 0.69,
+      "capacity_teu_per_day": 2400.0,
+      "base_cost_per_teu": 41.2,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_TUMAKURU_NH48",
+      "target": "JUNCTION_NELAMANGALA",
+      "key": "ROAD_NH48_SB",
+      "mode": "ROAD",
+      "distance_km": 49.9,
+      "transit_time_hrs": 1.27,
+      "capacity_teu_per_day": 3600.0,
+      "base_cost_per_teu": 81.9,
+      "active": true
+    },
+    {
+      "source": "PLANT_DOBBASPET",
+      "target": "PLANT_TUMAKURU",
+      "key": "ROAD_SPUR",
+      "mode": "ROAD",
+      "distance_km": 39.8,
+      "transit_time_hrs": 1.09,
+      "capacity_teu_per_day": 2000.0,
+      "base_cost_per_teu": 68.9,
+      "active": true
+    },
+    {
+      "source": "PLANT_TUMAKURU",
+      "target": "PLANT_DOBBASPET",
+      "key": "ROAD_SPUR",
+      "mode": "ROAD",
+      "distance_km": 39.8,
+      "transit_time_hrs": 1.09,
+      "capacity_teu_per_day": 2000.0,
+      "base_cost_per_teu": 68.9,
+      "active": true
+    },
+    {
+      "source": "PLANT_SRIPERUMBUDUR",
+      "target": "CFS_ORAGADAM",
+      "key": "ROAD_CROSS",
+      "mode": "ROAD",
+      "distance_km": 18.1,
+      "transit_time_hrs": 0.69,
+      "capacity_teu_per_day": 2400.0,
+      "base_cost_per_teu": 41.2,
+      "active": true
+    },
+    {
+      "source": "PLANT_ORAGADAM",
+      "target": "CFS_SRIPERUMBUDUR",
+      "key": "ROAD_CROSS",
+      "mode": "ROAD",
+      "distance_km": 19.2,
+      "transit_time_hrs": 0.71,
+      "capacity_teu_per_day": 2400.0,
+      "base_cost_per_teu": 42.6,
+      "active": true
+    },
+    {
+      "source": "ICD_WHITEFIELD",
+      "target": "JUNCTION_HOSKOTE",
+      "key": "ROAD_EB",
+      "mode": "ROAD",
+      "distance_km": 12.3,
+      "transit_time_hrs": 0.58,
+      "capacity_teu_per_day": 3200.0,
+      "base_cost_per_teu": 33.7,
+      "active": true
+    },
+    {
+      "source": "ICD_WHITEFIELD",
+      "target": "JUNCTION_ELECTRONIC_CITY",
+      "key": "ROAD_NICE",
+      "mode": "ROAD",
+      "distance_km": 23.9,
+      "transit_time_hrs": 0.79,
+      "capacity_teu_per_day": 3000.0,
+      "base_cost_per_teu": 48.6,
+      "active": true
+    },
+    {
+      "source": "ICD_WHITEFIELD",
+      "target": "CFS_NELAMANGALA",
+      "key": "ROAD_RING",
+      "mode": "ROAD",
+      "distance_km": 51.0,
+      "transit_time_hrs": 1.29,
+      "capacity_teu_per_day": 2800.0,
+      "base_cost_per_teu": 83.3,
+      "active": true
+    },
+    {
+      "source": "ICD_WHITEFIELD",
+      "target": "PLANT_PEENYA",
+      "key": "ROAD_ORR",
+      "mode": "ROAD",
+      "distance_km": 32.1,
+      "transit_time_hrs": 0.94,
+      "capacity_teu_per_day": 2600.0,
+      "base_cost_per_teu": 59.1,
+      "active": true
+    },
+    {
+      "source": "ICD_WHITEFIELD",
+      "target": "PLANT_BOMMASANDRA",
+      "key": "ROAD_0",
+      "mode": "ROAD",
+      "distance_km": 25.4,
+      "transit_time_hrs": 0.82,
+      "capacity_teu_per_day": 2400.0,
+      "base_cost_per_teu": 50.5,
+      "active": true
+    },
+    {
+      "source": "ICD_WHITEFIELD",
+      "target": "PLANT_NARASAPURA",
+      "key": "ROAD_NH75",
+      "mode": "ROAD",
+      "distance_km": 39.7,
+      "transit_time_hrs": 1.09,
+      "capacity_teu_per_day": 2400.0,
+      "base_cost_per_teu": 68.8,
+      "active": true
+    },
+    {
+      "source": "ICD_WHITEFIELD",
+      "target": "PLANT_VEMAGAL",
+      "key": "ROAD_NH75",
+      "mode": "ROAD",
+      "distance_km": 46.1,
+      "transit_time_hrs": 1.2,
+      "capacity_teu_per_day": 2200.0,
+      "base_cost_per_teu": 77.0,
+      "active": true
+    },
+    {
+      "source": "PLANT_HOSUR",
+      "target": "JUNCTION_ATTIBELE",
+      "key": "ROAD_NB",
+      "mode": "ROAD",
+      "distance_km": 8.8,
+      "transit_time_hrs": 0.51,
+      "capacity_teu_per_day": 3200.0,
+      "base_cost_per_teu": 29.3,
+      "active": true
+    },
+    {
+      "source": "PLANT_HOSUR",
+      "target": "JUNCTION_KRISHNAGIRI",
+      "key": "ROAD_NH44_EB",
+      "mode": "ROAD",
+      "distance_km": 60.1,
+      "transit_time_hrs": 1.46,
+      "capacity_teu_per_day": 3200.0,
+      "base_cost_per_teu": 94.9,
+      "active": true
+    },
+    {
+      "source": "PORT_KAMARAJAR",
+      "target": "ICD_SALEM",
+      "key": "RAIL_SOUTH",
+      "mode": "RAIL",
+      "distance_km": 349.7,
+      "transit_time_hrs": 9.13,
+      "capacity_teu_per_day": 1800.0,
+      "base_cost_per_teu": 207.8,
+      "active": true
+    },
+    {
+      "source": "PORT_KATTUPALLI",
+      "target": "CFS_MANALI",
+      "key": "ROAD_COASTAL",
+      "mode": "ROAD",
+      "distance_km": 22.8,
+      "transit_time_hrs": 0.77,
+      "capacity_teu_per_day": 2600.0,
+      "base_cost_per_teu": 47.2,
+      "active": true
+    },
+    {
+      "source": "PORT_KATTUPALLI",
+      "target": "CFS_CHENNAI_CENTRAL",
+      "key": "ROAD_BYPASS",
+      "mode": "ROAD",
+      "distance_km": 27.1,
+      "transit_time_hrs": 0.85,
+      "capacity_teu_per_day": 2600.0,
+      "base_cost_per_teu": 52.7,
+      "active": true
+    },
+    {
+      "source": "PORT_CHENNAI",
+      "target": "JUNCTION_TIRUVALLUR",
+      "key": "ROAD_NH716",
+      "mode": "ROAD",
+      "distance_km": 49.9,
+      "transit_time_hrs": 1.27,
+      "capacity_teu_per_day": 2800.0,
+      "base_cost_per_teu": 81.9,
+      "active": true
+    },
+    {
+      "source": "PORT_KRISHNAPATNAM",
+      "target": "CFS_SULLURPETA",
+      "key": "ROAD_NH16_SB",
+      "mode": "ROAD",
+      "distance_km": 76.7,
+      "transit_time_hrs": 1.77,
+      "capacity_teu_per_day": 3200.0,
+      "base_cost_per_teu": 116.2,
+      "active": true
+    },
+    {
+      "source": "PORT_KRISHNAPATNAM",
+      "target": "JUNCTION_NAIDUPETA",
+      "key": "ROAD_SPUR",
+      "mode": "ROAD",
+      "distance_km": 56.6,
+      "transit_time_hrs": 1.4,
+      "capacity_teu_per_day": 3000.0,
+      "base_cost_per_teu": 90.4,
+      "active": true
+    },
+    {
+      "source": "PORT_KARAIKAL",
+      "target": "ICD_SALEM",
+      "key": "RAIL_KAVERI",
+      "mode": "RAIL",
+      "distance_km": 240.2,
+      "transit_time_hrs": 6.52,
+      "capacity_teu_per_day": 1800.0,
+      "base_cost_per_teu": 146.5,
+      "active": true
+    },
+    {
+      "source": "PORT_KARAIKAL",
+      "target": "JUNCTION_VILLUPURAM",
+      "key": "ROAD_EC",
+      "mode": "ROAD",
+      "distance_km": 150.9,
+      "transit_time_hrs": 3.14,
+      "capacity_teu_per_day": 2200.0,
+      "base_cost_per_teu": 211.2,
+      "active": true
+    },
+    {
+      "source": "PORT_VOC",
+      "target": "CFS_MADURAI_INLAND",
+      "key": "ROAD_NH38",
+      "mode": "ROAD",
+      "distance_km": 154.5,
+      "transit_time_hrs": 3.21,
+      "capacity_teu_per_day": 2400.0,
+      "base_cost_per_teu": 215.8,
+      "active": true
+    },
+    {
+      "source": "PORT_COCHIN",
+      "target": "CFS_PALAKKAD_FREIGHT",
+      "key": "ROAD_NH544",
+      "mode": "ROAD",
+      "distance_km": 139.7,
+      "transit_time_hrs": 2.94,
+      "capacity_teu_per_day": 2600.0,
+      "base_cost_per_teu": 196.8,
+      "active": true
+    },
+    {
+      "source": "PORT_COCHIN",
+      "target": "JUNCTION_MYSURU_RING",
+      "key": "ROAD_HILL",
+      "mode": "ROAD",
+      "distance_km": 325.1,
+      "transit_time_hrs": 6.37,
+      "capacity_teu_per_day": 2000.0,
+      "base_cost_per_teu": 434.1,
+      "active": true
+    },
+    {
+      "source": "PORT_NEW_MANGALORE",
+      "target": "JUNCTION_MYSURU_RING",
+      "key": "ROAD_GHAT",
+      "mode": "ROAD",
+      "distance_km": 259.5,
+      "transit_time_hrs": 5.16,
+      "capacity_teu_per_day": 2400.0,
+      "base_cost_per_teu": 350.2,
+      "active": true
+    },
+    {
+      "source": "PORT_NEW_MANGALORE",
+      "target": "CFS_NELAMANGALA",
+      "key": "RAIL_WEST",
+      "mode": "RAIL",
+      "distance_km": 329.4,
+      "transit_time_hrs": 8.64,
+      "capacity_teu_per_day": 1600.0,
+      "base_cost_per_teu": 196.5,
+      "active": true
+    },
+    {
+      "source": "ICD_TONDIARPET",
+      "target": "PLANT_AMBATTUR",
+      "key": "ROAD_0",
+      "mode": "ROAD",
+      "distance_km": 17.5,
+      "transit_time_hrs": 0.67,
+      "capacity_teu_per_day": 2400.0,
+      "base_cost_per_teu": 40.4,
+      "active": true
+    },
+    {
+      "source": "ICD_TONDIARPET",
+      "target": "PLANT_GUMMIDIPOONDI",
+      "key": "ROAD_0",
+      "mode": "ROAD",
+      "distance_km": 45.7,
+      "transit_time_hrs": 1.2,
+      "capacity_teu_per_day": 2200.0,
+      "base_cost_per_teu": 76.5,
+      "active": true
+    },
+    {
+      "source": "ICD_TONDIARPET",
+      "target": "PLANT_THIRUVALLUR",
+      "key": "ROAD_0",
+      "mode": "ROAD",
+      "distance_km": 51.4,
+      "transit_time_hrs": 1.3,
+      "capacity_teu_per_day": 2200.0,
+      "base_cost_per_teu": 83.8,
+      "active": true
+    },
+    {
+      "source": "ICD_TONDIARPET",
+      "target": "JUNCTION_CHENGALPATTU",
+      "key": "ROAD_ORR",
+      "mode": "ROAD",
+      "distance_km": 73.1,
+      "transit_time_hrs": 1.7,
+      "capacity_teu_per_day": 2600.0,
+      "base_cost_per_teu": 111.6,
+      "active": true
+    },
+    {
+      "source": "ICD_HOSUR",
+      "target": "PLANT_BOMMASANDRA",
+      "key": "ROAD_0",
+      "mode": "ROAD",
+      "distance_km": 24.5,
+      "transit_time_hrs": 0.8,
+      "capacity_teu_per_day": 2400.0,
+      "base_cost_per_teu": 49.4,
+      "active": true
+    },
+    {
+      "source": "ICD_HOSUR",
+      "target": "PLANT_BIDADI",
+      "key": "ROAD_NICE",
+      "mode": "ROAD",
+      "distance_km": 63.3,
+      "transit_time_hrs": 1.52,
+      "capacity_teu_per_day": 2400.0,
+      "base_cost_per_teu": 99.0,
+      "active": true
+    },
+    {
+      "source": "ICD_HOSUR",
+      "target": "PLANT_KRISHNAGIRI_TIER1",
+      "key": "ROAD_EB",
+      "mode": "ROAD",
+      "distance_km": 67.2,
+      "transit_time_hrs": 1.59,
+      "capacity_teu_per_day": 2400.0,
+      "base_cost_per_teu": 104.0,
+      "active": true
+    },
+    {
+      "source": "ICD_HOSUR",
+      "target": "JUNCTION_DHARMAPURI",
+      "key": "ROAD_NH44_SB",
+      "mode": "ROAD",
+      "distance_km": 91.7,
+      "transit_time_hrs": 2.05,
+      "capacity_teu_per_day": 2800.0,
+      "base_cost_per_teu": 135.4,
+      "active": true
+    },
+    {
+      "source": "ICD_SALEM",
+      "target": "ICD_WHITEFIELD",
+      "key": "RAIL_CONCOR",
+      "mode": "RAIL",
+      "distance_km": 181.2,
+      "transit_time_hrs": 5.11,
+      "capacity_teu_per_day": 2000.0,
+      "base_cost_per_teu": 113.5,
+      "active": true
+    },
+    {
+      "source": "ICD_SALEM",
+      "target": "PLANT_KINATHUKADAVU",
+      "key": "ROAD_SOUTH",
+      "mode": "ROAD",
+      "distance_km": 191.7,
+      "transit_time_hrs": 3.9,
+      "capacity_teu_per_day": 2000.0,
+      "base_cost_per_teu": 263.4,
+      "active": true
+    },
+    {
+      "source": "ICD_SALEM",
+      "target": "PLANT_COIMBATORE",
+      "key": "ROAD_NH544",
+      "mode": "ROAD",
+      "distance_km": 184.0,
+      "transit_time_hrs": 3.76,
+      "capacity_teu_per_day": 2400.0,
+      "base_cost_per_teu": 253.5,
+      "active": true
+    },
+    {
+      "source": "ICD_SALEM",
+      "target": "JUNCTION_TRICHY",
+      "key": "ROAD_EAST",
+      "mode": "ROAD",
+      "distance_km": 142.2,
+      "transit_time_hrs": 2.98,
+      "capacity_teu_per_day": 2400.0,
+      "base_cost_per_teu": 200.0,
+      "active": true
+    },
+    {
+      "source": "ICD_IRUGUR",
+      "target": "PLANT_KINATHUKADAVU",
+      "key": "ROAD_0",
+      "mode": "ROAD",
+      "distance_km": 29.0,
+      "transit_time_hrs": 0.89,
+      "capacity_teu_per_day": 2200.0,
+      "base_cost_per_teu": 55.1,
+      "active": true
+    },
+    {
+      "source": "ICD_IRUGUR",
+      "target": "PLANT_PALAKKAD_COMPONENTS",
+      "key": "ROAD_NH544_WB",
+      "mode": "ROAD",
+      "distance_km": 55.2,
+      "transit_time_hrs": 1.37,
+      "capacity_teu_per_day": 2200.0,
+      "base_cost_per_teu": 88.7,
+      "active": true
+    },
+    {
+      "source": "ICD_KRISHNAPATNAM_RAIL",
+      "target": "PLANT_NELLORE_TIER1",
+      "key": "ROAD_0",
+      "mode": "ROAD",
+      "distance_km": 30.5,
+      "transit_time_hrs": 0.91,
+      "capacity_teu_per_day": 2400.0,
+      "base_cost_per_teu": 57.0,
+      "active": true
+    },
+    {
+      "source": "ICD_KRISHNAPATNAM_RAIL",
+      "target": "PLANT_NAIDUPETA",
+      "key": "ROAD_0",
+      "mode": "ROAD",
+      "distance_km": 51.2,
+      "transit_time_hrs": 1.3,
+      "capacity_teu_per_day": 2200.0,
+      "base_cost_per_teu": 83.5,
+      "active": true
+    },
+    {
+      "source": "ICD_KRISHNAPATNAM_RAIL",
+      "target": "PLANT_TADA",
+      "key": "RAIL_SPUR",
+      "mode": "RAIL",
+      "distance_km": 84.6,
+      "transit_time_hrs": 2.81,
+      "capacity_teu_per_day": 2000.0,
+      "base_cost_per_teu": 59.4,
+      "active": true
+    },
+    {
+      "source": "ICD_KRISHNAPATNAM_RAIL",
+      "target": "PLANT_SRICITY",
+      "key": "ROAD_SPUR",
+      "mode": "ROAD",
+      "distance_km": 97.0,
+      "transit_time_hrs": 2.15,
+      "capacity_teu_per_day": 2200.0,
+      "base_cost_per_teu": 142.2,
+      "active": true
+    },
+    {
+      "source": "CFS_PONNERI",
+      "target": "PLANT_TADA",
+      "key": "ROAD_NH16",
+      "mode": "ROAD",
+      "distance_km": 41.2,
+      "transit_time_hrs": 1.11,
+      "capacity_teu_per_day": 2200.0,
+      "base_cost_per_teu": 70.7,
+      "active": true
+    },
+    {
+      "source": "CFS_PONNERI",
+      "target": "PLANT_THIRUVALLUR",
+      "key": "ROAD_SPUR",
+      "mode": "ROAD",
+      "distance_km": 46.8,
+      "transit_time_hrs": 1.22,
+      "capacity_teu_per_day": 2200.0,
+      "base_cost_per_teu": 77.9,
+      "active": true
+    },
+    {
+      "source": "CFS_MANALI",
+      "target": "PLANT_MARAIMALAI",
+      "key": "ROAD_BYPASS",
+      "mode": "ROAD",
+      "distance_km": 60.5,
+      "transit_time_hrs": 1.47,
+      "capacity_teu_per_day": 2200.0,
+      "base_cost_per_teu": 95.4,
+      "active": true
+    },
+    {
+      "source": "CFS_MANALI",
+      "target": "PLANT_IRUNGATTUKOTTAI",
+      "key": "ROAD_0",
+      "mode": "ROAD",
+      "distance_km": 43.0,
+      "transit_time_hrs": 1.15,
+      "capacity_teu_per_day": 2400.0,
+      "base_cost_per_teu": 73.0,
+      "active": true
+    },
+    {
+      "source": "CFS_ENNORE_LOGISTICS",
+      "target": "PLANT_AMBATTUR",
+      "key": "ROAD_0",
+      "mode": "ROAD",
+      "distance_km": 26.3,
+      "transit_time_hrs": 0.84,
+      "capacity_teu_per_day": 2200.0,
+      "base_cost_per_teu": 51.7,
+      "active": true
+    },
+    {
+      "source": "CFS_ENNORE_LOGISTICS",
+      "target": "PLANT_GUMMIDIPOONDI",
+      "key": "ROAD_NORTH",
+      "mode": "ROAD",
+      "distance_km": 36.1,
+      "transit_time_hrs": 1.02,
+      "capacity_teu_per_day": 2200.0,
+      "base_cost_per_teu": 64.2,
+      "active": true
+    },
+    {
+      "source": "CFS_MINJUR",
+      "target": "PLANT_GUMMIDIPOONDI",
+      "key": "ROAD_NH16",
+      "mode": "ROAD",
+      "distance_km": 27.1,
+      "transit_time_hrs": 0.85,
+      "capacity_teu_per_day": 2200.0,
+      "base_cost_per_teu": 52.7,
+      "active": true
+    },
+    {
+      "source": "CFS_MINJUR",
+      "target": "PLANT_SRICITY",
+      "key": "ROAD_BYPASS",
+      "mode": "ROAD",
+      "distance_km": 48.4,
+      "transit_time_hrs": 1.25,
+      "capacity_teu_per_day": 2200.0,
+      "base_cost_per_teu": 80.0,
+      "active": true
+    },
+    {
+      "source": "CFS_CHENNAI_CENTRAL",
+      "target": "PLANT_IRUNGATTUKOTTAI",
+      "key": "ROAD_0",
+      "mode": "ROAD",
+      "distance_km": 38.4,
+      "transit_time_hrs": 1.06,
+      "capacity_teu_per_day": 2400.0,
+      "base_cost_per_teu": 67.2,
+      "active": true
+    },
+    {
+      "source": "CFS_CHENNAI_CENTRAL",
+      "target": "PLANT_VALLAM_VADAGAL",
+      "key": "ROAD_0",
+      "mode": "ROAD",
+      "distance_km": 56.5,
+      "transit_time_hrs": 1.4,
+      "capacity_teu_per_day": 2200.0,
+      "base_cost_per_teu": 90.3,
+      "active": true
+    },
+    {
+      "source": "CFS_CHENNAI_CENTRAL",
+      "target": "PLANT_CHENGALPATTU",
+      "key": "ROAD_0",
+      "mode": "ROAD",
+      "distance_km": 65.0,
+      "transit_time_hrs": 1.55,
+      "capacity_teu_per_day": 2200.0,
+      "base_cost_per_teu": 101.2,
+      "active": true
+    },
+    {
+      "source": "CFS_CHENNAI_CENTRAL",
+      "target": "PLANT_THIRUVALLUR",
+      "key": "ROAD_0",
+      "mode": "ROAD",
+      "distance_km": 43.4,
+      "transit_time_hrs": 1.15,
+      "capacity_teu_per_day": 2200.0,
+      "base_cost_per_teu": 73.6,
+      "active": true
+    },
+    {
+      "source": "CFS_CHENNAI_CENTRAL",
+      "target": "PLANT_MARAIMALAI",
+      "key": "ROAD_0",
+      "mode": "ROAD",
+      "distance_km": 56.3,
+      "transit_time_hrs": 1.39,
+      "capacity_teu_per_day": 2200.0,
+      "base_cost_per_teu": 90.1,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_TAMBARAM",
+      "target": "PLANT_CHENGALPATTU",
+      "key": "ROAD_NH32",
+      "mode": "ROAD",
+      "distance_km": 29.6,
+      "transit_time_hrs": 0.9,
+      "capacity_teu_per_day": 2400.0,
+      "base_cost_per_teu": 55.9,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_TAMBARAM",
+      "target": "PLANT_VALLAM_VADAGAL",
+      "key": "ROAD_ORR",
+      "mode": "ROAD",
+      "distance_km": 26.4,
+      "transit_time_hrs": 0.84,
+      "capacity_teu_per_day": 2200.0,
+      "base_cost_per_teu": 51.8,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_TAMBARAM",
+      "target": "PLANT_ORAGADAM",
+      "key": "ROAD_0",
+      "mode": "ROAD",
+      "distance_km": 23.2,
+      "transit_time_hrs": 0.78,
+      "capacity_teu_per_day": 2600.0,
+      "base_cost_per_teu": 47.7,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_TAMBARAM",
+      "target": "PLANT_SRIPERUMBUDUR",
+      "key": "ROAD_0",
+      "mode": "ROAD",
+      "distance_km": 22.2,
+      "transit_time_hrs": 0.76,
+      "capacity_teu_per_day": 2600.0,
+      "base_cost_per_teu": 46.4,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_RANIPET",
+      "target": "PLANT_IRUNGATTUKOTTAI",
+      "key": "ROAD_NH48_EB",
+      "mode": "ROAD",
+      "distance_km": 89.0,
+      "transit_time_hrs": 2.0,
+      "capacity_teu_per_day": 2400.0,
+      "base_cost_per_teu": 131.9,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_WALAJAPET",
+      "target": "PLANT_CHEYYAR",
+      "key": "ROAD_0",
+      "mode": "ROAD",
+      "distance_km": 43.6,
+      "transit_time_hrs": 1.16,
+      "capacity_teu_per_day": 2200.0,
+      "base_cost_per_teu": 73.8,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_WALAJAPET",
+      "target": "PLANT_ORAGADAM",
+      "key": "ROAD_NH48_EB",
+      "mode": "ROAD",
+      "distance_km": 80.2,
+      "transit_time_hrs": 1.84,
+      "capacity_teu_per_day": 2600.0,
+      "base_cost_per_teu": 120.7,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_WALAJAPET",
+      "target": "PLANT_SRIPERUMBUDUR",
+      "key": "ROAD_NH48_EB",
+      "mode": "ROAD",
+      "distance_km": 77.6,
+      "transit_time_hrs": 1.79,
+      "capacity_teu_per_day": 2600.0,
+      "base_cost_per_teu": 117.3,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_AMBUR",
+      "target": "PLANT_KRISHNAGIRI_TIER1",
+      "key": "ROAD_NH48",
+      "mode": "ROAD",
+      "distance_km": 63.4,
+      "transit_time_hrs": 1.52,
+      "capacity_teu_per_day": 2200.0,
+      "base_cost_per_teu": 99.2,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_AMBUR",
+      "target": "PLANT_SALEM_STEEL",
+      "key": "ROAD_SOUTH",
+      "mode": "ROAD",
+      "distance_km": 175.9,
+      "transit_time_hrs": 3.61,
+      "capacity_teu_per_day": 2000.0,
+      "base_cost_per_teu": 243.2,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_CHITTOOR",
+      "target": "PLANT_TIRUPATI_ELECTRONICS",
+      "key": "ROAD_0",
+      "mode": "ROAD",
+      "distance_km": 82.0,
+      "transit_time_hrs": 1.87,
+      "capacity_teu_per_day": 2200.0,
+      "base_cost_per_teu": 123.0,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_CHITTOOR",
+      "target": "PLANT_NARASAPURA",
+      "key": "ROAD_NH75",
+      "mode": "ROAD",
+      "distance_km": 147.4,
+      "transit_time_hrs": 3.08,
+      "capacity_teu_per_day": 2200.0,
+      "base_cost_per_teu": 206.7,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_MULBAGAL",
+      "target": "PLANT_CHITTOOR_AUTO",
+      "key": "ROAD_EB",
+      "mode": "ROAD",
+      "distance_km": 93.7,
+      "transit_time_hrs": 2.09,
+      "capacity_teu_per_day": 2000.0,
+      "base_cost_per_teu": 137.9,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_MULBAGAL",
+      "target": "PLANT_NARASAPURA",
+      "key": "ROAD_NH75",
+      "mode": "ROAD",
+      "distance_km": 52.4,
+      "transit_time_hrs": 1.32,
+      "capacity_teu_per_day": 2400.0,
+      "base_cost_per_teu": 85.1,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_ATTIBELE",
+      "target": "PLANT_BIDADI",
+      "key": "ROAD_NICE",
+      "mode": "ROAD",
+      "distance_km": 52.5,
+      "transit_time_hrs": 1.32,
+      "capacity_teu_per_day": 2600.0,
+      "base_cost_per_teu": 85.2,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_ATTIBELE",
+      "target": "PLANT_HAROHALLI",
+      "key": "ROAD_STRR",
+      "mode": "ROAD",
+      "distance_km": 42.5,
+      "transit_time_hrs": 1.14,
+      "capacity_teu_per_day": 2200.0,
+      "base_cost_per_teu": 72.4,
+      "active": true
+    },
+    {
+      "source": "CFS_MADURAI_INLAND",
+      "target": "JUNCTION_KARUR",
+      "key": "ROAD_NH44_NB",
+      "mode": "ROAD",
+      "distance_km": 151.1,
+      "transit_time_hrs": 3.15,
+      "capacity_teu_per_day": 2600.0,
+      "base_cost_per_teu": 211.4,
+      "active": true
+    },
+    {
+      "source": "CFS_COCHIN_VALLARPADAM",
+      "target": "PLANT_PALAKKAD_COMPONENTS",
+      "key": "ROAD_DIRECT",
+      "mode": "ROAD",
+      "distance_km": 124.1,
+      "transit_time_hrs": 2.65,
+      "capacity_teu_per_day": 2200.0,
+      "base_cost_per_teu": 176.8,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_THRISSUR",
+      "target": "CFS_PALAKKAD_FREIGHT",
+      "key": "ROAD_NH544",
+      "mode": "ROAD",
+      "distance_km": 91.9,
+      "transit_time_hrs": 2.05,
+      "capacity_teu_per_day": 2600.0,
+      "base_cost_per_teu": 135.6,
+      "active": true
+    },
+    {
+      "source": "CFS_COIMBATORE_NEELAMBUR",
+      "target": "PLANT_KINATHUKADAVU",
+      "key": "ROAD_0",
+      "mode": "ROAD",
+      "distance_km": 35.2,
+      "transit_time_hrs": 1.0,
+      "capacity_teu_per_day": 2200.0,
+      "base_cost_per_teu": 63.1,
+      "active": true
+    },
+    {
+      "source": "CFS_SALEM_LOGISTICS",
+      "target": "JUNCTION_KRISHNAGIRI",
+      "key": "ROAD_NH44_NB",
+      "mode": "ROAD",
+      "distance_km": 122.2,
+      "transit_time_hrs": 2.61,
+      "capacity_teu_per_day": 2600.0,
+      "base_cost_per_teu": 174.4,
+      "active": true
+    },
+    {
+      "source": "CFS_KRISHNAPATNAM",
+      "target": "PLANT_NAIDUPETA",
+      "key": "ROAD_NH16_SB",
+      "mode": "ROAD",
+      "distance_km": 55.9,
+      "transit_time_hrs": 1.39,
+      "capacity_teu_per_day": 2200.0,
+      "base_cost_per_teu": 89.6,
+      "active": true
+    },
+    {
+      "source": "CFS_KRISHNAPATNAM",
+      "target": "JUNCTION_RENIGUNTA",
+      "key": "ROAD_NH71",
+      "mode": "ROAD",
+      "distance_km": 116.1,
+      "transit_time_hrs": 2.5,
+      "capacity_teu_per_day": 2600.0,
+      "base_cost_per_teu": 166.6,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_TUMAKURU_NH48",
+      "target": "OUTBOUND_PUNE_MUMBAI_NH48",
+      "key": "ROAD_OUT",
+      "mode": "ROAD",
+      "distance_km": 113.5,
+      "transit_time_hrs": 2.45,
+      "capacity_teu_per_day": 4000.0,
+      "base_cost_per_teu": 163.3,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_HOSKOTE",
+      "target": "OUTBOUND_BENGALURU_NORTH_AIR",
+      "key": "ROAD_OUT",
+      "mode": "ROAD",
+      "distance_km": 22.6,
+      "transit_time_hrs": 0.77,
+      "capacity_teu_per_day": 4000.0,
+      "base_cost_per_teu": 46.9,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_NELAMANGALA",
+      "target": "OUTBOUND_HYDERABAD_NH44",
+      "key": "ROAD_OUT",
+      "mode": "ROAD",
+      "distance_km": 123.0,
+      "transit_time_hrs": 2.63,
+      "capacity_teu_per_day": 4000.0,
+      "base_cost_per_teu": 175.4,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_GUDUR",
+      "target": "OUTBOUND_VIJAYAWADA_NH16",
+      "key": "ROAD_OUT",
+      "mode": "ROAD",
+      "distance_km": 86.0,
+      "transit_time_hrs": 1.94,
+      "capacity_teu_per_day": 4000.0,
+      "base_cost_per_teu": 128.1,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_RENIGUNTA",
+      "target": "OUTBOUND_TIRUPATI_GATE",
+      "key": "ROAD_OUT",
+      "mode": "ROAD",
+      "distance_km": 23.0,
+      "transit_time_hrs": 0.78,
+      "capacity_teu_per_day": 3500.0,
+      "base_cost_per_teu": 47.4,
+      "active": true
+    },
+    {
+      "source": "CFS_MANGALORE_PANAMBUR",
+      "target": "OUTBOUND_MANGALORE_COAST",
+      "key": "ROAD_OUT",
+      "mode": "ROAD",
+      "distance_km": 56.3,
+      "transit_time_hrs": 1.39,
+      "capacity_teu_per_day": 3500.0,
+      "base_cost_per_teu": 90.1,
+      "active": true
+    },
+    {
+      "source": "PORT_COCHIN",
+      "target": "OUTBOUND_COCHIN_EXPORT_GATE",
+      "key": "ROAD_OUT",
+      "mode": "ROAD",
+      "distance_km": 6.4,
+      "transit_time_hrs": 0.47,
+      "capacity_teu_per_day": 3500.0,
+      "base_cost_per_teu": 26.2,
+      "active": true
+    },
+    {
+      "source": "PORT_VOC",
+      "target": "OUTBOUND_TUTICORIN_DEEPSEA",
+      "key": "ROAD_OUT",
+      "mode": "ROAD",
+      "distance_km": 5.5,
+      "transit_time_hrs": 0.45,
+      "capacity_teu_per_day": 3000.0,
+      "base_cost_per_teu": 25.0,
+      "active": true
+    },
+    {
+      "source": "PORT_CHENNAI",
+      "target": "OUTBOUND_CHENNAI_EXPORT_GATE",
+      "key": "ROAD_OUT",
+      "mode": "ROAD",
+      "distance_km": 12.9,
+      "transit_time_hrs": 0.59,
+      "capacity_teu_per_day": 5000.0,
+      "base_cost_per_teu": 34.5,
+      "active": true
+    },
+    {
+      "source": "PLANT_COIMBATORE",
+      "target": "OUTBOUND_COIMBATORE_WEST_GATE",
+      "key": "ROAD_OUT",
+      "mode": "ROAD",
+      "distance_km": 9.5,
+      "transit_time_hrs": 0.53,
+      "capacity_teu_per_day": 3500.0,
+      "base_cost_per_teu": 30.2,
+      "active": true
+    }
+  ]
+}

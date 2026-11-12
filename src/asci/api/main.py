@@ -93,6 +93,10 @@ class GeneratePlanRequest(BaseModel):
     lambda_cost_budget: float = Field(default=0.05, ge=0.0)
     random_seed: int = Field(default=42)
     k_hop_neighborhood: int = Field(default=2, ge=1, le=4)
+    risk_mode: Literal["DETERMINISTIC", "EXPECTED_COST", "CVAR"] = Field(default="EXPECTED_COST")
+    cvar_alpha: float = Field(default=0.90, ge=0.5, lt=1.0)
+    solver_type: Literal["OR_TOOLS", "NETWORKX"] = Field(default="OR_TOOLS")
+    propagation_tier: Literal[1, 2] = Field(default=2)
 
 
 class PlanResponse(BaseModel):
@@ -125,7 +129,10 @@ class RecordDecisionResponse(BaseModel):
     planner_id: str
 
 
-def create_app(data_dir: str | Path | None = None) -> FastAPI:
+def create_app(
+    data_dir: str | Path | None = None,
+    network_scale: str | None = None,
+) -> FastAPI:
     """
     Create configured FastAPI app.
     Uses file-backed SQLite + JSONL persistence when `data_dir` (or env `ASCI_DATA_DIR`)
@@ -136,6 +143,10 @@ def create_app(data_dir: str | Path | None = None) -> FastAPI:
         description="Agentic-RAG Decision Support for South India Automotive Logistics Corridor",
         version="2.0.0",
     )
+
+    resolved_scale = network_scale or os.environ.get("ASCI_NETWORK_SCALE", "v0_core")
+    if resolved_scale not in ("v0_core", "v1_corridor"):
+        resolved_scale = "v0_core"
 
     if data_dir is not None and str(data_dir).strip():
         base_dir = Path(data_dir)
@@ -150,10 +161,10 @@ def create_app(data_dir: str | Path | None = None) -> FastAPI:
         decision_db = ":memory:"
         trace_jsonl = None
 
-    registry = get_canonical_registry()
+    registry = get_canonical_registry(network_scale=resolved_scale)
     event_store = SQLiteEventStore(db_path=event_db, registry=registry)
     decision_store = DecisionTraceStore(db_path=decision_db, jsonl_trace_path=trace_jsonl)
-    graph_store = CorridorGraphStore.load_from_json(registry=registry)
+    graph_store = CorridorGraphStore.load_from_json(registry=registry, network_scale=resolved_scale)
     vector_store = SemanticVectorStore(registry=registry)
     timeseries_store = TimeSeriesStore(db_path=ts_db, registry=registry)
 
@@ -353,6 +364,11 @@ def create_app(data_dir: str | Path | None = None) -> FastAPI:
             lambda_cost_budget=req.lambda_cost_budget,
             random_seed=req.random_seed,
             k_hop_neighborhood=req.k_hop_neighborhood,
+            risk_mode=req.risk_mode,
+            cvar_alpha=req.cvar_alpha,
+            solver_type=req.solver_type,
+            propagation_tier=req.propagation_tier,
+            network_scale=resolved_scale,  # type: ignore[arg-type]
         )
         rng = random.Random(cfg.random_seed)
 

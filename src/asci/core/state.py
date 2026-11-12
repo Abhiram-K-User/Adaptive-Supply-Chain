@@ -144,6 +144,9 @@ class PathRiskMetric(BaseModel):
     mode: str
     exposure: float = Field(ge=0.0)
     criticality: float = Field(ge=0.0)
+    utilisation: float = Field(default=0.0, ge=0.0)
+    uncertainty_factor: float = Field(default=1.0, ge=0.0)
+    concentration: float = Field(default=1.0, ge=0.0)
     path_risk: float = Field(ge=0.0)
     baseline_delay_hrs: float = Field(ge=0.0)
 
@@ -158,6 +161,7 @@ class LineStopMetric(BaseModel):
     expected_delay_days: float
     time_to_line_stop_days: float
     line_stop_risk: float = Field(ge=0.0, le=1.0)
+    line_stop_probability: float = Field(default=0.0, ge=0.0, le=1.0)
 
 
 class GraphContext(BaseModel):
@@ -170,6 +174,11 @@ class GraphContext(BaseModel):
     node_capacity_multipliers: dict[str, float] = Field(default_factory=dict)
     edge_capacity_multipliers: dict[str, float] = Field(default_factory=dict)
     k_hops: int = Field(default=2, ge=1)
+    propagated_node_delays_hrs: dict[str, float] = Field(default_factory=dict)
+    hop_decay_applied: bool = False
+    propagation_tier: int = 1
+    redistributed_edge_loads_teu: dict[str, float] = Field(default_factory=dict)
+    edge_congestion_ratios: dict[str, float] = Field(default_factory=dict)
     path_metrics: list[PathRiskMetric] = Field(default_factory=list)
     line_stop_metrics: list[LineStopMetric] = Field(default_factory=list)
 
@@ -231,6 +240,9 @@ class MitigationPlan(BaseModel):
     allocations: list[FlowAllocation] = Field(default_factory=list)
     unmet_demand_teu: float = Field(default=0.0, ge=0.0)
     mode_split: dict[str, float] = Field(default_factory=dict)
+    risk_mode: str = "DETERMINISTIC"
+    cvar_cost: float | None = Field(default=None, ge=0.0)
+    solver_engine: str = "OR_TOOLS"
     summary: str
 
 
