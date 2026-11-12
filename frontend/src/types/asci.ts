@@ -340,6 +340,73 @@ export interface RecordDecisionResponse {
   planner_id: string;
 }
 
+export interface DecisionRecord {
+  decision_id: number;
+  plan_id: string;
+  session_id: string;
+  decision: "APPROVE" | "EDIT" | "REJECT";
+  planner_id: string;
+  comments: string;
+  modifications_json: string;
+  timestamp: string;
+}
+
+export interface WhatIfRequest {
+  event_id?: string | null;
+  target_entity_id: string;
+  capacity_multiplier: number;
+  duration_days: number;
+  risk_mode: "DETERMINISTIC" | "EXPECTED_COST" | "CVAR";
+  propagation_tier: 1 | 2;
+  baseline_plan_id?: string | null;
+}
+
+export interface WhatIfResponse {
+  simulated_plan: MitigationPlan | null;
+  verification: VerificationReport | null;
+  cost_delta: number;
+  unmet_demand_delta_teu: number;
+  rail_share_delta_pct: number;
+  baseline_total_cost: number;
+  simulated_total_cost: number;
+}
+
+export interface EvidenceDetail {
+  citation_id: string;
+  source: string;
+  trust_tier: TrustTier;
+  entity_ids: string[];
+  snippet: string;
+  publication_date: string;
+  supported_claims: string[];
+  region?: string | null;
+  hazard_types?: DisruptionEventType[];
+  expires_at?: string | null;
+  untrusted_quoted?: boolean;
+  relevance_score?: number;
+  recovery_curves?: Record<string, number[]>;
+}
+
+export interface RealizedOutcomePayload {
+  entity_id: string;
+  hazard_type: string;
+  day_offset: number;
+  observed_teu: number;
+  vessel_calls?: number;
+  obs_date?: string;
+}
+
+export interface RealizedOutcomeResponse {
+  entity_id: string;
+  hazard_type: string;
+  day_offset: number;
+  observed_teu: number;
+  baseline_teu: number;
+  realized_multiplier: number;
+  deviation_pct: number;
+  updated_recovery_curve: number[];
+}
+
 export type ActiveWorkspaceTab =
   | "overview"
   | "network"

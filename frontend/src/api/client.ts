@@ -1,7 +1,9 @@
 import type {
   CanonicalEntity,
+  DecisionRecord,
   DisruptionEvent,
   DisruptionEventType,
+  EvidenceDetail,
   EvidenceProvenanceItem,
   FeedsStatusResponse,
   HealthResponse,
@@ -11,10 +13,14 @@ import type {
   OperatorTraceEntry,
   PlanResponse,
   GeneratePlanPayload,
+  RealizedOutcomePayload,
+  RealizedOutcomeResponse,
   RecordDecisionPayload,
   RecordDecisionResponse,
   ReplayIngestResponse,
   TrustTier,
+  WhatIfRequest,
+  WhatIfResponse,
 } from "../types/asci";
 
 const API_BASE = (import.meta.env.VITE_API_BASE_URL as string | undefined) ?? "";
@@ -123,5 +129,39 @@ export const asciApi = {
 
   getSessionTraces: (sessionId: string) =>
     requestJson<OperatorTraceEntry[]>(`/traces/${encodeURIComponent(sessionId)}`),
+
+  listDecisions: (planId?: string, limit = 20) => {
+    const qs = new URLSearchParams();
+    if (planId) qs.set("plan_id", planId);
+    qs.set("limit", String(limit));
+    return requestJson<DecisionRecord[]>(`/decisions?${qs.toString()}`);
+  },
+
+  getEvidenceDetail: (citationId: string) =>
+    requestJson<EvidenceDetail>(`/evidence/${encodeURIComponent(citationId)}`),
+
+  recordOutcome: (payload: RealizedOutcomePayload) => {
+    const qs = new URLSearchParams();
+    qs.set("entity_id", payload.entity_id);
+    qs.set("hazard_type", payload.hazard_type);
+    qs.set("day_offset", String(payload.day_offset));
+    qs.set("observed_teu", String(payload.observed_teu));
+    if (payload.vessel_calls !== undefined) qs.set("vessel_calls", String(payload.vessel_calls));
+    if (payload.obs_date) qs.set("obs_date", payload.obs_date);
+    return requestJson<RealizedOutcomeResponse>(`/outcomes?${qs.toString()}`, {
+      method: "POST",
+    });
+  },
+
+  getOutcomesForEntity: (entityId: string, windowDays = 30) =>
+    requestJson<Record<string, unknown>>(
+      `/outcomes/${encodeURIComponent(entityId)}?window_days=${windowDays}`
+    ),
+
+  runWhatIf: (payload: WhatIfRequest) =>
+    requestJson<WhatIfResponse>("/whatif", {
+      method: "POST",
+      body: JSON.stringify(payload),
+    }),
 };
 
