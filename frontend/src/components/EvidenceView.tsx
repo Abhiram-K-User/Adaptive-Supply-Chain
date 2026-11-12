@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { BookOpen, FileSearch, Lock, Search } from "lucide-react";
+import { BookOpen, Search, ShieldCheck } from "lucide-react";
 import { asciApi } from "../api/client";
 import type {
   DisruptionEventType,
@@ -14,7 +14,7 @@ interface EvidenceViewProps {
 export function EvidenceView({ sessionEvidence }: EvidenceViewProps) {
   const [query, setQuery] = useState("cyclone berth port diversion rail");
   const [entityId, setEntityId] = useState("");
-  const [hazardType, setHazardType] = useState<DisruptionEventType | "">("");
+  const [hazardType] = useState<DisruptionEventType | "">("");
   const [minTrustTier, setMinTrustTier] = useState<TrustTier | "">("");
   const [searchResults, setSearchResults] = useState<EvidenceProvenanceItem[] | null>(
     null
@@ -49,22 +49,22 @@ export function EvidenceView({ sessionEvidence }: EvidenceViewProps) {
   return (
     <div className="grid grid-cols-1 gap-4 lg:grid-cols-[minmax(0,1fr)_360px]">
       <div className="space-y-4">
-        <section className="rounded-xl border border-line bg-panel p-4 shadow-lg shadow-black/25">
+        <section className="rounded-2xl border border-light-border bg-white p-4 shadow-sm dark:border-dark-border dark:bg-dark-card dark:shadow-dark-card">
           <div className="flex flex-wrap items-center justify-between gap-2">
             <div>
-              <h2 className="flex items-center gap-2 text-sm font-bold text-white">
-                <BookOpen className="h-4 w-4 text-sky-400" />
-                Evidence & Playbook Vector Memory (USKL)
+              <h2 className="flex items-center gap-2 text-sm font-bold text-light-text-primary dark:text-dark-text-primary">
+                <BookOpen className="h-4 w-4 text-teal-600 dark:text-accent-cyan" />
+                Evidence &amp; SOP Playbook Vector Memory (USKL)
               </h2>
-              <p className="mt-0.5 text-xs text-slate-400">
-                Live query against <code className="text-sky-300">GET /evidence/search</code> (HashedConceptBoW / FAISS + Trust Tier filtering)
+              <p className="mt-0.5 text-xs text-light-text-secondary dark:text-dark-text-secondary">
+                Semantic vector lookup against <code className="font-mono text-teal-600 dark:text-accent-cyan">GET /evidence/search</code> (HashedConceptBoW / FAISS + Trust Tier filtering)
               </p>
             </div>
             {searchResults !== null && (
               <button
                 type="button"
                 onClick={() => setSearchResults(null)}
-                className="rounded-md border border-line bg-panel2 px-2.5 py-1 text-xs text-slate-300 hover:text-white"
+                className="rounded-lg border border-light-border bg-light-surface-subtle px-2.5 py-1 text-xs text-light-text-secondary hover:text-light-text-primary dark:border-dark-border dark:bg-dark-surface dark:text-dark-text-secondary dark:hover:text-dark-text-primary"
               >
                 Show Active Session Citations ({sessionEvidence.length})
               </button>
@@ -77,19 +77,19 @@ export function EvidenceView({ sessionEvidence }: EvidenceViewProps) {
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Semantic search query..."
-              className="sm:col-span-2 rounded-lg border border-line bg-[#090f1d] px-3 py-1.5 text-xs text-slate-100 focus:border-sky-400 focus:outline-none"
+              className="sm:col-span-2 rounded-lg border border-light-border bg-light-surface-subtle px-3 py-1.5 text-xs text-light-text-primary focus:border-teal-500 focus:bg-white focus:outline-none dark:border-dark-border dark:bg-dark-surface dark:text-dark-text-primary dark:focus:border-accent-cyan"
             />
             <input
               type="text"
               value={entityId}
               onChange={(e) => setEntityId(e.target.value)}
               placeholder="Entity ID (e.g. PORT_CHENNAI)"
-              className="rounded-lg border border-line bg-[#090f1d] px-3 py-1.5 font-mono text-xs text-slate-100 focus:border-sky-400 focus:outline-none"
+              className="rounded-lg border border-light-border bg-light-surface-subtle px-3 py-1.5 font-mono text-xs text-light-text-primary focus:border-teal-500 focus:bg-white focus:outline-none dark:border-dark-border dark:bg-dark-surface dark:text-dark-text-primary dark:focus:border-accent-cyan"
             />
             <select
               value={minTrustTier}
               onChange={(e) => setMinTrustTier(e.target.value as TrustTier | "")}
-              className="rounded-lg border border-line bg-[#090f1d] px-2.5 py-1.5 text-xs text-slate-100 focus:border-sky-400 focus:outline-none"
+              className="rounded-lg border border-light-border bg-light-surface-subtle px-2.5 py-1.5 text-xs text-light-text-primary focus:border-teal-500 focus:outline-none dark:border-dark-border dark:bg-dark-surface dark:text-dark-text-primary"
             >
               <option value="">Any Trust Tier</option>
               <option value="TIER_A">Min TIER_A</option>
@@ -99,141 +99,177 @@ export function EvidenceView({ sessionEvidence }: EvidenceViewProps) {
             <button
               type="submit"
               disabled={loading}
-              className="inline-flex items-center justify-center gap-1.5 rounded-lg bg-sky-500 px-3 py-1.5 text-xs font-bold text-slate-950 hover:bg-sky-400 disabled:opacity-50"
+              className="inline-flex items-center justify-center gap-1.5 rounded-lg bg-[#101C2C] px-3 py-1.5 text-xs font-semibold text-white hover:bg-slate-800 disabled:opacity-50 transition dark:bg-accent-cyan dark:text-[#090D14] dark:hover:bg-cyan-400"
             >
               <Search className="h-3.5 w-3.5" />
-              {loading ? "Searching..." : "Search Corpus"}
+              <span>{loading ? "Searching..." : "Vector Query"}</span>
             </button>
-            <select
-              value={hazardType}
-              onChange={(e) =>
-                setHazardType(e.target.value as DisruptionEventType | "")
-              }
-              className="sm:col-span-2 rounded-lg border border-line bg-[#090f1d] px-2.5 py-1.5 text-xs text-slate-100 focus:border-sky-400 focus:outline-none"
-            >
-              <option value="">All Hazard Types</option>
-              <option value="HAZARD_PORT">HAZARD_PORT</option>
-              <option value="HAZARD_ROAD">HAZARD_ROAD</option>
-              <option value="PORT_CONGESTION_STRIKE">PORT_CONGESTION_STRIKE</option>
-              <option value="RAIL_DISRUPTION">RAIL_DISRUPTION</option>
-              <option value="SHIPPING_SCHEDULE">SHIPPING_SCHEDULE</option>
-              <option value="TRADE_POLICY">TRADE_POLICY</option>
-              <option value="PLANT_OUTAGE">PLANT_OUTAGE</option>
-            </select>
           </form>
 
           {error && (
-            <div className="mt-2 rounded-lg border border-red-500/40 bg-red-500/10 px-3 py-2 text-xs text-red-200">
+            <div className="mt-2 rounded-lg border border-rose-300 bg-rose-50 p-2 text-xs text-rose-800 dark:border-rose-900/50 dark:bg-rose-950/40 dark:text-rose-300">
               {error}
             </div>
           )}
         </section>
 
-        <div className="space-y-2.5">
+        {/* Results List */}
+        <section className="space-y-2">
+          <div className="flex items-center justify-between text-xs text-light-text-muted dark:text-dark-text-muted">
+            <span>
+              {searchResults ? "Query Results" : "Active Session Grounding Evidence"}{" "}
+              ({displayedItems.length})
+            </span>
+            <span className="font-mono text-[10px]">
+              Vector Index: 9 SOP playbooks + live signals
+            </span>
+          </div>
+
           {displayedItems.length === 0 ? (
-            <div className="rounded-xl border border-dashed border-line bg-panel p-8 text-center text-xs text-slate-400">
-              No evidence records available yet. Run a plan in Command Center or click
-              "Search Corpus" above.
+            <div className="rounded-2xl border border-dashed border-light-border bg-white p-8 text-center text-xs text-light-text-muted dark:border-dark-border dark:bg-dark-card dark:text-dark-text-muted">
+              No evidence documents match query. Try searching &quot;cyclone&quot;, &quot;rail&quot;, or &quot;port&quot;.
             </div>
           ) : (
-            displayedItems.map((doc) => (
-              <div
-                key={doc.citation_id}
-                onClick={() => setSelectedCitationId(doc.citation_id)}
-                className={`cursor-pointer rounded-xl border bg-panel p-4 transition ${
-                  selectedCitationId === doc.citation_id
-                    ? "border-sky-400"
-                    : "border-line hover:border-sky-400/50"
-                }`}
-              >
-                <div className="flex flex-wrap items-center justify-between gap-2">
-                  <div className="flex items-center gap-2">
-                    <span className="font-mono text-xs font-bold text-sky-300">
-                      [{doc.citation_id}]
-                    </span>
-                    <span className="text-xs text-slate-400">{doc.source}</span>
+            <div className="grid grid-cols-1 gap-2.5">
+              {displayedItems.map((item) => {
+                const isSelected = selectedCitationId === item.citation_id;
+                const isTierA = item.trust_tier === "TIER_A";
+                const isTierB = item.trust_tier === "TIER_B";
+                return (
+                  <div
+                    key={item.citation_id}
+                    onClick={() => setSelectedCitationId(item.citation_id)}
+                    className={`cursor-pointer rounded-2xl border p-3.5 transition ${
+                      isSelected
+                        ? "border-teal-500 bg-teal-50/40 shadow-xs dark:border-accent-cyan dark:bg-accent-cyan/10"
+                        : "border-light-border bg-white hover:border-slate-300 dark:border-dark-border dark:bg-dark-card dark:hover:border-dark-hover"
+                    }`}
+                  >
+                    <div className="flex flex-wrap items-center justify-between gap-2">
+                      <div className="flex items-center gap-2">
+                        <span className="font-mono text-xs font-bold text-light-text-primary dark:text-dark-text-primary">
+                          [{item.citation_id}]
+                        </span>
+                        <span className="text-xs font-semibold text-light-text-secondary dark:text-dark-text-secondary">
+                          {item.source}
+                        </span>
+                      </div>
+
+                      <div className="flex items-center gap-2">
+                        <span
+                          className={`rounded-full px-2 py-0.5 text-[10px] font-bold ${
+                            isTierA
+                              ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-400"
+                              : isTierB
+                              ? "bg-sky-100 text-sky-800 dark:bg-sky-950/60 dark:text-sky-400"
+                              : "bg-amber-100 text-amber-800 dark:bg-amber-950/60 dark:text-amber-400"
+                          }`}
+                        >
+                          {item.trust_tier}
+                        </span>
+                        {item.relevance_score !== undefined && (
+                          <span className="font-mono text-[10px] text-light-text-muted dark:text-dark-text-muted">
+                            Score: {item.relevance_score.toFixed(2)}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+
+                    <p className="mt-2 text-xs text-light-text-secondary leading-relaxed dark:text-dark-text-secondary">
+                      &quot;{item.snippet}&quot;
+                    </p>
+
+                    <div className="mt-2 flex flex-wrap items-center gap-1.5 text-[10px]">
+                      {item.entity_ids.map((id) => (
+                        <span
+                          key={id}
+                          className="rounded bg-light-surface-subtle px-1.5 py-0.5 font-mono text-light-text-secondary dark:bg-dark-surface dark:text-dark-text-secondary"
+                        >
+                          {id}
+                        </span>
+                      ))}
+                      {item.supported_claims.map((claim, ci) => (
+                        <span
+                          key={ci}
+                          className="rounded bg-teal-50 px-1.5 py-0.5 font-medium text-teal-800 dark:bg-teal-950/50 dark:text-teal-300"
+                        >
+                          {claim}
+                        </span>
+                      ))}
+                    </div>
                   </div>
-                  <div className="flex items-center gap-2">
-                    {doc.publication_date && (
-                      <span className="text-[11px] text-slate-400">
-                        Published: {doc.publication_date}
-                      </span>
-                    )}
-                    <span
-                      className={`rounded-full px-2 py-0.5 text-[10px] font-bold ${
-                        doc.trust_tier === "TIER_A"
-                          ? "bg-emerald-500/15 text-emerald-300"
-                          : doc.trust_tier === "TIER_B"
-                          ? "bg-sky-500/15 text-sky-300"
-                          : "bg-red-500/15 text-red-300"
-                      }`}
-                    >
-                      {doc.trust_tier}
-                    </span>
-                  </div>
-                </div>
-                <p className="mt-2 text-xs leading-relaxed text-slate-200">
-                  {doc.snippet}
-                </p>
-                <div className="mt-2.5 flex flex-wrap gap-1.5">
-                  {doc.entity_ids.map((eid) => (
-                    <span
-                      key={eid}
-                      className="rounded border border-line bg-panel2 px-2 py-0.5 font-mono text-[10px] text-slate-300"
-                    >
-                      {eid}
-                    </span>
-                  ))}
-                  {doc.supported_claims.map((claim) => (
-                    <span
-                      key={claim}
-                      className="rounded border border-purple-500/30 bg-purple-500/10 px-2 py-0.5 text-[10px] text-purple-200"
-                    >
-                      Claim: {claim}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            ))
+                );
+              })}
+            </div>
           )}
-        </div>
+        </section>
       </div>
 
-      {/* Planned Single Evidence Endpoint Placeholder */}
-      <aside className="space-y-3">
-        <div className="rounded-xl border border-dashed border-amber-500/50 bg-panel p-4">
-          <div className="flex items-center justify-between gap-2">
-            <h3 className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-amber-300">
-              <FileSearch className="h-4 w-4" />
-              Single Citation Drill-Down
-            </h3>
-            <span className="rounded bg-amber-500/15 px-2 py-0.5 text-[10px] font-bold text-amber-300">
-              Placeholder
-            </span>
-          </div>
+      {/* Right Column: Citation Inspector */}
+      <aside className="rounded-2xl border border-light-border bg-white p-4 shadow-sm dark:border-dark-border dark:bg-dark-card dark:shadow-dark-card space-y-3">
+        <h3 className="text-xs font-bold uppercase tracking-wider text-light-text-primary dark:text-dark-text-primary border-b border-light-border dark:border-dark-border pb-2">
+          Citation Detail Inspector
+        </h3>
 
-          <p className="mt-2 text-xs leading-relaxed text-slate-300">
-            Selected ID:{" "}
-            <span className="font-mono text-sky-300">
-              {selectedCitationId ?? "Click an evidence card on the left"}
-            </span>
-          </p>
+        {selectedCitationId ? (
+          (() => {
+            const current = displayedItems.find(
+              (i) => i.citation_id === selectedCitationId
+            );
+            if (!current) return null;
+            return (
+              <div className="space-y-3 text-xs">
+                <div>
+                  <div className="font-mono font-bold text-teal-700 dark:text-accent-cyan">
+                    [{current.citation_id}]
+                  </div>
+                  <div className="font-semibold text-light-text-primary dark:text-dark-text-primary mt-0.5">
+                    {current.source}
+                  </div>
+                </div>
 
-          <div className="mt-3 rounded-lg border border-line bg-[#0a1122] p-3 text-xs text-slate-400">
-            <div className="flex items-center gap-1.5 font-mono text-[11px] font-bold text-slate-200">
-              <Lock className="h-3.5 w-3.5 text-amber-400" />
-              GET /evidence/{"{id}"} — Planned (PRD 10.2 / M3)
-            </div>
-            <p className="mt-1.5 text-[11px] leading-relaxed">
-              Per <code className="text-slate-300">project_context.md</code> Sec. 7, direct
-              single-citation retrieval (<code className="text-slate-300">GET /evidence/&#123;id&#125;</code>)
-              with full document provenance, time-series recovery curve attachments, and claim-level
-              verifiability hashes is queued under Team Lane M3.
-            </p>
+                <div className="rounded-xl border border-light-border bg-light-surface-subtle p-2.5 text-[11px] text-light-text-secondary leading-relaxed dark:border-dark-border dark:bg-dark-surface dark:text-dark-text-secondary">
+                  {current.snippet}
+                </div>
+
+                <div>
+                  <div className="font-semibold text-light-text-primary dark:text-dark-text-primary mb-1">
+                    Grounded Target Entities
+                  </div>
+                  <div className="flex flex-wrap gap-1 font-mono text-[10px]">
+                    {current.entity_ids.map((id) => (
+                      <span
+                        key={id}
+                        className="rounded border border-light-border bg-white px-2 py-0.5 text-light-text-primary dark:border-dark-border dark:bg-dark-card dark:text-dark-text-primary"
+                      >
+                        {id}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <div className="font-semibold text-light-text-primary dark:text-dark-text-primary mb-1">
+                    Supported Mitigation Claims
+                  </div>
+                  <ul className="space-y-1 text-[11px] text-light-text-secondary dark:text-dark-text-secondary">
+                    {current.supported_claims.map((cl, idx) => (
+                      <li key={idx} className="flex items-start gap-1.5">
+                        <ShieldCheck className="h-3.5 w-3.5 text-teal-600 dark:text-accent-cyan mt-0.5 shrink-0" />
+                        <span>{cl}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            );
+          })()
+        ) : (
+          <div className="py-8 text-center text-xs text-light-text-muted dark:text-dark-text-muted">
+            Select any citation card to inspect detailed grounded claims and metadata.
           </div>
-        </div>
+        )}
       </aside>
     </div>
   );
 }
-

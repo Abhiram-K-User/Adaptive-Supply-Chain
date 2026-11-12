@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Cpu, GitCommitHorizontal, Lock, RefreshCw } from "lucide-react";
+import { GitCommitHorizontal, RefreshCw } from "lucide-react";
 import { asciApi } from "../api/client";
 import type { OperatorTraceEntry, PlanResponse } from "../types/asci";
 
@@ -38,15 +38,15 @@ export function TraceView({ planResponse }: TraceViewProps) {
 
   return (
     <div className="space-y-4">
-      <section className="rounded-xl border border-line bg-panel p-4 shadow-lg shadow-black/25">
+      <section className="rounded-2xl border border-light-border bg-white p-4 shadow-sm dark:border-dark-border dark:bg-dark-card dark:shadow-dark-card">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
-            <h2 className="flex items-center gap-2 text-sm font-bold text-white">
-              <GitCommitHorizontal className="h-4 w-4 text-sky-400" />
+            <h2 className="flex items-center gap-2 text-sm font-bold text-light-text-primary dark:text-dark-text-primary">
+              <GitCommitHorizontal className="h-4 w-4 text-teal-600 dark:text-accent-cyan" />
               Chronological Operator Execution Trace
             </h2>
-            <p className="mt-0.5 text-xs text-slate-400">
-              Live audit log backed by <code className="text-sky-300">GET /traces/&#123;session_id&#125;</code> and <code className="text-slate-300">DecisionTraceStore</code>
+            <p className="mt-0.5 text-xs text-light-text-secondary dark:text-dark-text-secondary">
+              Live pipeline execution audit log backed by <code className="font-mono text-teal-600 dark:text-accent-cyan">GET /traces/&#123;session_id&#125;</code> and DecisionTraceStore
             </p>
           </div>
 
@@ -56,21 +56,21 @@ export function TraceView({ planResponse }: TraceViewProps) {
               value={lookupSessionId}
               onChange={(e) => setLookupSessionId(e.target.value)}
               placeholder={activeSessionId || "SESS_XXXXXXXX"}
-              className="w-48 rounded-lg border border-line bg-[#090f1d] px-2.5 py-1.5 font-mono text-xs text-slate-100 focus:border-sky-400 focus:outline-none"
+              className="w-48 rounded-lg border border-light-border bg-light-surface-subtle px-2.5 py-1.5 font-mono text-xs text-light-text-primary focus:border-teal-500 focus:bg-white focus:outline-none dark:border-dark-border dark:bg-dark-surface dark:text-dark-text-primary dark:focus:border-accent-cyan"
             />
             <button
               type="submit"
               disabled={loading || (!lookupSessionId && !activeSessionId)}
-              className="inline-flex items-center gap-1.5 rounded-lg border border-line bg-panel2 px-3 py-1.5 text-xs font-semibold text-slate-200 hover:border-sky-400/60 disabled:opacity-50"
+              className="inline-flex items-center gap-1.5 rounded-lg bg-[#101C2C] px-3 py-1.5 text-xs font-semibold text-white hover:bg-slate-800 disabled:opacity-50 transition shadow-xs dark:bg-accent-cyan dark:text-[#090D14] dark:hover:bg-cyan-400"
             >
               <RefreshCw className={`h-3.5 w-3.5 ${loading ? "animate-spin" : ""}`} />
-              Load Session Trace
+              <span>Load Session</span>
             </button>
             {fetchedTraces !== null && (
               <button
                 type="button"
                 onClick={() => setFetchedTraces(null)}
-                className="rounded-lg px-2 py-1 text-xs text-slate-400 hover:text-white"
+                className="rounded-lg px-2 py-1 text-xs text-light-text-muted hover:text-light-text-primary dark:text-dark-text-muted dark:hover:text-dark-text-primary"
               >
                 Use Current Plan
               </button>
@@ -79,151 +79,101 @@ export function TraceView({ planResponse }: TraceViewProps) {
         </div>
 
         {error && (
-          <div className="mt-3 rounded-lg border border-red-500/40 bg-red-500/10 px-3 py-2 text-xs text-red-200">
+          <div className="mt-3 rounded-lg border border-rose-300 bg-rose-50 px-3 py-2 text-xs text-rose-800 dark:border-rose-900/50 dark:bg-rose-950/40 dark:text-rose-300">
             {error}
           </div>
         )}
 
         <div className="mt-3 grid grid-cols-2 gap-2.5 sm:grid-cols-4">
-          <div className="rounded-lg border border-line bg-[#0a1122] px-3 py-2">
-            <div className="text-[10px] font-bold uppercase text-slate-400">
+          <div className="rounded-xl border border-light-border bg-light-surface-subtle px-3 py-2 dark:border-dark-border dark:bg-dark-surface">
+            <div className="text-[10px] font-bold uppercase text-light-text-muted dark:text-dark-text-muted">
               Session ID
             </div>
-            <div className="mt-0.5 font-mono text-xs font-bold text-white">
+            <div className="mt-0.5 font-mono text-xs font-bold text-light-text-primary dark:text-dark-text-primary truncate">
               {activeSessionId || lookupSessionId || "—"}
             </div>
           </div>
-          <div className="rounded-lg border border-line bg-[#0a1122] px-3 py-2">
-            <div className="text-[10px] font-bold uppercase text-slate-400">
+          <div className="rounded-xl border border-light-border bg-light-surface-subtle px-3 py-2 dark:border-dark-border dark:bg-dark-surface">
+            <div className="text-[10px] font-bold uppercase text-light-text-muted dark:text-dark-text-muted">
               Operator Steps
             </div>
-            <div className="mt-0.5 font-mono text-xs font-bold text-sky-300">
-              {traces.length} (Gate G1 cadence: 5)
+            <div className="mt-0.5 font-mono text-xs font-bold text-teal-700 dark:text-accent-cyan">
+              {traces.length} steps executed
             </div>
           </div>
-          <div className="rounded-lg border border-line bg-[#0a1122] px-3 py-2">
-            <div className="text-[10px] font-bold uppercase text-slate-400">
-              Total Duration
+          <div className="rounded-xl border border-light-border bg-light-surface-subtle px-3 py-2 dark:border-dark-border dark:bg-dark-surface">
+            <div className="text-[10px] font-bold uppercase text-light-text-muted dark:text-dark-text-muted">
+              Total Wall Duration
             </div>
-            <div className="mt-0.5 font-mono text-xs font-bold text-white">
+            <div className="mt-0.5 font-mono text-xs font-bold text-light-text-primary dark:text-dark-text-primary">
               {totalDurationMs.toFixed(1)} ms
             </div>
           </div>
-          <div className="rounded-lg border border-line bg-[#0a1122] px-3 py-2">
-            <div className="text-[10px] font-bold uppercase text-slate-400">
-              Compute Cost
+          <div className="rounded-xl border border-light-border bg-light-surface-subtle px-3 py-2 dark:border-dark-border dark:bg-dark-surface">
+            <div className="text-[10px] font-bold uppercase text-light-text-muted dark:text-dark-text-muted">
+              Compute Budget Cost
             </div>
-            <div className="mt-0.5 font-mono text-xs font-bold text-emerald-300">
-              {totalCost.toFixed(4)} units
+            <div className="mt-0.5 font-mono text-xs font-bold text-purple-700 dark:text-accent-purple">
+              ${totalCost.toFixed(4)}
             </div>
           </div>
-        </div>
-
-        <div className="mt-3 overflow-x-auto">
-          {traces.length === 0 ? (
-            <div className="rounded-lg border border-dashed border-line py-8 text-center text-xs text-slate-400">
-              No trace entries loaded yet. Generate a plan in Command Center or enter a
-              saved session ID above.
-            </div>
-          ) : (
-            <table className="w-full border-collapse text-left text-xs">
-              <thead>
-                <tr className="border-b border-line text-[10px] uppercase tracking-wider text-slate-400">
-                  <th className="py-2 pr-3">Step</th>
-                  <th className="py-2 pr-3">Operator</th>
-                  <th className="py-2 pr-3">Input Summary</th>
-                  <th className="py-2 pr-3">Output Summary</th>
-                  <th className="py-2 pr-3 text-right">Seed</th>
-                  <th className="py-2 pr-3 text-right">Duration</th>
-                  <th className="py-2 text-right">Cost</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-line/60">
-                {traces.map((step) => (
-                  <tr key={step.step_index}>
-                    <td className="py-2.5 pr-3 font-mono font-bold text-slate-400">
-                      #{step.step_index}
-                    </td>
-                    <td className="py-2.5 pr-3">
-                      <span className="rounded border border-sky-400/30 bg-sky-500/10 px-2 py-0.5 font-mono text-[11px] font-bold text-sky-300">
-                        {step.operator_type}
-                      </span>
-                    </td>
-                    <td className="py-2.5 pr-3 text-slate-300">{step.input_summary}</td>
-                    <td className="py-2.5 pr-3 text-slate-200">{step.output_summary}</td>
-                    <td className="py-2.5 pr-3 text-right font-mono text-slate-400">
-                      {step.seed}
-                    </td>
-                    <td className="py-2.5 pr-3 text-right font-mono text-slate-200">
-                      {step.duration_ms.toFixed(2)} ms
-                    </td>
-                    <td className="py-2.5 text-right font-mono text-emerald-300">
-                      {step.cost.toFixed(4)}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          )}
         </div>
       </section>
 
-      {/* Planned Phase 5-6 / Gate G4 Agentic Loop & Learned Policy Placeholder */}
-      <section className="rounded-xl border border-dashed border-amber-500/50 bg-panel p-4">
-        <div className="flex flex-wrap items-center justify-between gap-2">
-          <div className="flex items-center gap-2">
-            <Cpu className="h-4 w-4 text-amber-400" />
-            <h3 className="text-xs font-bold uppercase tracking-wider text-amber-300">
-              Phase 5–6 Controller Telemetry & Gate G4 Policy Controls (Placeholder)
-            </h3>
+      {/* Timeline Steps */}
+      <section className="space-y-3">
+        {traces.length === 0 ? (
+          <div className="rounded-2xl border border-dashed border-light-border bg-white p-8 text-center text-xs text-light-text-muted dark:border-dark-border dark:bg-dark-card dark:text-dark-text-muted">
+            No operator execution trace loaded. Run an optimization scenario to populate trace timeline.
           </div>
-          <span className="rounded bg-amber-500/15 px-2 py-0.5 text-[10px] font-bold uppercase text-amber-300">
-            Not Yet Implemented (M1 Roadmap)
-          </span>
-        </div>
+        ) : (
+          <div className="relative border-l-2 border-light-border dark:border-dark-border ml-4 pl-6 space-y-4">
+            {traces.map((trace) => (
+              <div
+                key={`${trace.step_index}-${trace.operator_type}`}
+                className="relative rounded-2xl border border-light-border bg-white p-3.5 shadow-sm hover:shadow-md transition dark:border-dark-border dark:bg-dark-card dark:shadow-dark-card"
+              >
+                {/* Node on timeline */}
+                <span className="absolute -left-[31px] top-3.5 flex h-4 w-4 items-center justify-center rounded-full bg-teal-600 ring-4 ring-white dark:bg-accent-cyan dark:ring-dark-bg" />
 
-        <p className="mt-2 text-xs text-slate-300">
-          Today&apos;s Stage C executes deterministic single-pass retrieval + scenario synthesis
-          under the 5-step Gate G1 cadence (<code className="text-slate-200">project_context.md</code> Sec. 5.6).
-          The following iterative RAG &amp; learned controller widgets are reserved placeholders
-          for Phases 5–6:
-        </p>
+                <div className="flex flex-wrap items-center justify-between gap-2 border-b border-light-border dark:border-dark-border pb-2">
+                  <div className="flex items-center gap-2">
+                    <span className="rounded bg-teal-50 px-1.5 py-0.5 font-mono text-[10px] font-bold text-teal-800 dark:bg-teal-950/60 dark:text-accent-cyan">
+                      Step #{trace.step_index}
+                    </span>
+                    <span className="font-mono text-xs font-bold text-light-text-primary dark:text-dark-text-primary">
+                      {trace.operator_type}
+                    </span>
+                  </div>
 
-        <div className="mt-3 grid grid-cols-1 gap-2.5 md:grid-cols-3">
-          <div className="rounded-lg border border-line bg-[#0a1122] p-3 text-xs">
-            <div className="flex items-center gap-1.5 font-semibold text-slate-200">
-              <Lock className="h-3.5 w-3.5 text-amber-400" />
-              Controller Policy Mode
-            </div>
-            <p className="mt-1 text-[11px] text-slate-400">
-              Placeholder selector for <code className="text-slate-300">Rule-Router</code> vs{" "}
-              <code className="text-slate-300">No-RAG / Fixed-RAG</code> baselines vs{" "}
-              <code className="text-slate-300">PyTorch Masked MLP (Gate G4)</code>.
-            </p>
+                  <div className="flex items-center gap-3 font-mono text-[11px] text-light-text-muted dark:text-dark-text-muted">
+                    <span>{trace.duration_ms.toFixed(1)}ms</span>
+                    <span>•</span>
+                    <span>Cost: ${trace.cost.toFixed(4)}</span>
+                    <span>•</span>
+                    <span>Seed: {trace.seed}</span>
+                  </div>
+                </div>
+
+                <div className="mt-2.5 grid grid-cols-1 gap-2 text-xs sm:grid-cols-2">
+                  <div className="rounded-xl border border-light-border bg-light-surface-subtle p-2 font-mono text-[11px] text-light-text-secondary dark:border-dark-border dark:bg-dark-surface dark:text-dark-text-secondary">
+                    <div className="text-[10px] font-bold uppercase text-light-text-muted dark:text-dark-text-muted mb-1">
+                      Input Payload Summary
+                    </div>
+                    {trace.input_summary}
+                  </div>
+                  <div className="rounded-xl border border-light-border bg-light-surface-subtle p-2 font-mono text-[11px] text-light-text-primary dark:border-dark-border dark:bg-dark-surface dark:text-dark-text-primary">
+                    <div className="text-[10px] font-bold uppercase text-light-text-muted dark:text-dark-text-muted mb-1">
+                      Output Result Summary
+                    </div>
+                    {trace.output_summary}
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
-          <div className="rounded-lg border border-line bg-[#0a1122] p-3 text-xs">
-            <div className="flex items-center gap-1.5 font-semibold text-slate-200">
-              <Lock className="h-3.5 w-3.5 text-amber-400" />
-              Iterative GRADE / REWRITE Loop
-            </div>
-            <p className="mt-1 text-[11px] text-slate-400">
-              Placeholder progression chart showing <code className="text-slate-300">RETRIEVE_DECISIONS</code>{" "}
-              &amp; evidence sufficiency grading per controller step.
-            </p>
-          </div>
-          <div className="rounded-lg border border-line bg-[#0a1122] p-3 text-xs">
-            <div className="flex items-center gap-1.5 font-semibold text-slate-200">
-              <Lock className="h-3.5 w-3.5 text-amber-400" />
-              Loop L3 Regret &amp; Calibration
-            </div>
-            <p className="mt-1 text-[11px] text-slate-400">
-              Placeholder telemetry for oracle trajectory labeling, cost-regret tradeoff,
-              and ECE/AUROC scoring (Phase 6–7).
-            </p>
-          </div>
-        </div>
+        )}
       </section>
     </div>
   );
 }
-
