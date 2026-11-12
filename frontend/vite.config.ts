@@ -16,7 +16,9 @@ export default defineConfig({
       "/ingest": "http://127.0.0.1:8000",
       "/plans": "http://127.0.0.1:8000",
       "/decisions": "http://127.0.0.1:8000",
-      "/traces": "http://127.0.0.1:8000"
+      "/traces": "http://127.0.0.1:8000",
+      "/whatif": "http://127.0.0.1:8000",
+      "/outcomes": "http://127.0.0.1:8000"
     }
   }
 });
