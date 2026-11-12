@@ -7,7 +7,7 @@ from __future__ import annotations
 
 import json
 import random
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 import httpx
@@ -171,7 +171,7 @@ def test_gate_g1_api_validation_dual_plan_noncollision_and_jsonl_traces(tmp_path
             "primary_entity_id": "PORT_KAMARAJAR",
             "event_type": DisruptionEventType.HAZARD_PORT.value,
             "severity": 0.85,
-            "published_at": datetime(2026, 11, 10, tzinfo=timezone.utc).isoformat(),
+            "published_at": datetime(2026, 11, 10, tzinfo=UTC).isoformat(),
         },
     ).json()
 

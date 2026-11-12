@@ -296,8 +296,8 @@ To avoid merge conflicts across parallel branches, keep changes aligned with the
 
 ### Environment & Installed Package Reality
 * **Python**: `3.11+` (`pyproject.toml` requires `>=3.11`).
-* **Installed locally on current dev machine**: `pydantic 2.12.5`, `fastapi 0.162.0`, `networkx 3.6.1`, `numpy 2.3.5`, `ortools 9.15.6755`, `scipy 1.17.1`, `httpx 0.28.1`, `pytest 9.1.1`, `hypothesis 6.170.15`, `torch 2.5.1`.
-* **NOT yet installed locally (optional / dev)**: `faiss-cpu`, `sentence-transformers`, `rapidfuzz`, `duckdb`, `osmnx` (optional `[geo]` extra; deterministic offline fallback active), `ruff`.
+* **Installed locally on current dev machine**: `pydantic 2.12.5`, `fastapi 0.162.0`, `networkx 3.6.1`, `numpy 2.3.5`, `ortools 9.15.6755`, `scipy 1.17.1`, `httpx 0.28.1`, `pytest 9.1.1`, `hypothesis 6.170.15`, `torch 2.5.1`, `ruff 0.17.4`.
+* **NOT yet installed locally (optional)**: `faiss-cpu`, `sentence-transformers`, `rapidfuzz`, `duckdb`, `osmnx` (optional `[geo]` extra; deterministic offline fallback active).
   * Code must either keep clean fallback paths (as `registry.py`, `vector_store.py`, and `osmnx_builder.py` do) OR update `requirements.txt`, `pyproject.toml`, and `Dockerfile` when introducing hard dependencies.
 * **`PYTHONPATH` Gotcha**:
   * `pytest` automatically adds `src` via `pyproject.toml` (`pythonpath = ["src"]`).

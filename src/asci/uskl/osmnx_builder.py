@@ -12,7 +12,7 @@ import math
 from pathlib import Path
 from typing import Any
 
-from asci.core.registry import CanonicalEntityRegistry, Entity, EntityType
+from asci.core.registry import CanonicalEntityRegistry, EntityType
 from asci.uskl.graph_store import CorridorGraphStore
 
 try:
@@ -641,9 +641,9 @@ class CorridorOSMnxBuilder:
     ) -> tuple[dict[str, Any], dict[str, Any]]:
         """Construct scaled 118-node registry and ~380-edge corridor multigraph JSON payloads."""
         base_dir = seeds_dir or _default_seeds_dir()
-        with open(base_dir / "corridor_registry.json", "r", encoding="utf-8") as f:
+        with open(base_dir / "corridor_registry.json", encoding="utf-8") as f:
             v0_reg = json.load(f)
-        with open(base_dir / "corridor_graph_v0.json", "r", encoding="utf-8") as f:
+        with open(base_dir / "corridor_graph_v0.json", encoding="utf-8") as f:
             v0_graph = json.load(f)
 
         entities = list(v0_reg.get("entities", [])) + cls._extra_entities()

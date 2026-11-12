@@ -5,14 +5,14 @@ Enforces deterministic state transitions and strict validation across pipeline o
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
-from enum import Enum
+from datetime import UTC, datetime
+from enum import StrEnum
 from typing import Any
 
 from pydantic import BaseModel, ConfigDict, Field
 
 
-class DisruptionEventType(str, Enum):
+class DisruptionEventType(StrEnum):
     """Regional event taxonomy per Section 5.1 of PRD."""
 
     HAZARD_PORT = "HAZARD_PORT"
@@ -24,7 +24,7 @@ class DisruptionEventType(str, Enum):
     PLANT_OUTAGE = "PLANT_OUTAGE"
 
 
-class EventStatus(str, Enum):
+class EventStatus(StrEnum):
     """Disruption event lifecycle state."""
 
     NEW = "NEW"
@@ -33,7 +33,7 @@ class EventStatus(str, Enum):
     EXPIRED = "EXPIRED"
 
 
-class TrustTier(str, Enum):
+class TrustTier(StrEnum):
     """Evidence provenance trust tier per Section 9 of PRD."""
 
     TIER_A = "TIER_A"  # Official authorities (e.g. IMD, Port Trust, GDACS)
@@ -41,7 +41,7 @@ class TrustTier(str, Enum):
     TIER_C = "TIER_C"  # Social media / unverified operational chatter
 
 
-class OperatorType(str, Enum):
+class OperatorType(StrEnum):
     """Agentic RAG and pipeline operator identifiers per Section 6.2 of PRD."""
 
     STAGE_A_PERCEPTION = "STAGE_A_PERCEPTION"
@@ -60,7 +60,7 @@ class OperatorType(str, Enum):
     ESCALATE = "ESCALATE"
 
 
-class VerificationVerdict(str, Enum):
+class VerificationVerdict(StrEnum):
     """Outcome verdict for verification layers."""
 
     PASS = "PASS"
@@ -68,7 +68,7 @@ class VerificationVerdict(str, Enum):
     WARN = "WARN"
 
 
-class PipelineStatus(str, Enum):
+class PipelineStatus(StrEnum):
     """Overall pipeline execution lifecycle status."""
 
     INITIALIZED = "INITIALIZED"
@@ -99,7 +99,7 @@ class RawSignal(BaseModel):
     trust_tier: TrustTier = TrustTier.TIER_B
     raw_headline: str
     raw_text: str
-    published_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    published_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
     latitude: float | None = None
     longitude: float | None = None
     polygon: list[tuple[float, float]] = Field(default_factory=list)
@@ -126,7 +126,7 @@ class DisruptionEvent(BaseModel):
     source_feed: str
     raw_headline: str
     raw_text: str
-    timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(UTC))
     corroboration_count: int = Field(default=1, ge=1)
     confidence: float = Field(ge=0.0, le=1.0, default=0.85)
     spatial_footprint: list[tuple[float, float]] = Field(default_factory=list)
@@ -235,7 +235,7 @@ class MitigationPlan(BaseModel):
     model_config = ConfigDict(frozen=True)
 
     plan_id: str
-    timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(UTC))
     objective_cost: float = Field(ge=0.0)
     allocations: list[FlowAllocation] = Field(default_factory=list)
     unmet_demand_teu: float = Field(default=0.0, ge=0.0)
@@ -283,7 +283,7 @@ class OperatorTraceItem(BaseModel):
     duration_ms: float = Field(ge=0.0)
     cost: float = Field(ge=0.0)
     seed: int
-    timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(UTC))
 
 
 class DashboardPayload(BaseModel):

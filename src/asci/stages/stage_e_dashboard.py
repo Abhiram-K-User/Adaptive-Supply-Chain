@@ -7,7 +7,7 @@ from __future__ import annotations
 
 import random
 import time
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
 
 from asci.core.contracts import OperatorResult, PipelineConfig
@@ -182,7 +182,7 @@ class StageEDashboard:
             duration_ms=round(duration_ms, 2),
             cost=op_cost,
             seed=cfg.random_seed,
-            timestamp=datetime.now(timezone.utc),
+            timestamp=datetime.now(UTC),
         )
 
         new_status = (

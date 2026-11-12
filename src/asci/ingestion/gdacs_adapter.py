@@ -6,7 +6,7 @@ Parses GeoJSON cyclone/flood alerts and spatial footprints with local fallback r
 from __future__ import annotations
 
 import json
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -49,7 +49,7 @@ class GDACSAdapter:
         if data is None:
             if not self.fallback_path.exists():
                 return []
-            with open(self.fallback_path, "r", encoding="utf-8") as f:
+            with open(self.fallback_path, encoding="utf-8") as f:
                 data = json.load(f)
 
         return self.parse_feature_collection(data)
@@ -99,7 +99,7 @@ class GDACSAdapter:
 
             from_str = props.get("fromdate")
             to_str = props.get("todate")
-            published_at = _parse_iso(from_str) or datetime.now(timezone.utc)
+            published_at = _parse_iso(from_str) or datetime.now(UTC)
             to_dt = _parse_iso(to_str)
             duration_days = 3.0
             if to_dt and to_dt > published_at:
@@ -157,7 +157,7 @@ def _parse_iso(val: Any) -> datetime | None:
         return None
     try:
         dt = datetime.fromisoformat(val.strip().replace("Z", "+00:00"))
-        return dt if dt.tzinfo else dt.replace(tzinfo=timezone.utc)
+        return dt if dt.tzinfo else dt.replace(tzinfo=UTC)
     except ValueError:
         return None
 

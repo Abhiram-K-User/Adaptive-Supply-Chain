@@ -10,7 +10,7 @@ import json
 import math
 import re
 from difflib import SequenceMatcher
-from enum import Enum
+from enum import StrEnum
 from pathlib import Path
 from typing import Any, Literal
 
@@ -22,7 +22,7 @@ except ImportError:  # pragma: no cover - optional acceleration
     _rapidfuzz = None
 
 
-class EntityType(str, Enum):
+class EntityType(StrEnum):
     """Canonical classification for physical and operational corridor nodes."""
 
     PORT = "PORT"
@@ -212,7 +212,7 @@ class CanonicalEntityRegistry:
         if not path_obj.exists():
             raise FileNotFoundError(f"Corridor registry seed not found at {path_obj}")
 
-        with open(path_obj, "r", encoding="utf-8") as f:
+        with open(path_obj, encoding="utf-8") as f:
             data = json.load(f)
 
         entities: dict[str, Entity] = {}

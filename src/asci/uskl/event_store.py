@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import json
 import sqlite3
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
 
 from asci.core.registry import CanonicalEntityRegistry, get_canonical_registry
@@ -196,9 +196,9 @@ class SQLiteEventStore:
 
     def expire_stale_events(self, as_of: datetime | None = None) -> int:
         """Mark active events whose estimated duration has elapsed by as_of as EXPIRED."""
-        ref_time = as_of or datetime.now(timezone.utc)
+        ref_time = as_of or datetime.now(UTC)
         if ref_time.tzinfo is None:
-            ref_time = ref_time.replace(tzinfo=timezone.utc)
+            ref_time = ref_time.replace(tzinfo=UTC)
 
         active = [
             e
@@ -209,7 +209,7 @@ class SQLiteEventStore:
         for evt in active:
             evt_ts = evt.timestamp
             if evt_ts.tzinfo is None:
-                evt_ts = evt_ts.replace(tzinfo=timezone.utc)
+                evt_ts = evt_ts.replace(tzinfo=UTC)
             if evt_ts + timedelta(days=evt.estimated_duration_days) <= ref_time:
                 if self.update_status(evt.event_id, EventStatus.EXPIRED):
                     expired_count += 1

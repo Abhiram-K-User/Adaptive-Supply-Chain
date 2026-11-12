@@ -13,7 +13,7 @@ import random
 import time
 from collections import defaultdict
 from dataclasses import dataclass
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 import networkx as nx
 import numpy as np
@@ -126,8 +126,8 @@ class StageDOptimiserAndVerifier:
         graph_ctx = state.graph_context
         assert event is not None and graph_ctx is not None
 
-        ports = tuple(sorted((e.id for e in self.registry.get_by_type(EntityType.PORT))))
-        plants = tuple(sorted((e.id for e in self.registry.get_by_type(EntityType.PLANT))))
+        ports = tuple(sorted(e.id for e in self.registry.get_by_type(EntityType.PORT)))
+        plants = tuple(sorted(e.id for e in self.registry.get_by_type(EntityType.PLANT)))
         all_nodes = tuple(sorted(self.graph_store.get_all_nodes()))
 
         comm_spec = _MULTI_COMMODITIES if cfg.enable_multi_commodity else _SINGLE_COMMODITY
@@ -237,7 +237,7 @@ class StageDOptimiserAndVerifier:
         tail_denom = max(1e-6, 1.0 - alpha)
         for zeta in candidates:
             val = zeta + (1.0 / tail_denom) * sum(
-                p * max(0.0, c - zeta) for p, c in zip(scen_probs, scen_costs)
+                p * max(0.0, c - zeta) for p, c in zip(scen_probs, scen_costs, strict=True)
             )
             if val < best:
                 best = val
@@ -820,17 +820,22 @@ class StageDOptimiserAndVerifier:
             for u, v in sorted(rem_edges.keys()):
                 adj[u].append(v)
 
-            def _find_path(start_port: str) -> list[str] | None:
+            def _find_path(
+                start_port: str,
+                adj_map: dict[str, list[str]] = adj,
+                edges_rem: dict[tuple[str, str], float] = rem_edges,
+                deliv_rem: dict[str, float] = rem_deliv,
+            ) -> list[str] | None:
                 stack: list[tuple[str, list[str]]] = [(start_port, [start_port])]
                 visited = {start_port}
                 while stack:
                     curr, path = stack.pop()
-                    if curr in plant_set and rem_deliv.get(curr, 0.0) > _LP_EPS:
+                    if curr in plant_set and deliv_rem.get(curr, 0.0) > _LP_EPS:
                         return path
                     neighbors = [
                         nxt
-                        for nxt in adj.get(curr, [])
-                        if rem_edges.get((curr, nxt), 0.0) > _LP_EPS and nxt not in visited
+                        for nxt in adj_map.get(curr, [])
+                        if edges_rem.get((curr, nxt), 0.0) > _LP_EPS and nxt not in visited
                     ]
                     for nxt in reversed(neighbors):
                         visited.add(nxt)
@@ -846,7 +851,7 @@ class StageDOptimiserAndVerifier:
                     if path is None:
                         break
                     dest = path[-1]
-                    hops = list(zip(path, path[1:]))
+                    hops = list(zip(path, path[1:], strict=False))
                     peel = min(
                         rem_supply[port_id],
                         rem_deliv[dest],
@@ -866,10 +871,16 @@ class StageDOptimiserAndVerifier:
                     continue
                 path_list = list(path_tuple)
                 unit_cost = round(
-                    sum(edge_unit_cost[(u, v)] for u, v in zip(path_list, path_list[1:])),
+                    sum(
+                        edge_unit_cost[(u, v)]
+                        for u, v in zip(path_list, path_list[1:], strict=False)
+                    ),
                     4,
                 )
-                uses_rail = any("RAIL" in edge_modes[(u, v)] for u, v in zip(path_list, path_list[1:]))
+                uses_rail = any(
+                    "RAIL" in edge_modes[(u, v)]
+                    for u, v in zip(path_list, path_list[1:], strict=False)
+                )
                 alloc_mode = "INTERMODAL_RAIL" if uses_rail else "ROAD"
                 allocations.append(
                     FlowAllocation(
@@ -929,7 +940,7 @@ class StageDOptimiserAndVerifier:
         plan_fingerprint = (
             hashlib.sha1(
                 f"{event.event_id}:{state.session_id}:{eff_risk_mode}:{lp_res.solver_name}:"
-                f"{round(lp_res.objective_value, 2)}:{unmet_demand_teu}:{len(allocations)}".encode("utf-8")
+                f"{round(lp_res.objective_value, 2)}:{unmet_demand_teu}:{len(allocations)}".encode()
             )
             .hexdigest()[:8]
             .upper()
@@ -1083,7 +1094,7 @@ class StageDOptimiserAndVerifier:
                 if path is None:
                     break
                 dest = path[-1]
-                hops = list(zip(path, path[1:]))
+                hops = list(zip(path, path[1:], strict=False))
                 peel = min(rem_supply[port_id], rem_deliv[dest], *(rem_edges[hop] for hop in hops))
                 rem_supply[port_id] -= peel
                 rem_deliv[dest] -= peel
@@ -1098,10 +1109,16 @@ class StageDOptimiserAndVerifier:
             path_list = list(path_tuple)
             flow_teu = round(f_int / _FLOW_SCALE, 4)
             unit_cost = round(
-                sum(edge_weighted_cost[(u, v)] for u, v in zip(path_list, path_list[1:])),
+                sum(
+                    edge_weighted_cost[(u, v)]
+                    for u, v in zip(path_list, path_list[1:], strict=False)
+                ),
                 4,
             )
-            uses_rail = any("RAIL" in edge_modes[(u, v)] for u, v in zip(path_list, path_list[1:]))
+            uses_rail = any(
+                "RAIL" in edge_modes[(u, v)]
+                for u, v in zip(path_list, path_list[1:], strict=False)
+            )
             allocations.append(
                 FlowAllocation(
                     commodity="CONTAINERISED_AUTO_PARTS",
@@ -1139,9 +1156,7 @@ class StageDOptimiserAndVerifier:
 
         plan_fingerprint = (
             hashlib.sha1(
-                f"{event.event_id}:{state.session_id}:NETWORKX:{round(total_transport_cost, 2)}:{unmet_demand_teu}:{len(allocations)}".encode(
-                    "utf-8"
-                )
+                f"{event.event_id}:{state.session_id}:NETWORKX:{round(total_transport_cost, 2)}:{unmet_demand_teu}:{len(allocations)}".encode()
             )
             .hexdigest()[:8]
             .upper()
@@ -1283,7 +1298,7 @@ class StageDOptimiserAndVerifier:
             if len(set(a.path)) != len(a.path):
                 invalid_paths.append(f"alloc[{idx}] contains cycle {a.path}")
                 continue
-            for u, v in zip(a.path, a.path[1:]):
+            for u, v in zip(a.path, a.path[1:], strict=False):
                 if not self.graph_store.has_active_edge(u, v):
                     invalid_paths.append(f"alloc[{idx}] non-existent or inactive edge {u}->{v}")
                     break
@@ -1316,7 +1331,7 @@ class StageDOptimiserAndVerifier:
         for a in candidate_plan.allocations:
             for nid in set(a.path):
                 node_flows[nid] += a.flow_teu
-            for hop_idx, (u, v) in enumerate(zip(a.path, a.path[1:])):
+            for hop_idx, (u, v) in enumerate(zip(a.path, a.path[1:], strict=False)):
                 edge_flows[(u, v)] += a.flow_teu
                 if hop_idx > 0:
                     node_passthrough_out[u] += a.flow_teu
@@ -1419,7 +1434,7 @@ class StageDOptimiserAndVerifier:
             origin_outflows[a.origin_id] += a.flow_teu
             dest_inflows[a.destination_id] += a.flow_teu
             dest_comm_inflows[(a.destination_id, a.commodity)] += a.flow_teu
-            for hop_idx, (u, v) in enumerate(zip(a.path, a.path[1:])):
+            for hop_idx, (u, v) in enumerate(zip(a.path, a.path[1:], strict=False)):
                 if hop_idx > 0:
                     transit_in[(u, a.commodity)] += a.flow_teu
                 if hop_idx < len(a.path) - 2:
@@ -1640,7 +1655,7 @@ class StageDOptimiserAndVerifier:
             duration_ms=round(duration_ms, 2),
             cost=op_cost,
             seed=cfg.random_seed,
-            timestamp=datetime.now(timezone.utc),
+            timestamp=datetime.now(UTC),
         )
 
         new_status = PipelineStatus.VERIFIED if overall_pass else PipelineStatus.FAILED

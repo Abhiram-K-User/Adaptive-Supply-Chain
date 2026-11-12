@@ -3,7 +3,7 @@ Unit tests for Corridor Graph topology repairs and Stage B risk/mode calculation
 """
 
 import random
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 from asci.core.contracts import PipelineConfig
 from asci.core.registry import CanonicalEntityRegistry, EntityType, get_canonical_registry
@@ -63,7 +63,7 @@ def test_stage_b_rail_mode_and_non_constant_exposure(
         source_feed="TEST",
         raw_headline="Chennai cyclone alert",
         raw_text="Storm warning at Chennai Port",
-        timestamp=datetime(2026, 11, 10, tzinfo=timezone.utc),
+        timestamp=datetime(2026, 11, 10, tzinfo=UTC),
     )
     state = PipelineState(session_id="SESS_B", status=PipelineStatus.PERCEIVED, event=evt)
     next_state, res = stage_b.run(state, pipeline_config, random.Random(42))
@@ -110,7 +110,7 @@ def test_stage_b_vulnerability_factors_and_propagate_determinism(
         source_feed="IMD",
         raw_headline="Bay storm at Chennai",
         raw_text="Severe storm surge at Chennai Port.",
-        timestamp=datetime(2026, 11, 10, tzinfo=timezone.utc),
+        timestamp=datetime(2026, 11, 10, tzinfo=UTC),
         corroboration_count=3,
         confidence=0.95,
     )
@@ -185,7 +185,7 @@ def test_tier2_dynamic_congestion_redistribution_and_idempotency(
         source_feed="IMD",
         raw_headline="Compound Bay storm disrupts Chennai & Kamarajar ports",
         raw_text="Severe cyclonic storm diverts inland TEU freight toward southern corridors.",
-        timestamp=datetime(2026, 11, 10, tzinfo=timezone.utc),
+        timestamp=datetime(2026, 11, 10, tzinfo=UTC),
     )
     stage_b = StageBCorridorRisk(graph_store=graph_store, registry=registry)
     s0 = PipelineState(session_id="S_T2_CMP", status=PipelineStatus.PERCEIVED, event=evt)
@@ -292,7 +292,7 @@ def test_osmnx_builder_v1_corridor_topology_and_mock_calibration(monkeypatch):
             source_feed="V1_BOTTLENECK_CHECK",
             raw_headline=f"Major outage at {bottleneck_id}",
             raw_text=f"Heavy congestion at {bottleneck_id}.",
-            timestamp=datetime(2026, 11, 10, tzinfo=timezone.utc),
+            timestamp=datetime(2026, 11, 10, tzinfo=UTC),
         )
         s_fin, results = pipe_v1.run(
             PipelineState(session_id=f"S_V1_{bottleneck_id}", status=PipelineStatus.PERCEIVED, event=evt),

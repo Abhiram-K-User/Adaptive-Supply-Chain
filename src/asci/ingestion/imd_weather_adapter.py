@@ -6,7 +6,7 @@ Provides regional severity priors from rainfall and wind velocity warnings.
 from __future__ import annotations
 
 import json
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -34,7 +34,7 @@ class IMDWeatherAdapter:
         _ = use_fallback
         if not self.fallback_path.exists():
             return []
-        with open(self.fallback_path, "r", encoding="utf-8") as f:
+        with open(self.fallback_path, encoding="utf-8") as f:
             payload = json.load(f)
         return self.parse_bulletins(payload.get("bulletins", []))
 
@@ -64,10 +64,10 @@ class IMDWeatherAdapter:
                 issued_dt = (
                     datetime.fromisoformat(issued_str.replace("Z", "+00:00"))
                     if issued_str
-                    else datetime.now(timezone.utc)
+                    else datetime.now(UTC)
                 )
             except ValueError:
-                issued_dt = datetime.now(timezone.utc)
+                issued_dt = datetime.now(UTC)
 
             bulletin_id = str(b.get("bulletin_id", f"IMD_{idx}"))
             signals.append(

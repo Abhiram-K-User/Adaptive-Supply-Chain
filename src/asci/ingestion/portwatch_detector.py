@@ -7,7 +7,7 @@ when vessel calls drop significantly below calibrated port baselines.
 from __future__ import annotations
 
 import csv
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 from asci.core.registry import CanonicalEntityRegistry, get_canonical_registry
@@ -40,7 +40,7 @@ class PortWatchAnomalyDetector:
             return []
 
         observations: list[PortObservation] = []
-        with open(path, "r", encoding="utf-8") as f:
+        with open(path, encoding="utf-8") as f:
             reader = csv.DictReader(f)
             for row in reader:
                 entity_id = row["entity_id"].strip()
@@ -77,7 +77,7 @@ class PortWatchAnomalyDetector:
         try:
             pub_dt = datetime.fromisoformat(f"{anomaly.obs_date}T12:00:00+00:00")
         except ValueError:
-            pub_dt = datetime.now(timezone.utc)
+            pub_dt = datetime.now(UTC)
 
         headline = (
             f"PortWatch Anomaly: {entity.name} vessel calls dropped {pct_drop}% "

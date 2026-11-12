@@ -9,7 +9,7 @@ Unit tests for Gate G2 Part 1 Mathematical Core:
 from __future__ import annotations
 
 import random
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 import pytest
 
@@ -54,7 +54,7 @@ def _make_analyzed_state(
         source_feed="GATE_G2_PART1",
         raw_headline=f"Disruption at {primary_entity_id}",
         raw_text=f"Operational bottleneck at {primary_entity_id}.",
-        timestamp=datetime(2026, 11, 10, tzinfo=timezone.utc),
+        timestamp=datetime(2026, 11, 10, tzinfo=UTC),
         corroboration_count=2,
         confidence=0.90,
     )
@@ -313,7 +313,7 @@ def test_gate_g2_part1_linestop_penalty_protects_lowest_cover_jit_plant(
         source_feed="TEST",
         raw_headline="Regional port closure",
         raw_text="Severe disruption limiting ports to Chennai residual.",
-        timestamp=datetime(2026, 11, 10, tzinfo=timezone.utc),
+        timestamp=datetime(2026, 11, 10, tzinfo=UTC),
     )
     state = PipelineState(
         session_id="SESS_JIT",

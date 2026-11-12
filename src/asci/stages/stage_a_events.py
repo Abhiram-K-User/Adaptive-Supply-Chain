@@ -10,7 +10,7 @@ import hashlib
 import random
 import re
 import time
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Protocol
 
 from pydantic import BaseModel, ConfigDict, Field
@@ -476,7 +476,7 @@ class StageAEventPerception:
                     "Kamarajar Port Limited (Ennore) container terminal has suspended all crane operations. "
                     "Feeder highways in Ennore logistics corridor inundated."
                 ),
-                timestamp=datetime.now(timezone.utc),
+                timestamp=datetime.now(UTC),
                 corroboration_count=3,
                 confidence=0.92,
             )
@@ -496,7 +496,7 @@ class StageAEventPerception:
             duration_ms=round(duration_ms, 2),
             cost=op_cost,
             seed=cfg.random_seed,
-            timestamp=datetime.now(timezone.utc),
+            timestamp=datetime.now(UTC),
         )
 
         new_state = state.transition(

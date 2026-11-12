@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import math
 import random
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field
@@ -179,7 +179,7 @@ class SuiteS1Runner:
             source_feed="SUITE_S1",
             raw_headline=f"Suite S1 disruption affecting {entity.name}",
             raw_text=f"Operational disruption at {entity.name} ({entity_id}) severity={severity}.",
-            timestamp=datetime(2026, 11, 10, tzinfo=timezone.utc),
+            timestamp=datetime(2026, 11, 10, tzinfo=UTC),
             corroboration_count=3 if confidence >= 0.80 else 1,
             confidence=confidence,
         )

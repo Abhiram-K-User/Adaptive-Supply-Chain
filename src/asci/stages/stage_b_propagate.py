@@ -9,7 +9,7 @@ from __future__ import annotations
 import random
 import time
 from collections import defaultdict, deque
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 import networkx as nx
 
@@ -180,7 +180,10 @@ def propagate_graph_context_tier2(
             for path in graph_store.find_ranked_paths(
                 port_id, plant.id, max_paths=1, cutoff=cutoff, simple_graph=dg
             ):
-                t_sum = sum(float(dg[u][v]["transit_time_hrs"]) for u, v in zip(path, path[1:]))
+                t_sum = sum(
+                    float(dg[u][v]["transit_time_hrs"])
+                    for u, v in zip(path, path[1:], strict=False)
+                )
                 routes.append((t_sum, path))
         routes.sort(key=lambda item: (item[0], len(item[1]), item[1]))
         plant_routes[plant.id] = routes
@@ -202,26 +205,26 @@ def propagate_graph_context_tier2(
             if not any(node in affected_set for node in p)
         ]
         diverted_total = 0.0
-        for (t, path), w in zip(primary_routes, inv_costs):
+        for (_t, path), w in zip(primary_routes, inv_costs, strict=False):
             alloc = demand * (w / inv_sum)
             path_affected = any(node in affected_set for node in path)
             if path_affected:
                 retain_frac = max(0.05, 1.0 - max(0.0, severity))
                 kept = alloc * retain_frac
                 diverted_total += alloc - kept
-                for u, v in zip(path, path[1:]):
+                for u, v in zip(path, path[1:], strict=False):
                     redistributed_loads[f"{u}->{v}"] += kept
             else:
-                for u, v in zip(path, path[1:]):
+                for u, v in zip(path, path[1:], strict=False):
                     redistributed_loads[f"{u}->{v}"] += alloc
 
         if diverted_total > 0.0 and surviving_routes:
             alt_pool = surviving_routes[:3]
             alt_weights = [1.0 / max(0.5, t) for t, _ in alt_pool]
             alt_sum = sum(alt_weights) or 1.0
-            for (_, alt_path), w_alt in zip(alt_pool, alt_weights):
+            for (_, alt_path), w_alt in zip(alt_pool, alt_weights, strict=True):
                 share = diverted_total * (w_alt / alt_sum)
-                for u, v in zip(alt_path, alt_path[1:]):
+                for u, v in zip(alt_path, alt_path[1:], strict=False):
                     redistributed_loads[f"{u}->{v}"] += share
 
     # Step 2: Evaluate link utilization & BPR congestion dwell spillover across diversion corridors
@@ -317,7 +320,7 @@ class Tier1PropagationSimulator:
                 duration_ms=round(duration_ms, 2),
                 cost=0.0005,
                 seed=cfg.random_seed,
-                timestamp=datetime.now(timezone.utc),
+                timestamp=datetime.now(UTC),
             )
             new_state = state.transition(updates={}, trace_item=trace_item)
             return new_state, OperatorResult(
@@ -363,7 +366,7 @@ class Tier1PropagationSimulator:
             duration_ms=round(duration_ms, 2),
             cost=op_cost,
             seed=cfg.random_seed,
-            timestamp=datetime.now(timezone.utc),
+            timestamp=datetime.now(UTC),
         )
         new_state = state.transition(updates={"graph_context": updated_ctx}, trace_item=trace_item)
         return new_state, OperatorResult(
@@ -424,7 +427,7 @@ class Tier2DynamicCongestionSimulator:
                 duration_ms=round(duration_ms, 2),
                 cost=0.0005,
                 seed=cfg.random_seed,
-                timestamp=datetime.now(timezone.utc),
+                timestamp=datetime.now(UTC),
             )
             new_state = state.transition(updates={}, trace_item=trace_item)
             return new_state, OperatorResult(
@@ -476,7 +479,7 @@ class Tier2DynamicCongestionSimulator:
             duration_ms=round(duration_ms, 2),
             cost=op_cost,
             seed=cfg.random_seed,
-            timestamp=datetime.now(timezone.utc),
+            timestamp=datetime.now(UTC),
         )
         new_state = state.transition(updates={"graph_context": updated_ctx}, trace_item=trace_item)
         return new_state, OperatorResult(

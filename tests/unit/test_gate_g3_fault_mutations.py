@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import copy
 import random
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 import pytest
 
@@ -50,7 +50,7 @@ def _base_analyzed_state(
         source_feed="TEST_S4",
         raw_headline="Storm surge at Kamarajar Port",
         raw_text="Cyclonic alert at Ennore.",
-        timestamp=datetime(2026, 11, 10, tzinfo=timezone.utc),
+        timestamp=datetime(2026, 11, 10, tzinfo=UTC),
         corroboration_count=2,
         confidence=0.92,
     )
@@ -387,7 +387,7 @@ def test_gate_g3_l3_citation_grounding_warns_when_unmatched(
         source_feed="TEST",
         raw_headline="Strike at Tuticorin Port",
         raw_text="Berth slowdown at VOC Port",
-        timestamp=datetime(2026, 11, 10, tzinfo=timezone.utc),
+        timestamp=datetime(2026, 11, 10, tzinfo=UTC),
     )
     s0 = PipelineState(
         session_id="SESS_WARN_CIT",

@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import copy
 import random
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 import pytest
 
@@ -100,7 +100,7 @@ def test_gate_g2_all_23_entities_reproducible_zero_l1_l2_breach(
         source_feed="GATE_G2_SWEEP",
         raw_headline=f"Disruption affecting {entity.name}",
         raw_text=f"Operational bottleneck at {entity.name} ({entity_id}).",
-        timestamp=datetime(2026, 11, 10, tzinfo=timezone.utc),
+        timestamp=datetime(2026, 11, 10, tzinfo=UTC),
         corroboration_count=2,
         confidence=0.90,
     )
@@ -149,7 +149,7 @@ def test_gate_g2_stage_b_severity_monotonicity_across_all_ports(
             source_feed="GATE_G2_MONO",
             raw_headline=f"Minor swell at {port.name}",
             raw_text=f"Mild weather at {port.name}",
-            timestamp=datetime(2026, 11, 10, tzinfo=timezone.utc),
+            timestamp=datetime(2026, 11, 10, tzinfo=UTC),
         )
         low_s, _ = stage_b.run(
             PipelineState(session_id="S_L", status=PipelineStatus.PERCEIVED, event=base_evt),
@@ -187,7 +187,7 @@ def test_gate_g2_compound_chennai_cluster_outage_diverts_without_breach(
         source_feed="GATE_G2_COMPOUND",
         raw_headline="Bay Cyclone impacts Ennore, Kattupalli, and Chennai ports",
         raw_text="Simultaneous coastal storm warning along North Tamil Nadu ports.",
-        timestamp=datetime(2026, 11, 10, tzinfo=timezone.utc),
+        timestamp=datetime(2026, 11, 10, tzinfo=UTC),
         corroboration_count=3,
         confidence=0.95,
     )
@@ -238,7 +238,7 @@ def test_gate_g2_inactive_graph_edge_carries_zero_flow(
         source_feed="TEST",
         raw_headline="Chennai-Whitefield rail direct track suspended",
         raw_text="Direct rail block train corridor temporarily closed.",
-        timestamp=datetime(2026, 11, 10, tzinfo=timezone.utc),
+        timestamp=datetime(2026, 11, 10, tzinfo=UTC),
     )
     s_fin, _ = pipe.run(
         PipelineState(session_id="S_INACT", status=PipelineStatus.PERCEIVED, event=evt),
@@ -250,7 +250,7 @@ def test_gate_g2_inactive_graph_edge_carries_zero_flow(
     assert s_fin.candidate_plan is not None
     # Verify (PORT_CHENNAI, ICD_WHITEFIELD) edge is completely avoided
     for a in s_fin.candidate_plan.allocations:
-        hops = list(zip(a.path, a.path[1:]))
+        hops = list(zip(a.path, a.path[1:], strict=False))
         assert ("PORT_CHENNAI", "ICD_WHITEFIELD") not in hops
 
 
@@ -315,7 +315,7 @@ def test_gate_g2_raw_signal_all_7_event_categories_end_to_end(
         trust_tier=TrustTier.TIER_B,
         raw_headline=headline,
         raw_text=body,
-        published_at=datetime(2026, 11, 10, tzinfo=timezone.utc),
+        published_at=datetime(2026, 11, 10, tzinfo=UTC),
     )
     pipe = WalkingSkeletonPipeline()
     s0 = PipelineState(

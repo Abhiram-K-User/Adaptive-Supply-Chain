@@ -5,17 +5,10 @@ Configures python path dynamically and provides initialized USKL stores.
 
 from __future__ import annotations
 
-import sys
-from datetime import datetime, timezone
-from pathlib import Path
+from datetime import UTC, datetime
 
 import pytest
 from fastapi.testclient import TestClient
-
-# Ensure src directory is in sys.path
-SRC_DIR = Path(__file__).resolve().parents[1] / "src"
-if str(SRC_DIR) not in sys.path:
-    sys.path.insert(0, str(SRC_DIR))
 
 from asci.api.main import create_app
 from asci.core.contracts import PipelineConfig
@@ -77,7 +70,7 @@ def sample_event(registry: CanonicalEntityRegistry) -> DisruptionEvent:
         source_feed="IMD_GDACS_PORTWATCH",
         raw_headline="Severe Cyclone warning: Ennore Kamarajar Port halts container operations",
         raw_text="Severe cyclonic conditions disrupt container handling at Kamarajar Port; feeder roads waterlogged.",
-        timestamp=datetime.now(timezone.utc),
+        timestamp=datetime.now(UTC),
         corroboration_count=2,
         confidence=0.90,
     )

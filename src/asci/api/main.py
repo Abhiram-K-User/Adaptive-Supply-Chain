@@ -10,7 +10,7 @@ import os
 import random
 import uuid
 from pathlib import Path
-from typing import Any, Literal
+from typing import Annotated, Any, Literal
 
 from fastapi import FastAPI, HTTPException, Query, status
 from pydantic import BaseModel, Field
@@ -211,12 +211,12 @@ def create_app(
 
     @api.get("/evidence/search", tags=["USKL"])
     def search_evidence(
-        q: str = Query(..., min_length=1, description="Semantic search query"),
-        entity_id: str | None = Query(default=None),
-        region: str | None = Query(default=None),
-        hazard_type: DisruptionEventType | None = Query(default=None),
-        min_trust_tier: TrustTier | None = Query(default=None),
-        limit: int = Query(default=5, ge=1, le=20),
+        q: Annotated[str, Query(min_length=1, description="Semantic search query")],
+        entity_id: Annotated[str | None, Query()] = None,
+        region: Annotated[str | None, Query()] = None,
+        hazard_type: Annotated[DisruptionEventType | None, Query()] = None,
+        min_trust_tier: Annotated[TrustTier | None, Query()] = None,
+        limit: Annotated[int, Query(ge=1, le=20)] = 5,
     ) -> list[dict[str, Any]]:
         """Query tagged semantic vector memory with metadata filters."""
         entity_ids = [entity_id] if entity_id else None
@@ -334,7 +334,9 @@ def create_app(
         )
 
     @api.get("/events", tags=["Events"])
-    def list_events(event_status: EventStatus | None = Query(default=None)) -> list[dict[str, Any]]:
+    def list_events(
+        event_status: Annotated[EventStatus | None, Query()] = None,
+    ) -> list[dict[str, Any]]:
         """List disruption events, optionally filtered by lifecycle status."""
         return [e.model_dump(mode="json") for e in event_store.list_events(status=event_status)]
 

@@ -5,9 +5,9 @@ Enforces that every node is validated against the Canonical Entity Registry.
 
 from __future__ import annotations
 
-from collections import OrderedDict
 import itertools
 import json
+from collections import OrderedDict
 from pathlib import Path
 from typing import Any
 
@@ -89,7 +89,7 @@ class CorridorGraphStore:
         if not path_obj.exists():
             raise FileNotFoundError(f"Corridor graph seed not found at {path_obj}")
 
-        with open(path_obj, "r", encoding="utf-8") as f:
+        with open(path_obj, encoding="utf-8") as f:
             data = json.load(f)
 
         g = nx.MultiDiGraph()
@@ -167,7 +167,7 @@ class CorridorGraphStore:
         if len(path) < 2:
             return "UNKNOWN"
         saw_rail = False
-        for u, v in zip(path, path[1:]):
+        for u, v in zip(path, path[1:], strict=False):
             active_edges = self.get_active_edges(u, v)
             if not active_edges:
                 return "UNKNOWN"
@@ -314,7 +314,9 @@ class CorridorGraphStore:
             for p in itertools.islice(gen, max_probe):
                 if len(p) - 1 > cutoff:
                     continue
-                total = sum(float(dg[u][v]["transit_time_hrs"]) for u, v in zip(p, p[1:]))
+                total = sum(
+                    float(dg[u][v]["transit_time_hrs"]) for u, v in zip(p, p[1:], strict=False)
+                )
                 candidates.append((total, len(p), list(p)))
                 if len(candidates) >= max_paths * 2:
                     break

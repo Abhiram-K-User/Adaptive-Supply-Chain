@@ -8,7 +8,7 @@ both v0_core (23 nodes) and v1_corridor (118 nodes).
 from __future__ import annotations
 
 import random
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 from hypothesis import given, settings
 from hypothesis import strategies as st
@@ -75,7 +75,7 @@ def _fuzz_event_cases(draw: st.DrawFn) -> tuple[str, DisruptionEvent, PipelineCo
         source_feed="HYPOTHESIS_FUZZ",
         raw_headline=f"Fuzz disruption on {primary_id}",
         raw_text=f"Simulated randomized disruption impacting {', '.join(affected)}.",
-        timestamp=datetime(2026, 11, 10, tzinfo=timezone.utc),
+        timestamp=datetime(2026, 11, 10, tzinfo=UTC),
         corroboration_count=corroboration,
         confidence=confidence,
     )

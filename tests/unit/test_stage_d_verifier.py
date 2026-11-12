@@ -3,7 +3,7 @@ Unit tests for generalized Stage D flow solver and genuine L1-L3 verification ch
 """
 
 import random
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 from asci.core.contracts import PipelineConfig
 from asci.core.registry import CanonicalEntityRegistry
@@ -45,7 +45,7 @@ def _prepare_analyzed_state(
         source_feed="TEST_FEED",
         raw_headline=f"Disruption at {entity_id}",
         raw_text=f"Operational stoppage affecting {entity_id}.",
-        timestamp=datetime(2026, 11, 10, tzinfo=timezone.utc),
+        timestamp=datetime(2026, 11, 10, tzinfo=UTC),
     )
     ev_doc = EvidenceItem(
         citation_id=f"CIT_{entity_id}",

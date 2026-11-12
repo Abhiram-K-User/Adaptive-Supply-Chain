@@ -8,7 +8,7 @@ from __future__ import annotations
 import math
 import random
 import time
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 from asci.core.contracts import OperatorResult, PipelineConfig
 from asci.core.registry import CanonicalEntityRegistry, EntityType, get_canonical_registry
@@ -61,7 +61,7 @@ class StageBCorridorRisk:
                 residual_caps.append(float(ent.capacity_teu_per_day) * n_mult)
 
         transit_hrs = 0.0
-        for u, v in zip(path, path[1:]):
+        for u, v in zip(path, path[1:], strict=False):
             edges = self.graph_store.get_active_edges(u, v)
             if not edges:
                 return 0.0, 0.0, float("inf"), 0.0
@@ -280,7 +280,10 @@ class StageBCorridorRisk:
                     4,
                 )
                 link_congestion = max(
-                    (edge_congestion_ratios.get(f"{u}->{v}", 0.0) for u, v in zip(path, path[1:])),
+                    (
+                        edge_congestion_ratios.get(f"{u}->{v}", 0.0)
+                        for u, v in zip(path, path[1:], strict=False)
+                    ),
                     default=0.0,
                 )
                 utilisation = round(
@@ -289,7 +292,10 @@ class StageBCorridorRisk:
                 )
                 path_node_betw = max(betweenness.get(nid, 0.0) for nid in path)
                 path_edge_betw = max(
-                    (edge_betweenness.get((u, v), 0.0) for u, v in zip(path, path[1:])),
+                    (
+                        edge_betweenness.get((u, v), 0.0)
+                        for u, v in zip(path, path[1:], strict=False)
+                    ),
                     default=0.0,
                 )
                 betweenness_factor = min(1.0, max(0.10, max(path_node_betw, path_edge_betw) * 3.0))
@@ -414,7 +420,7 @@ class StageBCorridorRisk:
             duration_ms=round(duration_ms, 2),
             cost=op_cost,
             seed=cfg.random_seed,
-            timestamp=datetime.now(timezone.utc),
+            timestamp=datetime.now(UTC),
         )
 
         new_state = state.transition(

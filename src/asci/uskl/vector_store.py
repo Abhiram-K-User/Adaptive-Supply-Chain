@@ -11,7 +11,7 @@ import hashlib
 import json
 import math
 import re
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any, Protocol
 
@@ -232,7 +232,7 @@ class SemanticVectorStore:
         if not self._documents:
             return []
 
-        ref_date = as_of_date or datetime.now(timezone.utc).strftime("%Y-%m-%d")
+        ref_date = as_of_date or datetime.now(UTC).strftime("%Y-%m-%d")
         min_rank = self._TIER_RANK.get(min_trust_tier, 0) if min_trust_tier else 0
         region_low = region.lower() if region else None
 
@@ -273,7 +273,7 @@ class SemanticVectorStore:
             scores_arr, indices_arr = self._faiss_index.search(q_vec, len(self._documents))
             sim_by_idx = {
                 int(doc_idx): float(sim)
-                for doc_idx, sim in zip(indices_arr[0], scores_arr[0])
+                for doc_idx, sim in zip(indices_arr[0], scores_arr[0], strict=True)
                 if doc_idx >= 0
             }
         else:
@@ -327,7 +327,7 @@ class SemanticVectorStore:
         if not meta_path.exists() or not vec_path.exists():
             raise FileNotFoundError(f"Persisted vector store artifacts not found in {in_dir}")
 
-        with open(meta_path, "r", encoding="utf-8") as f:
+        with open(meta_path, encoding="utf-8") as f:
             payload = json.load(f)
 
         store = cls(registry=registry, encoder=encoder, load_default_corpus=False)
@@ -360,7 +360,7 @@ class SemanticVectorStore:
             corpus_path = next((p for p in candidates if p.exists()), None)
 
         if corpus_path is not None and Path(corpus_path).exists():
-            with open(corpus_path, "r", encoding="utf-8") as f:
+            with open(corpus_path, encoding="utf-8") as f:
                 data = json.load(f)
             for item in data.get("documents", []):
                 self.add_document(

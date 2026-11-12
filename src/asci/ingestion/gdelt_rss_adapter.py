@@ -6,7 +6,7 @@ Filters articles for South India automotive corridor relevance before returning 
 from __future__ import annotations
 
 import json
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from email.utils import parsedate_to_datetime
 from pathlib import Path
 from typing import Any
@@ -81,7 +81,7 @@ class GDELTRSSAdapter:
         if payload is None:
             if not self.fallback_path.exists():
                 return []
-            with open(self.fallback_path, "r", encoding="utf-8") as f:
+            with open(self.fallback_path, encoding="utf-8") as f:
                 payload = json.load(f)
 
         return self.parse_articles(payload.get("articles", []))
@@ -111,7 +111,7 @@ class GDELTRSSAdapter:
             )
 
             pub_raw = art.get("published_at") or art.get("seendate")
-            published_at = _parse_ts(pub_raw) or datetime.now(timezone.utc)
+            published_at = _parse_ts(pub_raw) or datetime.now(UTC)
             art_id = str(art.get("article_id") or f"GDELT_{idx}")
             source_name = str(art.get("source") or art.get("domain") or "GDELT_RSS")
 
@@ -136,12 +136,12 @@ def _parse_ts(val: str | None) -> datetime | None:
     cleaned = val.strip()
     try:
         dt = datetime.fromisoformat(cleaned.replace("Z", "+00:00"))
-        return dt if dt.tzinfo else dt.replace(tzinfo=timezone.utc)
+        return dt if dt.tzinfo else dt.replace(tzinfo=UTC)
     except ValueError:
         pass
     try:
         dt = parsedate_to_datetime(cleaned)
-        return dt if dt.tzinfo else dt.replace(tzinfo=timezone.utc)
+        return dt if dt.tzinfo else dt.replace(tzinfo=UTC)
     except (TypeError, ValueError):
         return None
 

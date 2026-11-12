@@ -9,7 +9,7 @@ Verification tests for implemented Phase 4 components across USKL & Stage C/E:
 from __future__ import annotations
 
 import random
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 import pytest
 from fastapi.testclient import TestClient
@@ -130,7 +130,7 @@ def test_phase4_stage_c_budget_awareness_and_deterministic_as_of_date(
         source_feed="TEST",
         raw_headline="Flooded road near Tuticorin",
         raw_text="Highway access slowed near Tuticorin.",
-        timestamp=datetime(2026, 11, 10, tzinfo=timezone.utc),
+        timestamp=datetime(2026, 11, 10, tzinfo=UTC),
     )
     s0 = PipelineState(session_id="S_BUDGET", status=PipelineStatus.PERCEIVED, event=evt_sparse)
     s_b, _ = pipe.stage_b.run(s0, PipelineConfig(), random.Random(42))

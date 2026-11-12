@@ -9,7 +9,7 @@ from __future__ import annotations
 import math
 import random
 import time
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 from asci.core.contracts import OperatorResult, PipelineConfig
 from asci.core.registry import CanonicalEntityRegistry, get_canonical_registry
@@ -198,7 +198,7 @@ class StageCController:
             duration_ms=round(duration_ms, 2),
             cost=round(op_cost, 6),
             seed=cfg.random_seed,
-            timestamp=datetime.now(timezone.utc),
+            timestamp=datetime.now(UTC),
         )
 
         new_state = state.transition(

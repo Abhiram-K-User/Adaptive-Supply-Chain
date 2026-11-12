@@ -2,7 +2,7 @@
 Unit tests for Event Store lifecycle transitions and multi-feed corroboration merging.
 """
 
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 
 from asci.core.state import DisruptionEvent, DisruptionEventType, EventStatus
 from asci.uskl.event_store import SQLiteEventStore
@@ -10,7 +10,7 @@ from asci.uskl.event_store import SQLiteEventStore
 
 def test_event_corroboration_merges_and_updates_status(event_store: SQLiteEventStore):
     """Verify corroborating an active event transitions status NEW -> UPDATED and boosts confidence."""
-    t0 = datetime(2026, 11, 10, 6, 0, tzinfo=timezone.utc)
+    t0 = datetime(2026, 11, 10, 6, 0, tzinfo=UTC)
     evt_gdacs = DisruptionEvent(
         event_id="EVT_GDACS_01",
         event_type=DisruptionEventType.HAZARD_PORT,
@@ -61,7 +61,7 @@ def test_event_corroboration_merges_and_updates_status(event_store: SQLiteEventS
 
 def test_event_retraction_and_expiry(event_store: SQLiteEventStore):
     """Verify retract_event and expire_stale_events update lifecycle states correctly."""
-    t0 = datetime(2026, 11, 1, 0, 0, tzinfo=timezone.utc)
+    t0 = datetime(2026, 11, 1, 0, 0, tzinfo=UTC)
     evt1 = DisruptionEvent(
         event_id="EVT_EXPIRE_01",
         event_type=DisruptionEventType.HAZARD_ROAD,

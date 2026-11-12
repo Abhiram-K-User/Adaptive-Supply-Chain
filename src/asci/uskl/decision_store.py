@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import json
 import sqlite3
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -104,7 +104,7 @@ class DecisionTraceStore:
                     status,
                     plan.model_dump_json(),
                     verification.model_dump_json() if verification else None,
-                    datetime.now(timezone.utc).isoformat(),
+                    datetime.now(UTC).isoformat(),
                 ),
             )
             conn.commit()
@@ -181,7 +181,7 @@ class DecisionTraceStore:
                     planner_id,
                     comments,
                     json.dumps(modifications or {}),
-                    datetime.now(timezone.utc).isoformat(),
+                    datetime.now(UTC).isoformat(),
                 ),
             )
             conn.commit()
