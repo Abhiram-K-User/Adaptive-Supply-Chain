@@ -1,8 +1,9 @@
 import { useState } from "react";
-import { BookOpen, Search, ShieldCheck } from "lucide-react";
+import { BookOpen, Search, ShieldCheck, TrendingUp, Calendar, Hash } from "lucide-react";
 import { asciApi } from "../api/client";
 import type {
   DisruptionEventType,
+  EvidenceDetail,
   EvidenceProvenanceItem,
   TrustTier,
 } from "../types/asci";
@@ -20,8 +21,20 @@ export function EvidenceView({ sessionEvidence }: EvidenceViewProps) {
     null
   );
   const [selectedCitationId, setSelectedCitationId] = useState<string | null>(null);
+  const [evidenceDetail, setEvidenceDetail] = useState<EvidenceDetail | null>(null);
+  const [detailLoading, setDetailLoading] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const handleSelectCitation = (id: string) => {
+    setSelectedCitationId(id);
+    setDetailLoading(true);
+    asciApi
+      .getEvidenceDetail(id)
+      .then((detail) => setEvidenceDetail(detail))
+      .catch(() => setEvidenceDetail(null))
+      .finally(() => setDetailLoading(false));
+  };
 
   const runSearch = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -138,10 +151,10 @@ export function EvidenceView({ sessionEvidence }: EvidenceViewProps) {
                 return (
                   <div
                     key={item.citation_id}
-                    onClick={() => setSelectedCitationId(item.citation_id)}
+                    onClick={() => handleSelectCitation(item.citation_id)}
                     className={`cursor-pointer rounded-2xl border p-3.5 transition ${
                       isSelected
-                        ? "border-teal-500 bg-teal-50/40 shadow-xs dark:border-accent-cyan dark:bg-accent-cyan/10"
+                        ? "border-google-blue bg-blue-50/40 shadow-xs dark:border-google-blue dark:bg-blue-950/20"
                         : "border-light-border bg-white hover:border-slate-300 dark:border-dark-border dark:bg-dark-card dark:hover:border-dark-hover"
                     }`}
                   >
@@ -207,9 +220,14 @@ export function EvidenceView({ sessionEvidence }: EvidenceViewProps) {
 
       {/* Right Column: Citation Inspector */}
       <aside className="rounded-2xl border border-light-border bg-white p-4 shadow-sm dark:border-dark-border dark:bg-dark-card dark:shadow-dark-card space-y-3">
-        <h3 className="text-xs font-bold uppercase tracking-wider text-light-text-primary dark:text-dark-text-primary border-b border-light-border dark:border-dark-border pb-2">
-          Citation Detail Inspector
-        </h3>
+        <div className="flex items-center justify-between border-b border-light-border dark:border-dark-border pb-2">
+          <h3 className="text-xs font-bold uppercase tracking-wider text-light-text-primary dark:text-dark-text-primary">
+            Citation Detail Inspector
+          </h3>
+          <span className="font-mono text-[9px] text-google-blue bg-blue-50 dark:bg-blue-950/40 px-1.5 py-0.5 rounded">
+            GET /evidence/:id
+          </span>
+        </div>
 
         {selectedCitationId ? (
           (() => {
@@ -217,21 +235,38 @@ export function EvidenceView({ sessionEvidence }: EvidenceViewProps) {
               (i) => i.citation_id === selectedCitationId
             );
             if (!current) return null;
+            const detail = evidenceDetail;
+            const recoveryCurves = detail?.recovery_curves ?? {};
+            const curveKeys = Object.keys(recoveryCurves);
+
             return (
               <div className="space-y-3 text-xs">
                 <div>
-                  <div className="font-mono font-bold text-teal-700 dark:text-accent-cyan">
-                    [{current.citation_id}]
+                  <div className="flex items-center justify-between">
+                    <span className="font-mono font-bold text-google-blue">
+                      [{current.citation_id}]
+                    </span>
+                    <span className="rounded bg-light-secondary dark:bg-dark-elevated px-1.5 py-0.5 text-[10px] font-semibold text-light-text-secondary dark:text-dark-text-secondary">
+                      {detail?.trust_tier ?? current.trust_tier}
+                    </span>
                   </div>
-                  <div className="font-semibold text-light-text-primary dark:text-dark-text-primary mt-0.5">
+                  <div className="font-semibold text-light-text-primary dark:text-dark-text-primary mt-1">
                     {current.source}
                   </div>
+                  {detail?.publication_date && (
+                    <div className="flex items-center gap-1 text-[10px] text-light-text-muted dark:text-dark-text-muted mt-0.5">
+                      <Calendar className="h-3 w-3" />
+                      <span>Published: {detail.publication_date}</span>
+                      {detail.expires_at && <span>· Expires: {detail.expires_at}</span>}
+                    </div>
+                  )}
                 </div>
 
-                <div className="rounded-xl border border-light-border bg-light-surface-subtle p-2.5 text-[11px] text-light-text-secondary leading-relaxed dark:border-dark-border dark:bg-dark-surface dark:text-dark-text-secondary">
+                <div className="rounded-xl border border-light-border bg-light-secondary/60 p-2.5 text-[11px] text-light-text-secondary leading-relaxed dark:border-dark-border dark:bg-dark-elevated/60 dark:text-dark-text-secondary">
                   {current.snippet}
                 </div>
 
+                {/* Grounded Target Entities */}
                 <div>
                   <div className="font-semibold text-light-text-primary dark:text-dark-text-primary mb-1">
                     Grounded Target Entities
@@ -240,7 +275,7 @@ export function EvidenceView({ sessionEvidence }: EvidenceViewProps) {
                     {current.entity_ids.map((id) => (
                       <span
                         key={id}
-                        className="rounded border border-light-border bg-white px-2 py-0.5 text-light-text-primary dark:border-dark-border dark:bg-dark-card dark:text-dark-text-primary"
+                        className="rounded border border-light-border bg-light-surface px-2 py-0.5 text-light-text-primary dark:border-dark-border dark:bg-dark-surface dark:text-dark-text-primary"
                       >
                         {id}
                       </span>
@@ -248,6 +283,48 @@ export function EvidenceView({ sessionEvidence }: EvidenceViewProps) {
                   </div>
                 </div>
 
+                {/* Linked Port Recovery Curves */}
+                {curveKeys.length > 0 && (
+                  <div>
+                    <div className="flex items-center gap-1 font-semibold text-light-text-primary dark:text-dark-text-primary mb-1.5">
+                      <TrendingUp className="h-3.5 w-3.5 text-google-green" />
+                      <span>Port Recovery Curve (TimeSeriesStore)</span>
+                    </div>
+                    {curveKeys.map((key) => {
+                      const points = recoveryCurves[key] as number[];
+                      return (
+                        <div key={key} className="space-y-1.5 rounded-lg border border-light-border dark:border-dark-border bg-light-secondary/40 dark:bg-dark-elevated/40 p-2">
+                          <div className="font-mono text-[10px] text-google-blue font-semibold">
+                            {key}
+                          </div>
+                          <div className="space-y-1">
+                            {points.map((mult, idx) => {
+                              const pct = Math.round(mult * 100);
+                              return (
+                                <div key={idx} className="flex items-center gap-2 text-[10px]">
+                                  <span className="w-10 text-light-text-muted dark:text-dark-text-muted shrink-0">
+                                    Day +{idx + 1}:
+                                  </span>
+                                  <div className="flex-1 bg-light-border dark:bg-dark-border h-2 rounded-full overflow-hidden">
+                                    <div
+                                      className="bg-google-green h-full rounded-full transition-all"
+                                      style={{ width: `${Math.min(100, pct)}%` }}
+                                    />
+                                  </div>
+                                  <span className="w-8 text-right font-mono font-bold text-light-text-primary dark:text-dark-text-primary shrink-0">
+                                    {pct}%
+                                  </span>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+
+                {/* Supported Mitigation Claims */}
                 <div>
                   <div className="font-semibold text-light-text-primary dark:text-dark-text-primary mb-1">
                     Supported Mitigation Claims
@@ -255,7 +332,7 @@ export function EvidenceView({ sessionEvidence }: EvidenceViewProps) {
                   <ul className="space-y-1 text-[11px] text-light-text-secondary dark:text-dark-text-secondary">
                     {current.supported_claims.map((cl, idx) => (
                       <li key={idx} className="flex items-start gap-1.5">
-                        <ShieldCheck className="h-3.5 w-3.5 text-teal-600 dark:text-accent-cyan mt-0.5 shrink-0" />
+                        <ShieldCheck className="h-3.5 w-3.5 text-google-blue mt-0.5 shrink-0" />
                         <span>{cl}</span>
                       </li>
                     ))}
@@ -266,7 +343,7 @@ export function EvidenceView({ sessionEvidence }: EvidenceViewProps) {
           })()
         ) : (
           <div className="py-8 text-center text-xs text-light-text-muted dark:text-dark-text-muted">
-            Select any citation card to inspect detailed grounded claims and metadata.
+            Select any citation card to inspect detailed grounded claims, metadata, and port recovery trajectories.
           </div>
         )}
       </aside>
