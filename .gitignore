@@ -59,6 +59,7 @@ venv.bak/
 *.db
 *.log
 *.jsonl
+local_data/
 
 # Node / React frontend artifacts
 node_modules/

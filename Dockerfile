@@ -1,4 +1,14 @@
 # Multi-stage production container for ASCI Core Platform
+
+# Stage 0: Build React frontend
+FROM node:22-alpine AS frontend-builder
+WORKDIR /frontend
+COPY frontend/package*.json ./
+RUN npm ci
+COPY frontend/ ./
+RUN npm run build
+
+# Stage 1: Build Python dependencies
 FROM python:3.11-slim AS builder
 
 WORKDIR /app
@@ -31,8 +41,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 RUN groupadd -r asci && useradd -r -g asci -d /app -s /sbin/nologin asci
 
 COPY --from=builder /install /usr/local
+COPY --from=frontend-builder /frontend/dist /app/frontend/dist
 COPY data /app/data
 COPY src /app/src
+COPY scripts /app/scripts
 COPY pyproject.toml /app/
 
 RUN chown -R asci:asci /app

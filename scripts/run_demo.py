@@ -34,8 +34,13 @@ def main() -> int:
     parser.add_argument("--port", type=int, default=8000, help="Bind port (default: 8000).")
     parser.add_argument(
         "--data-dir",
-        default=os.environ.get("ASCI_DATA_DIR"),
-        help="Optional directory for SQLite + JSONL persistence.",
+        default=os.environ.get("ASCI_DATA_DIR", "./local_data"),
+        help="Optional directory for SQLite + JSONL persistence (default: ./local_data).",
+    )
+    parser.add_argument(
+        "--ephemeral",
+        action="store_true",
+        help="Run in-memory only (no persistence); overrides --data-dir.",
     )
     parser.add_argument(
         "--preload",
@@ -54,8 +59,13 @@ def main() -> int:
     )
     args = parser.parse_args()
 
+    if args.ephemeral:
+        data_dir = None  # run in-memory
+    else:
+        data_dir = args.data_dir  # "./local_data" by default
+
     llm_status = MultiProviderLLMClient().get_status()
-    app = create_app(data_dir=args.data_dir, network_scale=args.scale)
+    app = create_app(data_dir=data_dir, network_scale=args.scale)
 
     live_enabled = (
         os.environ.get("ASCI_LIVE_FEEDS_ENABLED", "true").strip().lower()
