@@ -92,3 +92,4 @@ def test_whatif_endpoint(api_client: TestClient) -> None:
         json={"target_entity_id": "PORT_UNKNOWN_XYZ", "capacity_multiplier": 0.5, "duration_days": 2.0},
     )
     assert bad_resp.status_code == 400
+
