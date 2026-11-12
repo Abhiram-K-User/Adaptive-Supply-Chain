@@ -1,16 +1,20 @@
 import { useCallback, useEffect, useState } from "react";
 import { asciApi } from "./api/client";
 import { SCENARIO_PRESETS } from "./data/presets";
-import {
-  EventWorkbench,
-  type PlannerControlsState,
-} from "./components/EventWorkbench";
-import { EvidenceView } from "./components/EvidenceView";
-import { HeaderBar } from "./components/HeaderBar";
-import { OutcomesMonitoringPlaceholderView } from "./components/OutcomesMonitoringPlaceholderView";
-import { OverviewCommandView } from "./components/OverviewCommandView";
-import { TraceView } from "./components/TraceView";
-import { WhatIfPlaceholderView } from "./components/WhatIfPlaceholderView";
+import { type PlannerControlsState } from "./components/EventWorkbench";
+import { Sidebar } from "./components/layout/Sidebar";
+import { TopNavbar } from "./components/layout/TopNavbar";
+import { GlobalSearchModal } from "./components/layout/GlobalSearchModal";
+import { NotificationDrawer } from "./components/layout/NotificationDrawer";
+import { OverviewPage } from "./pages/OverviewPage";
+import { NetworkView } from "./components/NetworkView";
+import { InventoryView } from "./components/InventoryView";
+import { ForecastingView } from "./components/ForecastingView";
+import { SuppliersView } from "./components/SuppliersView";
+import { RiskView } from "./components/RiskView";
+import { OptimizationView } from "./components/OptimizationView";
+import { AnalyticsView } from "./components/AnalyticsView";
+
 import type {
   ActiveWorkspaceTab,
   CanonicalEntity,
@@ -35,7 +39,11 @@ export function App() {
   const [selectedEventId, setSelectedEventId] = useState<string | null>(null);
   const [planResponse, setPlanResponse] = useState<PlanResponse | null>(null);
 
-  const [activeTab, setActiveTab] = useState<ActiveWorkspaceTab>("command");
+  const [activeTab, setActiveTab] = useState<ActiveWorkspaceTab>("overview");
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [notificationsOpen, setNotificationsOpen] = useState(false);
+
   const [busy, setBusy] = useState(false);
   const [plannerComments, setPlannerComments] = useState(
     "Approved in ASCI Control Tower React Console"
@@ -45,7 +53,7 @@ export function App() {
     kind: "info" | "ok" | "err";
   }>({
     message:
-      "Ready. Click 'Run Cyclone Michaung Demo' or select any event to optimize.",
+      "Ready. South India logistics corridor calibrated (118 nodes, 364 edges). Select an event or run optimization.",
     kind: "info",
   });
 
@@ -74,8 +82,7 @@ export function App() {
     const pool = active.length > 0 ? active : list;
     if (pool.length === 0) return null;
     return [...pool].sort(
-      (a, b) =>
-        b.severity * b.confidence - a.severity * a.confidence
+      (a, b) => b.severity * b.confidence - a.severity * a.confidence
     )[0];
   }, []);
 
@@ -172,7 +179,8 @@ export function App() {
   const handlePollLive = useCallback(async () => {
     setBusy(true);
     setStatusBanner({
-      message: "Polling LIVE GDACS, GDELT/India News RSS, Open-Meteo Weather & PortWatch...",
+      message:
+        "Polling LIVE GDACS, GDELT/India News RSS, Open-Meteo Weather & PortWatch...",
       kind: "info",
     });
     try {
@@ -192,7 +200,9 @@ export function App() {
       });
     } catch (err) {
       setStatusBanner({
-        message: `Live feed poll error: ${err instanceof Error ? err.message : String(err)}`,
+        message: `Live feed poll error: ${
+          err instanceof Error ? err.message : String(err)
+        }`,
         kind: "err",
       });
     } finally {
@@ -208,37 +218,6 @@ export function App() {
     }, ms);
     return () => window.clearInterval(id);
   }, [autoPollEnabled, feedsStatus?.poll_interval_seconds, handlePollLive]);
-
-  const handlePollReplay = async () => {
-    setBusy(true);
-    setStatusBanner({
-      message: "Polling deterministic replay fixtures (GDACS, GDELT/RSS, IMD, PortWatch)...",
-      kind: "info",
-    });
-    try {
-      const rep = await asciApi.pollReplayFeeds(true);
-      const [evs, fs] = await Promise.all([
-        refreshEvents(),
-        asciApi.getFeedsStatus(),
-      ]);
-      setFeedsStatus(fs);
-      const topEv = pickTopActiveEvent(evs);
-      if (topEv) {
-        await runPlanForEvent(topEv.event_id);
-      }
-      setStatusBanner({
-        message: `Replay Poll: collected ${rep.signals_collected} signals into ${rep.events_persisted} canonical events. Optimized ${topEv ? topEv.primary_entity_id : "corridor"}.`,
-        kind: "ok",
-      });
-    } catch (err) {
-      setStatusBanner({
-        message: `Feed poll error: ${err instanceof Error ? err.message : String(err)}`,
-        kind: "err",
-      });
-    } finally {
-      setBusy(false);
-    }
-  };
 
   const handleIngestAndPlan = async (overridePreset?: PlannerControlsState) => {
     const cfg = overridePreset ?? controls;
@@ -257,11 +236,13 @@ export function App() {
         llm_provider: cfg.llmProvider,
       });
       await refreshEvents();
-      setActiveTab("command");
+      setActiveTab("overview");
       await runPlanForEvent(ev.event_id, cfg);
     } catch (err) {
       setStatusBanner({
-        message: `Ingestion error: ${err instanceof Error ? err.message : String(err)}`,
+        message: `Ingestion error: ${
+          err instanceof Error ? err.message : String(err)
+        }`,
         kind: "err",
       });
       setBusy(false);
@@ -304,7 +285,9 @@ export function App() {
       });
     } catch (err) {
       setStatusBanner({
-        message: `Decision error: ${err instanceof Error ? err.message : String(err)}`,
+        message: `Decision error: ${
+          err instanceof Error ? err.message : String(err)
+        }`,
         kind: "err",
       });
     } finally {
@@ -312,74 +295,174 @@ export function App() {
     }
   };
 
-  const selectedEvent =
-    events.find((e) => e.event_id === selectedEventId) ?? null;
+  // Map legacy tabs to corresponding views
+  const normalizedTab =
+    activeTab === "command"
+      ? "overview"
+      : activeTab === "evidence" || activeTab === "trace"
+      ? "analytics"
+      : activeTab === "whatif"
+      ? "optimization"
+      : activeTab === "outcomes"
+      ? "forecasting"
+      : activeTab;
 
   return (
-    <div className="min-h-screen bg-canvas text-slate-100">
-      <HeaderBar
+    <div
+      className={`min-h-screen w-full grid transition-[grid-template-columns] duration-200 ${
+        sidebarCollapsed
+          ? "grid-cols-[76px_minmax(0,1fr)]"
+          : "grid-cols-[260px_minmax(0,1fr)]"
+      } bg-light-bg dark:bg-dark-bg text-light-text-primary dark:text-dark-text-primary`}
+    >
+      {/* 1. Left Enterprise Sidebar (Column 1 of Grid) */}
+      <Sidebar
+        activeTab={normalizedTab}
+        onSelectTab={setActiveTab}
+        collapsed={sidebarCollapsed}
+        onToggleCollapse={() => setSidebarCollapsed((prev) => !prev)}
         health={health}
-        llmStatus={llmStatus}
         nodeCount={entities.length}
         edgeCount={baseEdges.length}
-        activeTab={activeTab}
-        onSelectTab={setActiveTab}
-        onPollLive={() => void handlePollLive()}
-        onPollReplay={() => void handlePollReplay()}
-        autoPollEnabled={autoPollEnabled}
-        onToggleAutoPoll={() => setAutoPollEnabled((prev) => !prev)}
-        onRunMichaungDemo={handleRunMichaungDemo}
-        busy={busy}
+        disruptionCount={events.length}
       />
 
-      <main className="mx-auto max-w-[1680px] p-3.5">
-        {activeTab === "command" && (
-          <div className="grid grid-cols-1 gap-3 lg:grid-cols-[320px_minmax(0,1fr)]">
-            <EventWorkbench
-              controls={controls}
-              onChangeControls={updateControls}
-              events={events}
-              selectedEventId={selectedEventId}
-              onSelectEventAndPlan={(eventId) => void runPlanForEvent(eventId)}
-              onIngestAndPlan={() => void handleIngestAndPlan()}
-              busy={busy}
-            />
-            <OverviewCommandView
+      {/* 2. Main Workspace (Column 2 of Grid - Automatically Resizes) */}
+      <div className="flex flex-col min-w-0 h-screen overflow-y-auto">
+        {/* Top Navbar */}
+        <TopNavbar
+          activeTab={normalizedTab}
+          health={health}
+          llmStatus={llmStatus}
+          feedsStatus={feedsStatus}
+          nodeCount={entities.length}
+          edgeCount={baseEdges.length}
+          alertCount={events.length}
+          onOpenSearch={() => setSearchOpen(true)}
+          onOpenNotifications={() => setNotificationsOpen(true)}
+          onPollLive={() => void handlePollLive()}
+          onRunMichaungDemo={handleRunMichaungDemo}
+          onRunOptimization={() => {
+            const top = pickTopActiveEvent(events);
+            if (top) void runPlanForEvent(top.event_id);
+            else handleRunMichaungDemo();
+          }}
+          autoPollEnabled={autoPollEnabled}
+          onToggleAutoPoll={() => setAutoPollEnabled((prev) => !prev)}
+          busy={busy}
+          collapsedSidebar={sidebarCollapsed}
+        />
+
+        {/* Dynamic Page Views */}
+        <main className="flex-1 p-5 max-w-[1720px] w-full mx-auto">
+          {normalizedTab === "overview" && (
+            <OverviewPage
               entities={entities}
               baseEdges={baseEdges}
               planResponse={planResponse}
               feedsStatus={feedsStatus}
               statusBanner={statusBanner}
-              plannerComments={plannerComments}
-              onChangePlannerComments={setPlannerComments}
-              onRecordDecision={(d, mods) => void handleRecordDecision(d, mods)}
               onOpenTab={setActiveTab}
+              onRunOptimization={() => {
+                const top = pickTopActiveEvent(events);
+                if (top) void runPlanForEvent(top.event_id);
+                else handleRunMichaungDemo();
+              }}
               busy={busy}
             />
-          </div>
-        )}
+          )}
 
-        {activeTab === "evidence" && (
-          <EvidenceView
-            sessionEvidence={planResponse?.dashboard?.evidence_provenance ?? []}
-          />
-        )}
+          {normalizedTab === "network" && (
+            <NetworkView
+              entities={entities}
+              baseEdges={baseEdges}
+              planResponse={planResponse}
+              onSelectEntity={() => {}}
+            />
+          )}
 
-        {activeTab === "trace" && <TraceView planResponse={planResponse} />}
+          {normalizedTab === "inventory" && (
+            <InventoryView
+              entities={entities}
+              planResponse={planResponse}
+            />
+          )}
 
-        {activeTab === "whatif" && (
-          <WhatIfPlaceholderView
-            entities={entities}
-            activeEvent={selectedEvent}
-            activePlan={planResponse}
-          />
-        )}
+          {normalizedTab === "forecasting" && (
+            <ForecastingView
+              entities={entities}
+              planResponse={planResponse}
+            />
+          )}
 
-        {activeTab === "outcomes" && <OutcomesMonitoringPlaceholderView />}
-      </main>
+          {normalizedTab === "suppliers" && (
+            <SuppliersView
+              entities={entities}
+              feedsStatus={feedsStatus}
+            />
+          )}
+
+          {normalizedTab === "risk" && (
+            <RiskView
+              events={events}
+              feedsStatus={feedsStatus}
+              selectedEventId={selectedEventId}
+              onSelectEventAndPlan={(id) => void runPlanForEvent(id)}
+              controls={controls}
+              onChangeControls={updateControls}
+              onIngestAndPlan={() => void handleIngestAndPlan()}
+              onPollLive={() => void handlePollLive()}
+              busy={busy}
+            />
+          )}
+
+          {normalizedTab === "optimization" && (
+            <OptimizationView
+              entities={entities}
+              planResponse={planResponse}
+              controls={controls}
+              onChangeControls={updateControls}
+              onRunOptimization={() => {
+                const top = pickTopActiveEvent(events);
+                if (top) void runPlanForEvent(top.event_id);
+                else handleRunMichaungDemo();
+              }}
+              onRecordDecision={handleRecordDecision}
+              plannerComments={plannerComments}
+              onChangePlannerComments={setPlannerComments}
+              busy={busy}
+            />
+          )}
+
+          {normalizedTab === "analytics" && (
+            <AnalyticsView
+              entities={entities}
+              planResponse={planResponse}
+            />
+          )}
+        </main>
+      </div>
+
+      {/* 3. Global Search Modal (Ctrl+K) */}
+      <GlobalSearchModal
+        isOpen={searchOpen}
+        onClose={() => setSearchOpen(false)}
+        entities={entities}
+        events={events}
+        onSelectTab={setActiveTab}
+        onSelectEvent={(id) => void runPlanForEvent(id)}
+      />
+
+      {/* 4. Live Notifications & Telemetry Drawer */}
+      <NotificationDrawer
+        isOpen={notificationsOpen}
+        onClose={() => setNotificationsOpen(false)}
+        events={events}
+        feedsStatus={feedsStatus}
+        onSelectEvent={(id) => void runPlanForEvent(id)}
+      />
     </div>
   );
 }
 
 export default App;
-

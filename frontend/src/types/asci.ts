@@ -341,6 +341,15 @@ export interface RecordDecisionResponse {
 }
 
 export type ActiveWorkspaceTab =
+  | "overview"
+  | "network"
+  | "inventory"
+  | "forecasting"
+  | "suppliers"
+  | "risk"
+  | "optimization"
+  | "analytics"
+  // Legacy aliases for internal deep linking
   | "command"
   | "evidence"
   | "trace"
