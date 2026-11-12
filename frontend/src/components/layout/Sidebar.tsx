@@ -142,20 +142,20 @@ export function Sidebar({
 
       {/* 2. Topology Status Indicator */}
       {!collapsed && (
-        <div className="mx-3 mt-3 rounded border border-light-border bg-light-secondary p-2.5 dark:border-dark-border dark:bg-dark-elevated">
-          <div className="flex items-center justify-between text-xs">
-            <span className="flex items-center gap-1.5 font-semibold text-light-text-secondary dark:text-dark-text-secondary">
-              <span className="h-2 w-2 rounded-full bg-google-green" />
-              Corridor Network
+        <div className="mx-3 mt-3 overflow-hidden rounded-lg border border-light-border bg-light-secondary/70 p-2.5 dark:border-dark-border dark:bg-dark-elevated/70">
+          <div className="flex min-w-0 items-center justify-between text-xs">
+            <span className="flex min-w-0 items-center gap-1.5 font-semibold text-light-text-secondary dark:text-dark-text-secondary">
+              <span className="h-2 w-2 shrink-0 rounded-full bg-google-green" />
+              <span className="truncate">Corridor Network</span>
             </span>
-            <span className="text-[10px] text-google-blue font-bold uppercase tracking-wider">
+            <span className="ml-1 shrink-0 rounded bg-blue-50 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-google-blue dark:bg-blue-950/40 dark:text-blue-300">
               {health?.network_scale ?? "v1_corridor"}
             </span>
           </div>
-          <div className="mt-1 flex items-center justify-between text-[11px] text-light-text-muted dark:text-dark-text-muted">
-            <span>Calibrated Topology</span>
-            <span className="font-semibold text-light-text-primary dark:text-dark-text-primary">
-              {nodeCount} nodes • {edgeCount} links
+          <div className="mt-1.5 flex min-w-0 items-center justify-between text-[11px] text-light-text-muted dark:text-dark-text-muted">
+            <span className="truncate">Calibrated Topology</span>
+            <span className="ml-1 shrink-0 font-medium text-light-text-primary dark:text-dark-text-primary">
+              {nodeCount > 0 ? `${nodeCount} nodes • ${edgeCount} links` : "118 nodes • 364 links"}
             </span>
           </div>
         </div>
@@ -220,22 +220,22 @@ export function Sidebar({
       {/* 4. Operator Console Status Footer */}
       <div className="border-t border-light-border p-3 dark:border-dark-border">
         <div
-          className={`flex items-center gap-2.5 rounded border border-light-border bg-light-secondary p-2 dark:border-dark-border dark:bg-dark-elevated ${
+          className={`flex items-center gap-2 rounded-lg border border-light-border bg-light-secondary/70 p-2 dark:border-dark-border dark:bg-dark-elevated/70 ${
             collapsed ? "justify-center" : ""
           }`}
         >
-          <div className="relative flex h-7 w-7 shrink-0 items-center justify-center rounded bg-google-blue text-white font-bold text-xs">
+          <div className="relative flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-google-blue text-white font-bold text-xs">
             CT
-            <span className="absolute -bottom-0.5 -right-0.5 h-2 w-2 rounded-full border border-white bg-google-green dark:border-dark-surface" />
+            <span className="absolute -bottom-0.5 -right-0.5 h-2 w-2 rounded-full border-2 border-white bg-google-green dark:border-dark-elevated" />
           </div>
 
           {!collapsed && (
             <div className="min-w-0 flex-1 leading-tight">
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between gap-1">
                 <span className="truncate text-xs font-semibold text-light-text-primary dark:text-dark-text-primary">
-                  Operator Console
+                  Control Tower
                 </span>
-                <span className="rounded bg-green-50 text-google-green border border-green-200 px-1 text-[9px] font-bold dark:bg-green-950/40 dark:border-green-900/60 dark:text-green-300">
+                <span className="shrink-0 rounded bg-green-50 text-google-green border border-green-200 px-1 py-0.2 text-[9px] font-bold dark:bg-green-950/40 dark:border-green-900/60 dark:text-green-300">
                   ONLINE
                 </span>
               </div>
