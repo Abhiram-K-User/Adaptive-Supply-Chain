@@ -1,217 +1,150 @@
 # Adaptive Supply Chain Intelligence Platform (ASCI)
-## Integrated Agentic-RAG Edition v2.0 · South India Automotive Corridor
+## Integrated Agentic-RAG & Mathematical Optimization Control Tower (v2.0)
+### South India Port-Hinterland Automotive Corridor
 
-[![CI Pipeline](https://github.com/adaptive-logistics/asci-core/actions/workflows/ci.yml/badge.svg)](https://github.com/adaptive-logistics/asci-core/actions/workflows/ci.yml)
-[![Python 3.11](https://img.shields.io/badge/python-3.11-blue.svg)](https://www.python.org/downloads/release/python-3110/)
-[![Pydantic v2](https://img.shields.io/badge/pydantic-v2.12-green.svg)](https://docs.pydantic.dev/)
+[![Python 3.11+](https://img.shields.io/badge/python-3.11%20%7C%203.12%20%7C%203.13-blue.svg)](https://www.python.org/downloads/)
+[![Pydantic v2](https://img.shields.io/badge/pydantic-v2.10+-green.svg)](https://docs.pydantic.dev/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.110+-009688.svg)](https://fastapi.tiangolo.com)
-[![License: Proprietary / Industrial](https://img.shields.io/badge/license-Industrial%20MVP-orange.svg)]()
+[![Google OR-Tools](https://img.shields.io/badge/OR--Tools-GLOP%20LP-4285F4.svg)](https://developers.google.com/optimization)
+[![SciPy HiGHS](https://img.shields.io/badge/SciPy-HiGHS%20Dual--Solver-8CAAE6.svg)](https://scipy.org)
+[![React 18](https://img.shields.io/badge/frontend-React%2018%20%2B%20Vite%20%2B%20Tailwind-61DAFB.svg)](https://react.dev/)
 
-The **Adaptive Supply Chain Intelligence Platform (ASCI)** converts multimodal disruption signals (cyclones, port strikes, highway flooding, customs bottlenecks) into verified, evidence-cited response plans for Just-In-Time (JIT) automotive supply chains across South India.
-
----
-
-## 1. Geographic & Industrial Corridor Focus
-
-The system models the **South India Port-Hinterland Automotive Corridor** across Tamil Nadu, Karnataka, Andhra Pradesh, and Kerala:
-
-* **Gateway Maritime Ports**:
-  * `PORT_CHENNAI` (Chennai Port Authority)
-  * `PORT_KAMARAJAR` (Ennore / Kamarajar Port)
-  * `PORT_KATTUPALLI` (Adani Kattupalli Port)
-  * `PORT_KRISHNAPATNAM` (Adani Krishnapatnam Port)
-  * `PORT_VOC` (V.O. Chidambaranar Port, Tuticorin)
-  * `PORT_COCHIN` (Vallarpadam ICTT)
-  * `PORT_NEW_MANGALORE` (New Mangalore Port)
-
-* **Key Assembly Clusters & Tier-1 Hubs**:
-  * `PLANT_ORAGADAM` (Renault-Nissan, Daimler India Commercial Vehicles)
-  * `PLANT_SRIPERUMBUDUR` (Hyundai Motor India, Tier-1 cluster)
-  * `PLANT_HOSUR` (Ashok Leyland, TVS Motor Company)
-  * `PLANT_BIDADI` (Toyota Kirloskar Motor)
-  * `PLANT_SRICITY` (Isuzu Motors, Kobelco, Tier-1 cluster)
-  * `PLANT_COIMBATORE` (Precision components and motor cluster)
-
-* **Inland Container Depots (ICD) & Rail Freight Hubs**:
-  * `ICD_WHITEFIELD` (CONCOR Whitefield, Bengaluru)
-  * `ICD_TONDIARPET` (CONCOR Tondiarpet, Chennai)
-  * `ICD_IRUGUR` (CONCOR Irugur, Coimbatore)
+The **Adaptive Supply Chain Intelligence Platform (ASCI)** converts multimodal disruption signals (cyclones, port strikes, highway flooding, customs bottlenecks) into mathematically verified, evidence-cited mitigation plans for Just-In-Time (JIT) automotive supply chains across South India.
 
 ---
 
-## 2. Core Architectural Directives
+## 1. Master Plans & Documentation Directory
 
-### 2.1 Unified State & Knowledge Layer (USKL)
-All components read from and write to a single **Unified State & Knowledge Layer** bound by the **Canonical Entity Registry**. An entity identifier (e.g., `PORT_KAMARAJAR`, `PLANT_ORAGADAM`) shares the exact same immutable string across:
-1. **Corridor Graph Store** (`networkx.MultiDiGraph`)
-2. **Event Store** (`SQLiteEventStore`)
-3. **Vector Memory** (`SemanticVectorStore`)
-4. **Time-Series Store** (`TimeSeriesStore`)
-5. **Decision & Trace Store** (`DecisionTraceStore`)
+The project follows a structured engineering hierarchy:
 
-### 2.2 Immutable State & Operator Boundary
-Every pipeline operator follows the deterministic contract:
-```python
-def run(
-    self,
-    state: PipelineState,
-    cfg: PipelineConfig,
-    rng: random.Random
-) -> tuple[PipelineState, OperatorResult]:
-    ...
-```
-`PipelineState` uses Pydantic v2 `ConfigDict(frozen=True)`. Mutations occur via copy-on-write `state.transition(updates, trace_item)` which automatically increments step counters, accumulates compute costs, and appends chronological execution traces.
-
-### 2.3 Gate G1 "Walking Skeleton" Pipeline
-The end-to-end executable vertical slice coordinates five stages:
-```
-  [Disruption Signal]
-           │
-           ▼
-  ┌─────────────────────────────────────────────────────────┐
-  │ Stage A: Live Event Intelligence & Entity Resolution    │
-  └──────────────────────────┬──────────────────────────────┘
-                             │ Typed DisruptionEvent (Canonical IDs)
-                             ▼
-  ┌─────────────────────────────────────────────────────────┐
-  │ Stage B: Corridor Risk Graph & Path Impact Engine       │
-  └──────────────────────────┬──────────────────────────────┘
-                             │ Path Exposure & Time-to-Line-Stop KPIs
-                             ▼
-  ┌─────────────────────────────────────────────────────────┐
-  │ Stage C: Agentic RAG Controller & Computation Core      │
-  │          (Rule Router Baseline + Scenarios Parameter)   │
-  └──────────────────────────┬──────────────────────────────┘
-                             │ Evidence Set & Discrete Scenarios
-                             ▼
-  ┌─────────────────────────────────────────────────────────┐
-  │ Stage D: Deterministic Optimization & Layered Verifier  │
-  │          (Rerouting Allocations + L1/L2/L3 Gateways)    │
-  └──────────────────────────┬──────────────────────────────┘
-                             │ Verified MitigationPlan
-                             ▼
-  ┌─────────────────────────────────────────────────────────┐
-  │ Stage E: Operational Dashboard State-to-UI Serializer   │
-  └─────────────────────────────────────────────────────────┘
-```
-
-### 2.4 Three-Layer Verification Protocol
-* **Layer 1 (L1) Ingestion & Grounding**: Schema compliance, Canonical Entity ID verification, source corroboration checks.
-* **Layer 2 (L2) Network Solvency**: Flow conservation, edge capacity multipliers ($x_{ij} \le \text{Cap}_{ij} \cdot \text{Mult}_{ij}$), closed-edge zero flow.
-* **Layer 3 (L3) Decision Sanity & Grounding**: Plant line-stop threshold safety, unmet assembly demand bounds, citation grounding against retrieved evidence.
-
----
-
-## 3. Directory Layout
-
-```text
-asci-core/
-├── .github/
-│   └── workflows/
-│       └── ci.yml                     # GitHub Actions CI workflow (Python 3.11)
-├── data/
-│   └── seeds/
-│       ├── corridor_registry.json     # Canonical Entity Registry seed definitions
-│       └── corridor_graph_v0.json     # Corridor Multigraph node-link seed
-├── src/
-│   └── asci/
-│       ├── __init__.py
-│       ├── core/
-│       │   ├── __init__.py
-│       │   ├── registry.py            # Canonical Entity Registry lookup & gazetteer
-│       │   ├── state.py               # Immutable Pydantic v2 PipelineState schema
-│       │   └── contracts.py           # Operator protocol & OpResult structures
-│       ├── uskl/
-│       │   ├── __init__.py
-│       │   ├── graph_store.py         # NetworkX corridor multigraph store
-│       │   ├── event_store.py         # SQLite event lifecycle manager
-│       │   ├── vector_store.py        # Semantic vector memory stub & playbooks
-│       │   ├── timeseries_store.py    # DuckDB/SQLite baseline & recovery curves
-│       │   └── decision_store.py      # JSONL/SQLite trace & human decision store
-│       ├── stages/
-│       │   ├── __init__.py            # WalkingSkeletonPipeline orchestrator
-│       │   ├── stage_a_events.py      # Ingestion, classification, gazetteer resolution
-│       │   ├── stage_b_graph.py       # k-hop subgraph, path exposure, line-stop KPI
-│       │   ├── stage_c_controller.py  # Rule-router baseline & tool executor
-│       │   ├── stage_d_optimiser.py   # Flow solver stub & L1-L3 verification
-│       │   └── stage_e_dashboard.py   # State-to-UI Cytoscape serializer
-│       ├── api/
-│       │   ├── __init__.py
-│       │   └── main.py                # FastAPI REST endpoints
-│       └── utils/
-│           ├── __init__.py
-│           └── logging.py             # Structured logger
-├── tests/
-│   ├── conftest.py                    # PyTest fixtures and USKL setup
-│   ├── unit/
-│   │   ├── test_registry.py           # Unit tests for registry & gazetteer
-│   │   └── test_state.py              # Unit tests for immutability & copy-on-write
-│   └── integration/
-│       └── test_walking_skeleton.py   # CI Gate G1 integration test
-├── Dockerfile                         # Production container image
-├── pyproject.toml                     # Modern package build configuration
-├── requirements.txt                   # Pinned core and dev dependencies
-└── README.md
-```
-
----
-
-## 4. Quickstart Guide
-
-### 4.1 Environment Setup
-```bash
-cd asci-core
-python -m venv .venv
-
-# On Linux/macOS:
-source .venv/bin/activate
-# On Windows:
-.venv\Scripts\activate
-
-pip install --upgrade pip
-pip install -r requirements.txt
-pip install -e .
-```
-
-### 4.2 Running the Test Suite (Gate G1 Verification)
-Run all unit and integration tests:
-```bash
-pytest tests/ -v
-```
-All tests execute deterministically in `< 0.2s`.
-
-### 4.3 Running the FastAPI Service
-Launch the Uvicorn server:
-```bash
-uvicorn asci.api.main:app --reload --host 0.0.0.0 --port 8000
-```
-Interactive OpenAPI documentation will be accessible at:
-* Swagger UI: `http://localhost:8000/docs`
-* ReDoc: `http://localhost:8000/redoc`
-
-### 4.4 Docker Containerization
-Build and run the production container:
-```bash
-docker build -t asci-core:2.0.0 .
-docker run -p 8000:8000 asci-core:2.0.0
-```
-Verify the container health endpoint:
-```bash
-curl http://localhost:8000/health
-```
-
----
-
-## 5. REST API Endpoints
-
-| Method | Endpoint | Description |
+| Document | Role | Path |
 | :--- | :--- | :--- |
-| `GET` | `/health` | Service health status and corridor scope |
-| `GET` | `/registry` | List all canonical entities and coordinates |
-| `GET` | `/network` | Corridor graph nodes and topological edge count |
-| `POST` | `/events` | Ingest disruption alert with gazetteer resolution |
-| `GET` | `/events/{id}` | Retrieve structured event record |
-| `POST` | `/events/{id}/plan` | Trigger Stage A–E walking skeleton planning loop |
-| `GET` | `/plans/{id}` | Retrieve generated flow allocation plan |
-| `GET` | `/traces/{id}` | Retrieve step-by-step operator trace and costs |
+| **Master Plan (PRD)** | Governing 9-Phase Product Contract & Formal Invariants | [`adaptive_supply_chain_intelligence_prd.md`](adaptive_supply_chain_intelligence_prd.md) |
+| **Current Implementation Plan** | Prototype Demo Priorities & Placeholder Elimination | [`DEMO_NEXT_STEPS.md`](DEMO_NEXT_STEPS.md) |
+| **Setup & Onboarding Guide** | Step-by-step installation, environment & build guide | [`docs/SETUP.md`](docs/SETUP.md) |
+| **Architecture Specification** | 5-stage pipeline, LP dual-solver, & design tokens | [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) |
+| **REST API Reference** | Complete endpoint documentation, schemas & payloads | [`docs/API_REFERENCE.md`](docs/API_REFERENCE.md) |
+| **Technical Context & Invariants** | Immutable state rules, USKL store contracts & history | [`docs/PROJECT_CONTEXT.md`](docs/PROJECT_CONTEXT.md) |
+| **Milestone Roadmap** | PRD Gate G0–G5 status & immediate demo tasks | [`docs/ROADMAP.md`](docs/ROADMAP.md) |
 
+---
+
+## 2. Repository Structure
+
+The repository is organized into distinct, clean modules:
+
+```
+Adaptive-Supply-Chain/
+├── backend/                       # Python ASGI server entrypoint
+│   ├── __init__.py
+│   └── app/
+│       ├── __init__.py
+│       └── main.py                # FastAPI instance forwarding to asci.api.main
+├── data/                          # USKL seed corpora and geo feeds
+│   ├── feeds/                     # Sample and replay disruption feeds (GDACS, GDELT, RSS)
+│   └── seeds/                     # Corridor topology definitions (v0_core, v1_corridor)
+├── docs/                          # Comprehensive system documentation
+│   ├── SETUP.md                   # Developer setup & onboarding instructions
+│   ├── ARCHITECTURE.md            # 5-stage pipeline, LP dual-solver, & design tokens
+│   ├── API_REFERENCE.md           # REST API endpoints & schemas
+│   ├── PROJECT_CONTEXT.md         # Full technical invariants & data store specifications
+│   └── ROADMAP.md                 # Master PRD milestones & current demo tasks
+├── frontend/                      # React 18 + TypeScript + Vite + Tailwind CSS SPA
+│   ├── dist/                      # Production build assets (served by backend)
+│   ├── src/                       # React components, pages, contexts, & API client
+│   ├── package.json
+│   ├── tailwind.config.ts
+│   └── vite.config.ts             # Vite dev server with proxy to :8000
+├── scripts/                       # Operational and benchmarking scripts
+│   ├── run_demo.py                # Single-command demonstration runner
+│   └── run_suite_s1.py            # Statistical benchmark suite (Gate G2 validation)
+├── src/asci/                      # Core ASCI Python package
+│   ├── api/                       # FastAPI REST endpoints & static file mounting
+│   ├── benchmarks/                # Suite S1–S4 benchmarking modules
+│   ├── core/                      # Immutable PipelineState, contracts, canonical registry
+│   ├── ingestion/                 # Multimodal adapters (GDACS, GDELT, Weather, PortWatch)
+│   ├── llm/                       # Multi-provider LLM client & RAG briefing generator
+│   ├── stages/                    # 5-Stage optimization pipeline (Stage A -> Stage E)
+│   └── uskl/                      # Unified Supply Chain Knowledge Layer stores
+├── tests/                         # Pytest test suite (116+ unit & integration tests)
+├── adaptive_supply_chain_intelligence_prd.md # MASTER PLAN (Product Requirements Document)
+├── DEMO_NEXT_STEPS.md             # CURRENT IMPLEMENTATION PLAN (Prototype Roadmap)
+├── Dockerfile                     # Multi-stage container specification
+├── pyproject.toml                 # Python package metadata & dependencies
+├── requirements.txt               # Pinned Python requirements
+└── README.md                      # Repository landing page
+```
+
+---
+
+## 3. Quick Start
+
+### 3.1. Prerequisites
+- Python 3.11+
+- Node.js 18+ & npm
+
+### 3.2. Install Backend & Frontend
+
+```bash
+# 1. Python virtual environment & dependencies
+python -m venv .venv
+# Activate virtualenv (.venv\Scripts\activate on Windows, source .venv/bin/activate on Linux/Mac)
+pip install -e .
+
+# 2. Environment configuration
+cp .env.example .env
+# (Optional) Add your GROQ_API_KEY in .env for fast free LLM inference
+
+# 3. Build frontend bundle
+cd frontend
+npm install
+npm run build
+cd ..
+```
+
+### 3.3. Run the Control Tower
+
+```bash
+# Start FastAPI server (serves both REST API and React UI on port 8000)
+python -m uvicorn backend.app.main:app --host 0.0.0.0 --port 8000 --reload
+```
+
+- **Operational Control Tower UI**: [http://127.0.0.1:8000/](http://127.0.0.1:8000/)
+- **Interactive Swagger API Documentation**: [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
+
+For UI development with instantaneous Hot Module Reloading (HMR):
+```bash
+# In frontend directory:
+npm run dev
+# Open http://localhost:5173/ (proxies API requests to http://127.0.0.1:8000)
+```
+
+---
+
+## 4. Key Architectural Highlights
+
+### 4.1. 5-Stage Agentic Pipeline
+1. **Stage A (Perception)**: Multimodal ingestion (GDACS, GDELT, IMD Weather, IMF PortWatch) with `<UNTRUSTED_DOCUMENT>` prompt injection boundaries.
+2. **Stage B (Corridor Risk)**: Tier-1 BFS & Tier-2 BPR dynamic congestion propagation with Time-to-Line-Stop (TTLS) plant forecasts.
+3. **Stage C (RAG Controller)**: Context-bounded vector retrieval (9 SOP playbooks) + time-series recovery curves.
+4. **Stage D (Dual-Solver LP Optimizer)**: Multi-commodity flow allocation via **Google OR-Tools GLOP** primary LP solver independently verified by **SciPy HiGHS** dual-solver ($< 0.1\%$ gap).
+5. **Stage E (Control Tower)**: Cytoscape network graph, Leaflet geospatial visualization, and citation-verified RAG executive briefing.
+
+### 4.2. Dual-Theme Enterprise UI
+- **Primary Dark Reference**: High-contrast black and charcoal layered dashboard with glowing SVG trajectory sparklines, capsule metric pills, and ambient depth.
+- **Light Theme**: Crisp enterprise GDG theme with high readability and consistent semantic tokens.
+- **Iconography**: 100% strict adherence to Lucide React SVG vectors (zero emojis).
+
+---
+
+## 5. Testing & Verification
+
+```bash
+# Run complete test suite (unit + integration)
+pytest tests/ -v
+
+# Run Gate G2 Suite S1 statistical benchmark
+python scripts/run_suite_s1.py
+```
+
+See [`docs/SETUP.md`](docs/SETUP.md) for full developer onboarding instructions.
