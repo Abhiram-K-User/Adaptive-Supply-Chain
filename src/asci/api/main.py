@@ -146,6 +146,30 @@ class RecordDecisionResponse(BaseModel):
     planner_id: str
 
 
+class WhatIfRequest(BaseModel):
+    """Payload for interactive What-If sensitivity scenario (PRD 10.2)."""
+
+    event_id: str | None = None
+    target_entity_id: str
+    capacity_multiplier: float = Field(default=0.35, ge=0.0, le=1.0)
+    duration_days: float = Field(default=4.0, gt=0.0, le=30.0)
+    risk_mode: Literal["DETERMINISTIC", "EXPECTED_COST", "CVAR"] = "CVAR"
+    propagation_tier: Literal[1, 2] = 2
+    baseline_plan_id: str | None = None
+
+
+class WhatIfResponse(BaseModel):
+    """Side-by-side sensitivity delta response against active baseline."""
+
+    simulated_plan: MitigationPlan | None
+    verification: VerificationReport | None
+    cost_delta: float
+    unmet_demand_delta_teu: float
+    rail_share_delta_pct: float
+    baseline_total_cost: float
+    simulated_total_cost: float
+
+
 def create_app(
     data_dir: str | Path | None = None,
     network_scale: str | None = None,
@@ -591,6 +615,196 @@ def create_app(
         if not traces and session_id in state_cache:
             traces = [t.model_dump(mode="json") for t in state_cache[session_id].trace]
         return traces
+
+    @api.get("/decisions", tags=["Planning"])
+    def list_decisions(
+        plan_id: str | None = Query(default=None),
+        limit: int = Query(default=20, ge=1, le=100),
+    ) -> list[dict[str, Any]]:
+        """Retrieve recent human planner decisions from Decision Memory (Loop L2)."""
+        return decision_store.list_recent_decisions(limit=limit, plan_id=plan_id)
+
+    @api.get("/evidence/{citation_id}", tags=["USKL"])
+    def get_evidence_detail(citation_id: str) -> dict[str, Any]:
+        """Retrieve full evidence item metadata and linked port recovery curves."""
+        doc = vector_store.get_document(citation_id)
+        if not doc:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"Evidence citation '{citation_id}' not found.",
+            )
+        data = doc.model_dump(mode="json")
+        port_curves: dict[str, Any] = {}
+        for eid in doc.entity_ids:
+            ent = registry.get(eid)
+            if ent and ent.entity_type.value == "PORT":
+                for hz in doc.hazard_types:
+                    curve = timeseries_store.get_recovery_curve(eid, hz.value)
+                    if curve:
+                        port_curves[f"{eid}_{hz.value}"] = curve
+        data["recovery_curves"] = port_curves
+        return data
+
+    @api.post("/outcomes", tags=["USKL"])
+    def record_outcome(
+        entity_id: Annotated[str, Query()],
+        hazard_type: Annotated[str, Query()],
+        day_offset: Annotated[int, Query(ge=0, le=90)],
+        observed_teu: Annotated[float, Query(ge=0.0)],
+        vessel_calls: Annotated[float, Query(ge=0.0)] = 0.0,
+        obs_date: Annotated[str, Query()] = "",
+    ) -> dict[str, Any]:
+        """Record realized post-event outcome & recalibrate USKL recovery curves (Loop L1)."""
+        if not registry.validate_id(entity_id):
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"Specified entity_id '{entity_id}' not in Canonical Entity Registry.",
+            )
+        eff_date = obs_date or datetime.now(UTC).strftime("%Y-%m-%d")
+        return timeseries_store.record_realized_outcome(
+            entity_id=entity_id,
+            hazard_type=hazard_type,
+            day_offset=day_offset,
+            observed_teu=observed_teu,
+            vessel_calls=vessel_calls,
+            obs_date=eff_date,
+        )
+
+    @api.get("/outcomes/{entity_id}", tags=["USKL"])
+    def get_outcomes_for_entity(
+        entity_id: str,
+        window_days: Annotated[int, Query(ge=1, le=90)] = 30,
+    ) -> dict[str, Any]:
+        """Query current baseline, recovery curves, and recent observations for an entity."""
+        if not registry.validate_id(entity_id):
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"Specified entity_id '{entity_id}' not in Canonical Entity Registry.",
+            )
+        baseline = timeseries_store.get_baseline_record(entity_id)
+        series = timeseries_store.query_recent_series(entity_id, window_days=window_days)
+        curves = {
+            "HAZARD_PORT": timeseries_store.get_recovery_curve(entity_id, "HAZARD_PORT"),
+            "HAZARD_WEATHER": timeseries_store.get_recovery_curve(entity_id, "HAZARD_WEATHER"),
+        }
+        return {
+            "entity_id": entity_id,
+            "baseline": baseline,
+            "recovery_curves": curves,
+            "recent_observations": [
+                {
+                    "entity_id": s.entity_id,
+                    "obs_date": s.obs_date,
+                    "vessel_calls": s.vessel_calls,
+                    "teu_volume": s.teu_volume,
+                    "source": s.source,
+                }
+                for s in series
+            ],
+        }
+
+    @api.post("/whatif", response_model=WhatIfResponse, tags=["Planning"])
+    def run_whatif(req: WhatIfRequest) -> WhatIfResponse:
+        """
+        Execute in-memory sensitivity re-optimization without mutating persisted event store.
+        Evaluates Stage B -> Stage C -> Stage D with custom node capacity multiplier & duration.
+        """
+        if not registry.validate_id(req.target_entity_id):
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"Target entity '{req.target_entity_id}' not found in Canonical Entity Registry.",
+            )
+
+        rng = random.Random(42)
+        session_id = f"WHATIF_{uuid.uuid4().hex[:8].upper()}"
+
+        base_event: DisruptionEvent | None = None
+        if req.event_id:
+            base_event = event_store.get_event(req.event_id)
+
+        if base_event is None:
+            base_event = DisruptionEvent(
+                event_id=f"EVT_WHATIF_{uuid.uuid4().hex[:8].upper()}",
+                primary_entity_id=req.target_entity_id,
+                affected_entity_ids=[req.target_entity_id],
+                event_type=DisruptionEventType.HAZARD_PORT,
+                severity=round(1.0 - req.capacity_multiplier, 3),
+                confidence=0.95,
+                estimated_duration_days=req.duration_days,
+                source_feed="WHATIF_SENSITIVITY_SANDBOX",
+                trust_tier=TrustTier.TIER_B,
+                raw_headline=f"What-If Override: {req.target_entity_id} at {int(req.capacity_multiplier * 100)}% capacity for {req.duration_days:.1f}d",
+                raw_text=f"What-If synthetic disruption override for {req.target_entity_id} with remaining capacity {req.capacity_multiplier} for {req.duration_days} days.",
+                status=EventStatus.NEW,
+            )
+        else:
+            base_event = base_event.model_copy(
+                update={
+                    "event_id": f"EVT_WHATIF_{uuid.uuid4().hex[:8].upper()}",
+                    "severity": round(1.0 - req.capacity_multiplier, 3),
+                    "estimated_duration_days": req.duration_days,
+                    "raw_headline": f"[What-If] {base_event.raw_headline}",
+                }
+            )
+
+        cfg = PipelineConfig(
+            lambda_cost_budget=0.05,
+            random_seed=rng.randint(1, 9999),
+            k_hop_neighborhood=req.propagation_tier,
+            risk_mode=req.risk_mode,
+            cvar_alpha=0.90,
+            propagation_tier=req.propagation_tier,
+        )
+
+        initial_state = PipelineState(
+            session_id=session_id,
+            event=base_event,
+        )
+
+        try:
+            b_state, _ = stage_b.run(initial_state, cfg, rng)
+            c_state, _ = stage_c.run(b_state, cfg, rng)
+            d_state, _ = stage_d.run(c_state, cfg, rng)
+        except Exception as exc:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail=f"What-If optimization failed: {exc}",
+            ) from exc
+
+        sim_plan = d_state.candidate_plan
+        sim_cost = sim_plan.objective_cost if sim_plan else 0.0
+
+        baseline_cost = 0.0
+        if req.baseline_plan_id:
+            bp = decision_store.get_plan(req.baseline_plan_id)
+            if bp:
+                baseline_cost = bp.objective_cost
+
+        cost_delta = round(sim_cost - baseline_cost, 2)
+        unmet_delta = round(float(sim_plan.unmet_demand_teu), 2) if sim_plan else 0.0
+
+        rail_share = 0.0
+        if sim_plan:
+            if "INTERMODAL_RAIL" in sim_plan.mode_split:
+                rail_share = round(sim_plan.mode_split["INTERMODAL_RAIL"] * 100.0, 1)
+            else:
+                total_flow = sum(a.flow_teu for a in sim_plan.allocations)
+                rail_flow = sum(
+                    a.flow_teu
+                    for a in sim_plan.allocations
+                    if getattr(a.mode, "value", str(a.mode)) in ("RAIL", "INTERMODAL_RAIL")
+                )
+                rail_share = round((rail_flow / max(1.0, total_flow)) * 100.0, 1)
+
+        return WhatIfResponse(
+            simulated_plan=sim_plan,
+            verification=d_state.verification_report,
+            cost_delta=cost_delta,
+            unmet_demand_delta_teu=unmet_delta,
+            rail_share_delta_pct=rail_share,
+            baseline_total_cost=baseline_cost,
+            simulated_total_cost=sim_cost,
+        )
 
     return api
 
