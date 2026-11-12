@@ -10,57 +10,81 @@
 * **Date**: 16 October 2026 (Revises v1.0 dated 30 September 2026)
 * **Target Industry**: Automotive and automotive components logistics (containerised parts, import/export)
 * **Target Geography**: South India port-hinterland corridor (Karnataka, Tamil Nadu, Andhra Pradesh, Kerala)
-* **Core Philosophy**: A single end-to-end pipeline operating over a Unified State & Knowledge Layer (USKL), unifying agentic retrieval, corridor risk graph modeling, and deterministic mathematical optimization under human-in-the-loop governance
+* **Core Architecture**: One pipeline operating over a Unified State & Knowledge Layer (USKL); agentic RAG controller; deterministic optimisation and layered verification under human-in-the-loop governance
+* **Decision Mode**: Decision support with mandatory verification, cited evidence, and human review
 * **Team Allocation**: 5 cross-functional engineering leads
 * **Authoritative Reference**: *Adaptive Supply Chain Intelligence – Technical Design and Methodology Report v2.0* (39 pages)
+* **Scope in One Line**: Containerised auto-component flows between plant clusters (Bengaluru–Hosur, Sriperumbudur–Oragadam, Sri City, Coimbatore) and gateway ports (Chennai, Kamarajar, Kattupalli, Krishnapatnam, Tuticorin, Cochin, New Mangalore), with rail and road links, on a daily planning horizon.
 
 ---
 
-## 2. Executive Summary & Problem Definition
+## 0. What Changed from v1.0 (PDF Section 0)
 
-Just-in-time (JIT) automotive assembly plants across South India operate with lean inbound inventories, holding days rather than weeks of buffer parts. When regional disruptions occur—such as Bay of Bengal cyclones, monsoon flooding, berth strikes, or highway washouts—inbound delays rapidly trigger assembly line shutdowns.
-
-The **Adaptive Supply Chain Intelligence Platform** converts heterogeneous, multimodal disruption signals into verified, evidence-cited response plans. Rather than relying on static, disconnected analytical silos, the system coordinates:
-1. **Live Event Intelligence** grounded directly into an infrastructure graph.
-2. An **Agentic RAG Controller** that dynamically balances evidence gathering (text, graph, time-series) and numerical simulation under a formal computational budget.
-3. **Deterministic Optimization and Multi-Layer Verification** that ensure all suggested freight rerouting plans obey physical capacity limits and citation grounding before reaching human logistics planners.
+| Review Request | What Changed | Relevant Sections |
+| :--- | :--- | :--- |
+| **1. Complete integration, not independent modules** | The three "modules" are now stages of one pipeline over a single Unified State & Knowledge Layer (USKL) with one canonical entity registry. Every store (graph, events, documents, time-series, decisions) uses the same node/edge IDs. Four closed feedback loops make later runs depend on earlier ones. The software-supply-chain / GitHub-dependency idea has been removed; GitHub appears only as CI tooling. | Sec. 3, 4, 5 |
+| **2. Limit scope to one industry and region, based on available data** | Scope fixed to automotive & auto-components logistics in the South India port–hinterland corridor. A dataset matrix lists each public source, what it supplies, and where synthetic data is unavoidable. A Week-2 data-readiness gate (Gate G0) verifies access before design is frozen. | Sec. 2 |
+| **3. Computational RAG made agentic** | Retrieval is no longer a single lookup. An agentic RAG core plans, chooses among text, graph, and time-series retrieval *and* computation tools, grades evidence sufficiency, rewrites queries, cites sources, and stops under a cost-aware policy. It is compared against no-RAG, fixed-RAG, and LLM-planner baselines. | Sec. 6 |
+| **4. Other improvements** | Real-event backtesting; a plant-level "time-to-line-stop" KPI suited to just-in-time automotive; PortWatch anomaly-triggered events; tiered MVP; retrieval-specific evaluation; retrieval-poisoning defences; calibrated uncertainty; updated roadmap built on vertical slices. | Sec. 10–13 |
 
 ---
 
-## 3. Scope & Corridor Definition
+## 2. Industry & Region Scope
 
-### 3.1 Geographic and Industrial Focus
-* **Industry Focus**: Containerised automotive components (inbound components from international/domestic suppliers to assembly plants; outbound shipments to export markets).
-* **Industrial Clusters**: Sriperumbudur-Oragadam (Tamil Nadu), Bengaluru-Hosur (Karnataka/Tamil Nadu), Bidadi-Harohalli (Karnataka), Sri City (Andhra Pradesh), and Coimbatore (Tamil Nadu).
-* **Gateway Maritime Ports**: Chennai Port, Kamarajar (Ennore), Kattupalli, Krishnapatnam, V.O. Chidambaranar (Tuticorin), Cochin, and New Mangalore.
-* **Inland Infrastructure**: Inland Container Depots (ICDs) such as Bengaluru ICD, container freight stations (CFS), and major rail/highway transit corridors.
+### 2.1 Why Automotive Logistics in South India
+* **Just-in-Time Sensitivity**: Automotive plants hold days, not weeks, of inbound components. A port or road disruption translates quickly into a possible line stoppage, which gives the project a concrete, plant-level outcome metric (Time-to-Line-Stop).
+* **Dense, Short Corridors with Real Alternatives**: Several plant clusters sit within a few hours of more than one gateway port, with rail links from inland container depots. Rerouting decisions are therefore genuine, not trivial.
+* **Recurring, Documented Regional Hazards**: The north-east monsoon and Bay of Bengal cyclones regularly disrupt the Chennai-area coast. This yields a steady stream of events for live demonstration and a historical case library for retrieval.
+* **Open Data Availability**: Port-level activity, hazard alerts, news events, road/rail geometry, and trade statistics are public. Plant-level flows are not, and are generated synthetically.
 
-### 3.2 Network Graph Dimensions
-* **Graph Scale**: Directed multigraph $G = (V, E)$ consisting of approximately 100–150 nodes and 300–500 edges.
-* **Node Breakdown**:
-  * 7–8 gateway maritime ports
-  * 5–6 rail terminals / inland container depots
-  * 25–40 manufacturing plants or Tier-1 supplier clusters
-  * 15–25 warehouse / CFS nodes
-  * ~10 outbound market gateways
-* **Planning Granularity**: Daily operational horizon.
-
-### 3.3 Scope Boundaries
+### 2.2 Scope Boundaries
 
 | Dimension | In-Scope | Out-of-Scope |
 | :--- | :--- | :--- |
-| **Commodities** | Containerised automotive components | Bulk commodities, roll-on/roll-off (RoRo) finished vehicles (Tier 3 stretch only) |
-| **Modes** | Road freight and ICD container rail corridors | Air freight, urban last-mile delivery, maritime ocean carrier scheduling |
-| **Network Tiers** | Gateway ports to Tier-1 suppliers and OEM assembly plants | Deep Tier-3+ sub-tier supplier tracing |
-| **Disruptions** | Weather hazards (cyclones, floods), port strikes/congestion, rail cuts, blank sailings, policy tariffs, plant outages | Geopolitical conflict, global macroeconomic currency shifts |
-| **Automation** | Decision support with cited provenance and planner sign-off | Autonomous logistics execution bypassing human dispatchers |
+| **Industry** | Automotive and auto-components logistics only | Other industries; pan-India or global network |
+| **Region** | Karnataka, Tamil Nadu, Andhra Pradesh, Kerala corridor; out-of-region gateways only as boundary nodes | Full national network; international hinterlands |
+| **Commodities** | One commodity class: containerised auto components, inbound and outbound | Multi-commodity optimization; roll-on/roll-off (RoRo) finished vehicles (Tier 3 stretch only) |
+| **Modes** | Road, rail and port nodes/edges; daily horizon | Air freight, last-mile delivery, tier-3+ supplier mapping |
+| **Disruptions** | Weather/hazard, port congestion or strike, road/rail closure, shipping schedule change, trade-policy change, plant outage | Autonomous execution of logistics actions; replacing human dispatchers |
+| **Evaluation** | Synthetic benchmark + real-event backtests + live demonstration | Claiming real-world forecasting accuracy from live news |
+
+### 2.3 Network Graph Dimensions
+* **Target Scale**: Directed multigraph $G = (V, E)$ consisting of approximately 100–150 nodes and 300–500 edges.
+  * 7–8 gateway maritime ports (Chennai, Kamarajar, Kattupalli, Krishnapatnam, VOC Tuticorin, Cochin, New Mangalore)
+  * 5–6 rail terminals / inland container depots (ICD Whitefield, ICD Irugur, etc.)
+  * 25–40 plant or supplier nodes grouped by cluster (Sriperumbudur–Oragadam, Bengaluru–Hosur, Bidadi–Harohalli, Sri City, Coimbatore)
+  * 15–25 warehouse / container freight station (CFS) nodes
+  * ~10 outbound market gateways
+
+### 2.4 Dataset Matrix & Verification
+
+| Source | Provides | Role in System | Status / Fallback |
+| :--- | :--- | :--- | :--- |
+| **IMF PortWatch** | Daily AIS-derived port calls and trade-volume estimates | Port baseline throughput; ground truth for backtests; anomaly-triggered events | **Real**. Fallback: synthetic port series calibrated to published totals |
+| **GDACS** | Alerts for cyclones, floods, earthquakes with location and severity | Live hazard events; hazard-to-port intersection | **Real**. Fallback: cached disaster alerts |
+| **GDELT & RSS** | Global news events; local advisories | Unstructured event text for extraction; documents for vector memory | **Real (noisy)**. Fallback: curated regional news archive |
+| **Weather / IMD APIs** | Rainfall and wind forecasts; official warnings | Severity priors; time-series retrieval | **Real**. Fallback: manual or scraped IMD bulletins |
+| **OpenStreetMap (OSMnx)** | Road and rail geometry; port and terminal locations | Edge topology, distances, transit-time estimates | **Real**. Primary network backbone |
+| **Trade Statistics** | Auto-sector trade value by partner; port traffic statistics | Demand weights for outbound lanes; calibration of synthetic flows | **Real (coarse)**. Fallback: published annual aggregates |
+| **Plant Operations** | Locations, days-of-cover, flows, edge costs, demand | Line-stop exposure calculations, flow constraints | **Synthetic**. Calibrated against published port container volumes |
+
+> **Honest Data Position**: Topology, locations, hazards, news, and port activity are real. Plant-level operational data is synthetic by necessity. Results on the synthetic benchmark measure the **method**; backtests on real events (Section 11) check that the method behaves sensibly on real signals. Neither is claimed as proof of real-world forecasting accuracy.
 
 ---
 
-## 4. Unified State & Knowledge Layer (USKL) and Data Architecture
+## 3. Integrated Architecture
 
-### 4.1 Canonical Entity Registry
-All system components read from and write to a single **Unified State & Knowledge Layer (USKL)**. The stores are bound by a centralized **Canonical Entity Registry**. Every physical entity (e.g., `PORT_KAMARAJAR`, `PLANT_ORAGADAM`) shares identical, immutable identifier strings across all five backing data stores:
+### 3.1 From Modules to One System (Stage Coupling & Failure Modes)
+
+| Stage | Consumes (from) | Produces (for) | Breaks if Missing |
+| :--- | :--- | :--- | :--- |
+| **A. Event Intelligence** | Feeds, analyst input, PortWatch anomalies; graph registry for entity resolution; vector memory for disambiguation and priors | Typed event with graph-resolved targets (to B, C) | Events cannot be grounded to graph IDs |
+| **B. Corridor Risk Graph** | Resolved event (A); time-series baselines; retrieved severity/duration priors (C) | Affected paths, exposure, line-stop risk, alternative capacity (to C, optimiser) | No path impact, no features for the controller |
+| **C. Agentic RAG Controller**| Event (A); graph features (B); all knowledge stores; cost budget $\lambda$ | Operator sequence, evidence set, scenarios, explanation (to optimiser, verifier, dashboard) | No adaptive depth, no evidence, no explanation |
+| **D. Optimise & Verify** | Graph state (B); scenarios (C); event grounding (A) | Verified plan or escalation (to E) | No safe plan release |
+| **E. Dashboard & Human Review** | Plan, paths, evidence, trace | Decisions, edits, outcomes (back to memory, graph, controller training) | Loop never closes; system cannot learn |
+
+### 3.2 Unified State & Knowledge Layer (USKL)
 
 ```
 +---------------------------------------------------------------------------------+
@@ -73,316 +97,447 @@ All system components read from and write to a single **Unified State & Knowledg
 +-------------------+-----------------+-----------------+------------+------------+
 ```
 
-1. **Corridor Graph Store** (NetworkX, SQLite/JSON): Network topology, physical road/rail edges, transit capacities, flow utilization, and plant inventory days-of-cover.
-2. **Event Store** (SQLite): Typed disruption events, geographic polygons, and lifecycle tracking (`new`, `updated`, `retracted`, `expired`).
-3. **Vector Memory** (FAISS + sentence-transformers): Disaster bulletins, news reports, and playbook mitigation logs. Every chunk is indexed with metadata tags: entity IDs, region, hazard type, and date.
-4. **Time-Series Store** (DuckDB / SQLite): Port-call counts, rainfall metrics, seasonal throughput curves, and post-event recovery trajectories.
-5. **Decision & Trace Memory** (SQLite + JSONL): Operator execution sequences, token/compute costs, human approvals/edits/rejections, and realized operational outcomes.
+1. **Corridor Graph Store** (NetworkX, SQLite/JSON): Nodes, edges, capacities, multipliers, plant days-of-cover. Linked by Entity Registry IDs.
+2. **Event Store** (SQLite): Typed events, clusters, lifecycle state (`new`, `updated`, `retracted`, `expired`). Linked by target node/edge IDs.
+3. **Vector Memory** (FAISS + sentence-transformers): Advisories, incident reports, past event summaries, playbooks; each chunk tagged with graph entity IDs, region, hazard type, and date.
+4. **Time-Series Store** (DuckDB / SQLite): Port calls, rainfall, baselines, realised outcomes. Linked by port/node IDs.
+5. **Decision & Trace Memory** (SQLite + JSONL): Human approvals/edits/rejections, outcomes, operator traces, plan history. Linked by event, plan, and entity IDs.
 
-### 4.2 Data Ingestion & Calibration Matrix
+### 3.3 Pipeline Logic
+1. A live source, a PortWatch anomaly, or an analyst submits an event.
+2. Event Intelligence extracts a typed record and resolves it against the entity registry, using retrieval to disambiguate places and set priors.
+3. The graph engine applies the event to the graph and computes direct exposure, affected paths, and plant line-stop risk.
+4. The agentic controller observes the combined state and chooses the next retrieval or computation operator; each result is written back immutably.
+5. The deterministic optimiser produces the candidate plan; the three-layer verifier checks grounding, feasibility, decision sanity, and citation support.
+6. The dashboard presents plan, affected paths, evidence, and trace for human approval, edit, or rejection.
+7. The decision, and later the realised outcome, are written to memory and to the time-series store.
 
-| Source | Input Supplied | Role in System | Status / Fallback |
-| :--- | :--- | :--- | :--- |
-| **IMF PortWatch** | AIS daily port calls, trade volume estimates | Baseline throughput, anomaly-triggered events, backtesting ground truth | **Real**. Fallback: synthetic series calibrated to published figures |
-| **GDACS** | Disaster alerts (cyclones, floods) with spatial footprint | Live hazard ingestion and automated spatial intersection with corridors | **Real**. Fallback: cached disaster alerts |
-| **GDELT & RSS** | Global/regional logistics news and advisories | Unstructured text ingestion for extraction and vector indexing | **Real (noisy)**. Fallback: curated regional news archive |
-| **Weather / IMD APIs** | Rainfall, wind velocity, official warning bulletins | Severity priors and parametric time-series retrieval | **Real**. Fallback: manual/scraped IMD bulletins |
-| **OpenStreetMap (OSMnx)** | Road and rail geometries, terminal coordinates | Edge topologies, physical distances, free-flow transit times | **Real**. Primary network backbone |
-| **Trade Statistics** | UN Comtrade, Ministry of Ports publications | Outbound lane demand weights, aggregate flow calibration | **Real (coarse)**. Fallback: annual published aggregates |
-| **Plant Operations** | Days-of-cover, bills of materials, tier suppliers | Line-stop exposure calculations, flow constraints | **Synthetic**. Calibrated against published port container volumes |
+### 3.4 Closed Feedback Loops
+* **Loop L1 (Outcome $\rightarrow$ Graph)**: Realised PortWatch activity after an event updates edge/node multiplier estimates and severity priors.
+* **Loop L2 (Decision $\rightarrow$ Memory)**: Planner approvals, edits, and rejections are stored with the event and plan. Retrieved as decision precedents; used in plan-churn checks.
+* **Loop L3 (Trace $\rightarrow$ Controller)**: Operator traces with measured costs become oracle-labelled training data for controller retraining.
+* **Loop L4 (Event $\rightarrow$ Knowledge)**: Every validated event and its resolution is chunked, tagged, and added to vector memory to expand the analogue incident library.
 
-### 4.3 Closed Architectural Feedback Loops
-* **Loop L1 (Realized Outcomes $\rightarrow$ Corridor Graph)**: Realized port throughput metrics ingested after an event update node/edge capacity multipliers and recovery curves.
-* **Loop L2 (Planner Actions $\rightarrow$ Decision Memory)**: Human planner edits and rejections are indexed to inform future plan-churn constraints and serve as decision precedents.
-* **Loop L3 (Operator Traces $\rightarrow$ Controller Policy)**: Execution traces tagged with empirical regret and compute costs serve as training data for adaptive controller policies.
-* **Loop L4 (Validated Events $\rightarrow$ Vector Memory)**: Resolved event profiles and historical responses are indexed into vector memory to expand the analogue incident library.
+### 3.5 Integration Contracts and Rules
+* Every operator follows `run(state, cfg, rng) -> (new_state, OpResult)`. State is typed (Pydantic v2) and immutable at operator boundaries; randomness only through `rng`; cost is measured, never self-reported.
+* Walking skeleton first. An event travels end to end (`event -> graph -> rule router -> optimiser -> verifier -> dashboard stub`) with stubs where needed. Every phase replaces stubs with real components while the end-to-end test stays green.
+* Integration test in CI: a scripted event must produce a verified plan with a complete trace on every merge.
+* Mocks are temporary scaffolding; none may remain at the final freeze.
 
 ---
 
-## 5. End-to-End Pipeline & Functional Specifications
+## 4. Stage A: Live Event Intelligence (Corridor-Specific)
 
-```
-  [Live Feeds / PortWatch / Manual Input]
-                     │
-                     ▼
-  ┌─────────────────────────────────────────────────────────┐
-  │ Stage A: Live Event Intelligence & Entity Resolution    │
-  └──────────────────────────┬──────────────────────────────┘
-                             │ Typed Event (Registry IDs)
-                             ▼
-  ┌─────────────────────────────────────────────────────────┐
-  │ Stage B: Corridor Risk Graph & Path Impact Engine       │
-  └──────────────────────────┬──────────────────────────────┘
-                             │ Path Exposure, Criticality, Time-to-Line-Stop
-                             ▼
-  ┌─────────────────────────────────────────────────────────┐
-  │ Stage C: Agentic RAG Controller & Computation Core      │
-  │          (Iterative Loop: Retrieve ⇄ Compute ⇄ Grade)   │
-  └──────────────────────────┬──────────────────────────────┘
-                             │ Evidence Set, Scenarios, Candidate Flow Bounds
-                             ▼
-  ┌─────────────────────────────────────────────────────────┐
-  │ Stage D: Deterministic Optimization & Layered Verifier  │
-  │          (OR-Tools Flow Solver + L1/L2/L3 Gateways)    │
-  └──────────────────────────┬──────────────────────────────┘
-                             │ Verified Response Plan + Provenance Trace
-                             ▼
-  ┌─────────────────────────────────────────────────────────┐
-  │ Stage E: Operational Dashboard & Human-in-the-Loop     │
-  └─────────────────────────────────────────────────────────┘
-```
+### 4.1 Event Sources and Processing
 
-### 5.1 Stage A: Live Event Intelligence
-Converts raw, external text and time-series signals into validated, structured disruption records grounded in canonical registry IDs.
-* **Automated Ingestion**: Scheduled polling of GDACS, GDELT, and port RSS feeds. Incorporates an IMF PortWatch anomaly detector that flags significant drops in vessel arrivals below seasonal baselines.
-* **Classification & Extraction**: Filters for corridor relevance. A zero-tool extraction LLM parses unstructured text into strict Pydantic v2 data models.
-* **Entity Gazetteer Resolution**: Maps text place names to canonical IDs using fuzzy matching, geospatial proximities, and past resolution memories.
-* **Regional Event Taxonomy**:
-  1. `HAZARD_PORT`: Coastal cyclones, sea surges, or red rain warnings affecting port operations.
-  2. `HAZARD_ROAD`: Flooded highways or bridge closures along freight routes.
-  3. `PORT_CONGESTION_STRIKE`: Stevedore labor strikes, customs outages, berth backlogs.
-  4. `RAIL_DISRUPTION`: Railway track flooding or blockages between inland container depots and ports.
-  5. `SHIPPING_SCHEDULE`: Carrier blank sailings or trade-lane diversions.
-  6. `TRADE_POLICY`: Tariff shifts, customs clearance rule modifications.
-  7. `PLANT_OUTAGE`: Component supplier breakdown or assembly plant stoppage.
+| Step | Implementation | Integration Point |
+| :--- | :--- | :--- |
+| **Ingest** | Scheduled polling of GDACS, GDELT and RSS; analyst event form; PortWatch anomaly detector that raises an event when a port's daily calls fall well below its baseline | Time-series store feeds the detector; events are stored in the event store |
+| **Classify** | Rules or a lightweight LLM classifier for corridor relevance | Uses region/hazard tags from the registry |
+| **Extract** | Rules first; structured-output LLM as fallback. The extraction LLM has no tools and sees only the article text | Output validated against Pydantic schema |
+| **Resolve** | Fuzzy matching and embeddings against the graph gazetteer (node names, aliases, geography); retrieval of similar past resolutions | Targets expressed as registry IDs with probabilities |
+| **Validate** | Schema and grounding checks; source corroboration count | L1 verification record |
+| **Store** | Deduplication, updates, retractions, expiry; cluster into a belief state | Event store; chunk and tag into vector memory (Loop L4) |
 
-### 5.2 Stage B: Corridor Risk Graph & Path Impact Engine
-Computes physical infrastructure vulnerability and inventory depletion timelines across the corridor multigraph $G = (V, E)$.
-* **Impacted Subgraph**: Applies capacity multipliers ($m \in [0.0, 1.0]$) and delays to affected nodes/edges, extracting the impacted $k$-hop subgraph.
-* **Path Enumeration**: Identifies all active routes between parts suppliers, ports, and automotive assembly clusters.
-* **Structural Vulnerability Metrics**:
+### 4.2 Regional Event Taxonomy
+1. `HAZARD_PORT`: Cyclone landfall or red rain alert near Chennai–Ennore coast (port capacity multiplier, delay).
+2. `HAZARD_ROAD`: Flooded underpass or highway closure on a plant–port road (edge closure or multiplier, added transit time).
+3. `PORT_CONGESTION_STRIKE`: Berth congestion, labour action, customs system outage (port handling capacity, dwell time).
+4. `RAIL_DISRUPTION`: Track blockage on an ICD–port rail link (rail edge multiplier; shift of load to road).
+5. `SHIPPING_SCHEDULE`: Blank sailings or route diversion on a trade lane (outbound gateway capacity or delay).
+6. `TRADE_POLICY`: Tariff or regulatory change affecting an export market (demand weight on outbound lanes).
+7. `PLANT_OUTAGE`: Component supplier breakdown or assembly plant stoppage (node capacity, upstream flow).
+
+---
+
+## 5. Stage B: Corridor Risk Graph & Path-Impact Prediction
+
+### 5.1 Graph Model
+Directed multigraph $G = (V, E)$ storing capacity, utilisation, cost, transit time, and current multipliers; plant nodes also store inventory days-of-cover.
+
+### 5.2 Affected-Path Algorithm
+1. Resolve event targets to registry IDs (from Stage A).
+2. Apply the multiplier or delay and build the affected $k$-hop subgraph.
+3. Enumerate feasible plant-to-gateway paths traversing affected elements.
+4. Compute path exposure, alternative capacity, bottleneck concentration, and criticality.
+5. Compute plant-level line-stop risk.
+6. Run propagation if the controller selects it; rank paths by risk; write features to the shared state.
+
+### 5.3 Risk Features and Line-Stop Metric
+* **Exposure**: Share of baseline flow behind the affected element:
   $$\text{Exposure}(e) = \frac{\text{Baseline Flow across element } e}{\text{Total Corridor Flow}}$$
+* **Criticality**: Normalised betweenness $\times$ utilisation $\times$ demand dependency:
   $$\text{Criticality}(e) = \text{Betweenness}(e) \times \text{Utilisation}(e) \times \text{Demand Dependency}(e)$$
-  $$\text{PathRisk}(p) = \text{Exposure} \times \text{Criticality} \times \text{Severity} \times \text{Uncertainty Factor} \times \text{Concentration}$$
+* **PathRisk**: Ranking score:
+  $$\text{PathRisk}(p) = \text{Exposure} \times \text{Criticality} \times \text{Severity} \times \text{UncertaintyFactor} \times \text{Concentration}$$
 * **Plant-Level Line-Stop Metric**:
   $$\text{Time-to-Line-Stop}(\text{Plant } v) = \text{Inventory Days-of-Cover}(v) - \text{Expected Inbound Delay}(v)$$
-  Calculates the probability that inbound transit delays exceed available days-of-cover across all scenarios.
-* **Propagation Modeling**: Tier 1 executes deterministic hop-decay propagation; Tier 2 incorporates dynamic load redistribution simulating diverted road congestion and container dwell times.
+  Calculates the probability that inbound transit delays exceed available days-of-cover across scenarios.
+
+### 5.4 Propagation
+* **Tier 1 (Hop-Decay)**: Deterministic BFS hop-decay cascade attenuating adjacent corridor capacities ($m \times \gamma^{\text{hop}}$).
+* **Tier 2 (Dynamic Load Redistribution)**: Simulates diversion effects (port capacity down $\rightarrow$ diverted load up $\rightarrow$ road congestion up $\rightarrow$ inventory down $\rightarrow$ delay up) using nonlinear BPR volume-delay functions.
+* **Tier 3 (GNN Surrogate)**: Stretch capability, retained only if outperforming simulation benchmarks.
 
 ---
 
 ## 6. Stage C: Agentic RAG Computational Core
 
-### 6.1 Architectural Principles
-* **Unified Tooling**: Treats unstructured text retrieval, graph queries, time-series analysis, and numerical solvers as equivalent tools within a unified execution budget.
-* **Role Separation**: Large Language Models are strictly confined to text extraction, query reformulation, qualitative grading, and explanation generation. Mathematical optimization and constraint verification remain strictly deterministic.
-* **State Immutability**: All decisions execute over an immutable Pydantic state container $S_t$.
+### 6.1 Concept & Design Stance
+* **Agentic & Computational**: A controller observes the state, decides what to do next, calls a tool, grades the result, and decides again. Tools include text retrieval, graph queries, time-series analysis, and numerical solvers.
+* **Design Stance**: One orchestrator with typed tools, not a swarm of autonomous agents. Keeps state, cost accounting, and safety masks tractable.
+* **Role Separation**: The LLM interprets text, rewrites queries, grades evidence, and writes explanations. It never decides feasibility or optimises; deterministic code does.
 
-### 6.2 Tool Catalog
+### 6.2 Retrieval Tools (Four Sources, One Registry)
 
-| Tool Identifier | Operator Type | Target Store | Description & Return Contract |
-| :--- | :--- | :--- | :--- |
-| `RETRIEVE_TEXT` | Retrieval | Vector Memory | Semantic vector search filtered by entity ID, hazard class, and date. Returns ranked passages with provenance IDs. |
-| `RETRIEVE_GRAPH` | Retrieval | Corridor Graph | Traverses $k$-hop neighborhood. Returns structured dependency facts and node connectivity summaries. |
-| `RETRIEVE_TS` | Retrieval | Time-Series | Queries historical port call throughput and precipitation. Returns empirical drop and recovery curves. |
-| `RETRIEVE_DECISIONS` | Retrieval | Decision Memory | Queries past plans for similar disruption profiles. Returns prior human modifications and outcomes. |
-| `REWRITE_QUERY` | Utility | LLM Engine | Reformulates failed queries with canonical aliases and technical terms. Limit: 2 rewrites per query. |
-| `GRADE` | Utility | Cross-Encoder/LLM | Evaluates retrieved passage relevance and aggregates an evidence sufficiency score ($0.0$ to $1.0$). |
-| `GRAPH_ANALYZE` | Computation | Network Engine | Calculates path exposures, alternative corridor capacities, and plant time-to-line-stop metrics. |
-| `PROPAGATE` | Computation | Simulator | Runs hop-decay cascade or multi-commodity dynamic load-redistribution simulations. |
-| `SCENARIOS` | Computation | Scenario Engine | Generates discrete, probability-weighted future states parameterized by retrieved historical analogues. |
-| `OPTIMIZE` | Computation | OR-Tools / HiGHS | Formulates and solves a deterministic or risk-aware (CVaR) minimum-cost network flow problem. |
-| `VERIFY` | Validation | Verifier Engine | Executes three-tiered validation (L1, L2, L3) against network flows and cited claims. Mandatory prior to `STOP`. |
+| Tool | Store | Query Form | Returns | Used For |
+| :--- | :--- | :--- | :--- | :--- |
+| `RETRIEVE_TEXT` | Vector memory | Semantic query + filters (entity IDs, hazard type, date range) | Ranked passages with IDs, dates, sources | Analogue incidents, advisories, playbook steps |
+| `RETRIEVE_GRAPH` | Corridor graph | $k$-hop subgraph around entity IDs; dependency facts | Subgraph + natural-language facts with provenance | Dependency context for explanation and priors |
+| `RETRIEVE_TS` | Time-series store | Parameterised query (port, window, hazard analogue) | Series statistics: baseline, drop, recovery time | Severity/duration priors; outcome checks |
+| `RETRIEVE_DECISIONS`| Decision & trace memory| Similar event + plan lookup | Past plans, edits, outcomes | Precedent and plan-churn context |
 
-### 6.3 Policy Economics & Control Loop
-The controller executes a masked policy $\pi(S_t, \lambda)$ seeking to minimize total cost and operational regret:
-$$\min_{\pi} J(\pi) = \mathbb{E} \left[ \text{Regret}(\text{Plan}) + \lambda \sum_{t=1}^{T} \text{Cost}(\text{Operator}_t) \right]$$
+### 6.3 Agent Roles
 
-* **Execution Masking Rules**:
-  * `GRAPH_ANALYZE` must run first immediately following perception.
-  * `SCENARIOS` is masked until baseline graph impact and uncertainty metrics are established.
-  * `OPTIMIZE` requires complete network exposure and scenario inputs.
-  * `STOP` is strictly masked until `VERIFY` returns a `PASS` verdict.
-  * Hitting the step budget ($T \ge 12$) or compute budget forces an immediate `ESCALATE` action.
+| Role | Implemented By | Responsibility |
+| :--- | :--- | :--- |
+| **Controller (planner)** | Learned masked policy (MLP); rule router and LLM planner as baselines | Choose next operator from valid set; decide `STOP` or `ESCALATE` |
+| **Query rewriter** | LLM, constrained to structured output | Reformulate failed query using entity IDs and hazard terms; limited to 2 rewrites |
+| **Retrievers** | Deterministic code over USKL stores | Execute queries, return IDs and provenance |
+| **Grader** | Small LLM or cross-encoder + rules | Score relevance of each item and sufficiency of evidence set ($0.0$–$1.0$); triggers rewrite |
+| **Computation tools** | Deterministic code (graph, simulator, scenarios, OR-Tools) | Produce numerical artefacts with IDs |
+| **Verifier** | Deterministic checks (+ citation checker) | `PASS`, `REPAIR`, or `ESCALATE` |
+| **Explainer** | LLM over computed artefacts and evidence only | Write rationale; every claim must cite an evidence ID or computed artefact ID |
+
+### 6.4 Action Space & Masking Rules
+
+| Operator | Cost Class | Mask Rule (Valid When) |
+| :--- | :--- | :--- |
+| `GRAPH_ANALYZE` | Low | Event resolved; always valid first after perception |
+| `RETRIEVE_TEXT` / `_GRAPH` / `_TS` / `_DECISIONS` | Low–medium | Event resolved; per-tool call limit not exceeded |
+| `REWRITE_QUERY` | Low | Previous retrieval graded insufficient; rewrite count $< 2$ |
+| `GRADE` | Low | New evidence exists since last grade |
+| `PROPAGATE` | Medium | Graph analysis done |
+| `SCENARIOS` | Medium | Graph analysis done; uncertainty or impact above gate |
+| `OPTIMIZE` | High | Required state available (graph analysis; scenarios if requested) |
+| `VERIFY` | Low | A plan exists |
+| `STOP` | None | Only after `VERIFY == PASS` |
+| `ESCALATE` | None | Always valid; forced by safety rules or budget exhaustion |
+
+### 6.5 Control Loop & Policy Objective
+The controller observes a feature vector built from the shared state:
+$$J(\pi) = \mathbb{E} \left[ \text{Regret}(\text{Plan}) + \lambda \sum_{t=1}^T \text{Cost}(\text{Operator}_t) \right]$$
+Cost is measured wall-clock time plus LLM tokens per operator, profiled once and logged per run.
+
+### 6.6 How Retrieval is Woven into the Other Stages (PDF Table 6.6)
+
+| Consumer | What Retrieval Supplies | Effect |
+| :--- | :--- | :--- |
+| **Stage A — Entity Resolution** | Similar past place-name resolutions; gazetteer aliases | Fewer mis-grounded targets |
+| **Stage A/B — Severity & Duration** | Distribution of impact and recovery times from analogue incidents and port-call series | Informed priors when news text gives no duration |
+| **Scenario Generation** | Analogue outcomes $\rightarrow$ scenario set and weights | Evidence-based scenario probabilities, not arbitrary ones |
+| **Explanation** | Cited passages and artefacts | Auditable rationale |
+| **Verification (L3)** | Citation-support check: each cited ID must exist and support claim | Blocks unsupported statements |
+
+### 6.7 Learning Strategy
+1. **Baselines First**: Always-full pipeline; rule router (thresholds on confidence/exposure); fixed RAG; LLM planner.
+2. **Planted-Analogue Benchmark**: Synthetic generator creates historical case library where past events carry known outcomes.
+3. **Oracle Labels**: Enumerate valid operator sequences on training instances, compute realized regret and measured cost, label best sequence per $\lambda$.
+4. **Imitation Learning**: Train a small masked MLP on oracle labels; add DAgger only if time permits.
+5. **Honest Reporting**: Rule router is a real baseline. If learned controller ties it, report as is.
+
+### 6.8 Safety for Agentic RAG
+* **Retrieved Text is Untrusted Data**: Wrapped as quoted evidence, never concatenated into prompt instructions; extraction LLM has no tools.
+* **Tool Allow-List and Hard Masks**: Step limit (12), per-tool call limits, budget cap. Hitting limits forces `ESCALATE`.
+* **Retrieval Poisoning and Staleness**: Trust tiers (Tier A/B/C), dates, expired items down-weighted; conflicting sources raise uncertainty.
+* **Citation-Required Output**: Explainer cannot release claims without supporting IDs; L3 verification rejects unsupported claims.
+* **Confidence Gates**: High-impact and low-confidence events trigger full-analysis fallback or human escalation.
 
 ---
 
-## 7. Stage D: Optimization & Layered Verification
+## 7. Optimisation & Layered Verification
 
-### 7.1 Mathematical Optimization Formulation
-The platform formulates logistics mitigation as a multi-commodity, minimum-cost network flow problem across directed multigraph $G = (V, E)$:
+### 7.1 Multi-Commodity Minimum-Cost Flow Formulation
 $$\min \sum_{(i,j) \in E} \sum_k c_{ij}^k x_{ij}^k + \sum_{v \in \text{Plants}} P_{\text{line-stop}}(v) \cdot \max(0, \text{Delay}_v - \text{Cover}_v) + \sum_{d \in \text{Demand}} P_{\text{unmet}} \cdot u_d$$
-
-* **Variables**: $x_{ij}^k \ge 0$, flow of component commodity $k$ across directed link $(i, j)$; $u_d \ge 0$, unmet assembly demand.
-* **Constraints**:
-  1. Edge flow capacity bounds: $x_{ij} \le \text{Capacity}_{ij} \times \text{Multiplier}_{ij}$
-  2. Strict conservation of flow at all transshipment and terminal nodes.
-  3. Assembly line demand satisfaction and safety stock preservation.
-* **Risk Modes**:
-  * *Deterministic*: Used for low-uncertainty, minor events.
-  * *Expected-Cost*: Balances costs across a discrete set of weighted disruption scenarios.
-  * *CVaR / Robust*: Minimizes the expected cost in the worst $\alpha$-percentile outcomes (tail risk protection).
-* **Solvers**: Google OR-Tools acts as primary solver; SciPy HiGHS performs independent dual-solver verification.
+* **Solvers**: Google OR-Tools (primary) and SciPy HiGHS (dual-solver cross-check).
+* **Risk Modes**: Deterministic, Expected-Cost, and CVaR (tail-risk protection).
 
 ### 7.2 Three-Layer Verification Protocol
 
-```
-Candidate Plan & Generated Explanation
-                  │
-                  ▼
-┌────────────────────────────────────────────────────────┐
-│ Layer 1 (L1): Ingestion & Graph Grounding Validation   │
-│ • Schema compliance (Pydantic v2)                      │
-│ • Canonical Entity ID verification                     │
-│ • Source corroboration count & provenance check        │
-└─────────────────────────┬──────────────────────────────┘
-                          │ PASS
-                          ▼
-┌────────────────────────────────────────────────────────┐
-│ Layer 2 (L2): Network Feasibility & Mathematical Solvency│
-│ • Edge flow capacity bounds (x_ij <= Cap_ij * Mult_ij) │
-│ • Strict flow conservation at all transit nodes        │
-│ • Closed-edge zero-flow enforcement                    │
-│ • Dual-solver (OR-Tools vs HiGHS) objective agreement  │
-└─────────────────────────┬──────────────────────────────┘
-                          │ PASS
-                          ▼
-┌────────────────────────────────────────────────────────┐
-│ Layer 3 (L3): Decision Sanity & Citation Verification  │
-│ • Unmet assembly demand within tolerated limits        │
-│ • Plant line-stop threshold safety confirmation        │
-│ • Plan churn limits relative to active operations      │
-│ • Citation Support: Every claim linked to valid ID     │
-└─────────────────────────┬──────────────────────────────┘
-                          │ PASS
-                          ▼
-             Release to Human Dashboard
-```
-
-Any validation failure triggers either automated parameter repair or human escalation (`ESCALATE`) accompanied by diagnostic failure logs.
-
----
-
-## 8. Stage E: Operational Dashboard & Human Review
-
-The user interface is an operational decision command center built in React and Cytoscape.js:
-
-* **Geospatial Corridor Map**: Renders ports, terminals, highways, rail links, and manufacturing clusters. Node colors highlight disruption statuses; edge widths display current freight volume; pulsating rings indicate uncertainty.
-* **Live Event Feed**: Displays active alerts, confidence scores, source counts, and PortWatch anomaly notifications.
-* **Line-Stop & Risk Panel**: Highlights assemblies at risk, time-to-line-stop estimates, and critical bottlenecks.
-* **Evidence Provenance Panel**: Shows retrieved news articles, bulletins, and historical time-series curves. Displays publication dates, trust tiers, and the specific claims supported.
-* **Scenario & Rerouting Plan View**: Summarizes suggested slot reservations, road-to-rail shifts, and total rerouting costs. Includes diff views against active operations.
-* **Computation Trace View**: Provides full step-by-step transparency into the agent controller's decisions, tool execution costs, and evidence sufficiency progression.
-* **Interactive What-If Sandbox**: Enables planners to adjust port capacity multipliers or hazard durations to instantly inspect alternative network solutions.
-* **Human Action Gateway**: Explicit review interface (`Approve`, `Edit`, `Reject`). Every planner decision is recorded in Decision Memory.
-
----
-
-## 9. Non-Functional, Security & Safety Requirements
-
-* **Untrusted Data Isolation**: All retrieved documents and news articles are treated as untrusted data. Passages are isolated in quoting containers and never directly concatenated into prompt instruction channels.
-* **Tool-Isolated Extractor**: The information extraction LLM operates without access to operational tools, preventing prompt injection attacks from executing system actions.
-* **Document Trust Tiers**: Vector documents are classified into discrete trust tiers (Tier A: official authorities; Tier B: mainstream trade press; Tier C: social media). Low-trust or expired entries are down-weighted by the grader.
-* **Citation-Enforced Release**: The explanation engine cannot release operational guidance to the dashboard unless every claim is verified against a valid evidence ID or computed artifact ID.
-* **System Determinism & Auditability**: All random seeds are strictly parameterized. Traces are stored in append-only JSONL files documenting transitions, solver outputs, and token/time costs.
-* **Containerization**: The entire platform runs within Docker, guaranteeing one-command reproducibility across environments.
-
----
-
-## 10. Technical Stack & API Specification
-
-### 10.1 Technology Stack
-* **Language & Validation**: Python 3.11, Pydantic v2
-* **Graph Engine**: NetworkX, OSMnx
-* **Storage Systems**: SQLite (relational events/graph), DuckDB (time-series), FAISS (vector index)
-* **Agent Core**: Custom typed finite-state machine, PyTorch (masked MLP policy)
-* **Optimization Solvers**: Google OR-Tools, SciPy HiGHS
-* **Web & UI Framework**: FastAPI, Uvicorn, React, TypeScript, Cytoscape.js
-* **Testing & CI/CD**: PyTest, Hypothesis, Docker, GitHub Actions
-
-### 10.2 REST API Specification
-
-| Endpoint | Method | Operational Function |
+| Layer | Checks | Action on Failure |
 | :--- | :--- | :--- |
-| `/events` | `POST` | Ingests a new disruption alert; runs Stage A extraction and entity resolution. |
-| `/events/{id}` | `GET` | Retrieves structured event details, confidence scores, and lifecycle state. |
-| `/events/{id}/plan` | `POST` | Triggers the Stage C agentic loop with a specified cost budget parameter $\lambda$. |
-| `/plans/{id}` | `GET` | Returns an optimized routing plan, flow allocations, and L1–L3 verification results. |
-| `/traces/{id}` | `GET` | Returns the complete chronological operator execution trace and cost metrics. |
-| `/evidence/{id}` | `GET` | Fetches an evidence item with full provenance, trust tier, and supported claims. |
-| `/network` | `GET` | Returns active corridor graph topology, node multipliers, and flows. |
-| `/registry` | `GET` | Returns the canonical entity registry (IDs, names, aliases, coordinates). |
-| `/whatif` | `POST` | Recomputes flow solutions for user-adjusted severities or durations. |
-| `/decisions` | `POST` | Records planner feedback (`Approve`, `Edit`, `Reject`) to Decision Memory. |
-| `/outcomes` | `POST` | Ingests realized post-event data to trigger Loop L1 graph recalibrations. |
+| **L1 Input** | Schema, graph grounding, source corroboration, entity validity, evidence provenance | Reject / repair / escalate |
+| **L2 Plan** | Capacity, flow conservation, closed edges, objective recomputation by a second solver | Repair or escalate |
+| **L3 Decision** | Unmet demand, line-stop risk threshold, cost sanity, plan churn, confidence gate, citation support of explanation | Repair or human confirmation |
 
 ---
 
-## 11. Evaluation Protocol & Target Metrics
+## 8. End-to-End Demonstration Scenario (PDF Section 8)
 
-### 11.1 Benchmark Test Suites
-* **Suite S1 (Single-Event Core)**: Evaluates single-point disruption responses across network configurations and ambiguity levels.
-* **Suite S2 (Event Timelines)**: Evaluates multi-day cascading disruptions with updates, escalations, and retractions.
-* **Suite S3 (Adversarial Robustness)**: Injects false news, prompt injection payloads, and corrupted vector chunks.
-* **Suite S4 (Plan Fault Mutations)**: Injects capacity violations, closed-edge traversals, and cost distortions to validate L2/L3 verifier catch rates.
-* **Suite S5 (Live Demonstration Episodes)**: Runs end-to-end demonstrations using live or replayed streaming feeds.
-* **Suite S6 (Historical Backtests)**: Replays documented regional events (e.g., Cyclone Michaung) and benchmarks predictions against historical IMF PortWatch AIS volume drops.
+**Illustrative Scenario**: North-east monsoon red-level cyclone/heavy-rain alert over Chennai–Ennore coast. Kamarajar and Kattupalli operate at 40% capacity for 3 days; road flooding risk on plant–port links.
 
-### 11.2 Empirical Success Targets
+| Step | Operator | Observation Written to State (Illustrative) | Cost Class |
+| :---: | :--- | :--- | :---: |
+| **0** | **Perception (always)** | GDACS alert + 2 news items $\rightarrow$ `HAZARD_PORT` at Kamarajar and Kattupalli, multiplier 0.40, 3 days, confidence 0.78; targets resolved to registry IDs | Low |
+| **1** | **`GRAPH_ANALYZE`** | 14 plant-to-gateway paths affected; ~38% of outbound corridor flow behind the two ports; Oragadam cluster time-to-line-stop $\approx 2.1$ days | Low |
+| **2** | **`RETRIEVE_TEXT`** | Three analogue cyclone-closure reports retrieved; duration prior 2–5 days; evidence sufficiency 0.55 (below 0.70 gate) | Medium |
+| **3** | **`REWRITE_QUERY` $\rightarrow$ `RETRIEVE_TS`** | Query refined with port IDs; port-call series for two past analogues show a sharp drop and several-day recovery | Medium |
+| **4** | **`GRADE`** | Sufficiency $0.82 \ge 0.70 \rightarrow$ proceed | Low |
+| **5** | **`PROPAGATE`** | Diverted load raises Chennai Port utilisation; Krishnapatnam spare capacity can absorb a large share | Medium |
+| **6** | **`SCENARIOS`** | Three weighted scenarios (moderate, severe, full closure) with analogue-informed weights | Medium |
+| **7** | **`OPTIMIZE`** | CVaR plan: pre-reserve Krishnapatnam and Chennai slots; shift selected flows to rail from Bengaluru ICD | High |
+| **8** | **`VERIFY`** | L1, L2, L3 PASS; all explanation claims cite evidence or artefact IDs | Low |
+| **9** | **`EXPLAIN` $\rightarrow$ `STOP`**| Plan, evidence, and trace released for human approval | Low |
 
-| Area | Baseline Comparison | Empirical Target Metric |
+* **Contrast Case**: A minor, high-confidence, low-exposure event (e.g., short delay at rarely used terminal) lets the controller skip retrieval, scenarios, and propagation and go straight from graph analysis to a deterministic plan, saving compute.
+* **After the Event**: Realised PortWatch data for affected ports is ingested (Loop L1), planner decision is stored (Loop L2), trace becomes training data (Loop L3), and event summary joins vector memory (Loop L4).
+
+---
+
+## 9. Dashboard Views & Human Review
+
+| View | Information Displayed |
+| :--- | :--- |
+| **Event Feed** | Events, sources, confidence, lifecycle, PortWatch anomaly flags |
+| **Corridor Map** | Nodes/edges, affected paths, multipliers, flow (edge width), uncertainty (ring/opacity) |
+| **Risk Panel** | Ranked paths, exposure, bottlenecks, plant time-to-line-stop |
+| **Evidence Panel** | Retrieved passages and series with source, date, trust tier; supported claims |
+| **Scenario Panel** | Scenario weights and plan cost by scenario; tail risk |
+| **Plan View** | Recommended reservations and routes; diff against active plan |
+| **Computation Trace** | Operator sequence, cost, why deeper analysis was chosen (retrieval and rewrites) |
+| **Verification Panel** | Each check, value, threshold, verdict |
+| **What-If Sandbox** | Change severity or duration, recompute fast path |
+| **Human Action** | Approve / Edit / Reject, stored to decision memory |
+
+---
+
+## 10. Additional Improvements over v1.0 (PDF Section 10)
+
+| Improvement | Rationale | Tier |
+| :--- | :--- | :---: |
+| **Canonical Entity Registry across all stores** | Core integration mechanism; removes ID mismatches | Tier 1 |
+| **Plant line-stop risk / Time-to-Line-Stop KPI** | Domain-specific outcome for JIT automotive | Tier 1 |
+| **PortWatch anomaly-triggered events** | Lets time-series data originate events, not only text feeds | Tier 1–2 |
+| **Real-event backtesting** | Replays documented regional events against PortWatch series | Tier 2 |
+| **Planted-analogue synthetic benchmark** | Makes benefit of retrieval measurable rather than assumed | Tier 2 |
+| **Evidence sufficiency gate & query rewriting** | Prevents over-retrieval and acting on weak evidence | Tier 1–2 |
+| **Calibrated uncertainty** | Confidence calibration (isotonic) and conformal intervals | Tier 2 |
+| **Retrieval security (poisoning, staleness, injection)** | Trust tiers, quarantine of retrieved text, red-team Suite S3 | Tier 1 |
+| **Cost-aware LLM usage** | Response caches, small model for grading, token cost in objective | Tier 1–2 |
+| **Tiered MVP** | Tier 1: Core pipeline; Tier 2: Time-series, CVaR, learned controller; Tier 3: GNN, DAgger | — |
+| **One-command reproducibility** | Fixed seeds, JSONL traces, Docker image, single script | Tier 1 |
+
+---
+
+## 11. Evaluation Plan & Systematic Ablation Studies (PDF Section 11)
+
+### 11.1 The 9 Systematic Ablation Questions
+
+| Evaluation Question | Comparison | Primary Metric |
 | :--- | :--- | :--- |
-| **Adaptive Computation** | Fixed-full operator pipeline | $\ge 40\%$ lower mean compute cost at comparable plan regret |
-| **Analytical Depth** | Binary depth classifier | $\text{AUROC} \ge 0.80$, Expected Calibration Error $\text{ECE} \le 0.08$ |
-| **Risk-Aware Planning** | Deterministic single-state routing | $\ge 15\%$ reduction in 95th-percentile regret at $\le 5\%$ higher mean cost |
-| **System Verification** | Injected constraint/logic faults | $\ge 99\%$ catch rate on injected plan faults; $0\%$ state modification from prompt injection |
-| **Retrieval Value** | No-RAG and fixed-RAG pipelines | Lower regret than no-RAG at $\le 1.5\times$ cost; Recall@5 on planted analogues $\ge 0.80$ |
-| **Explanation Grounding** | Unchecked generative summaries | $\ge 95\%$ of released explanation assertions supported by verified citations |
+| **1. Does graph analysis improve impact identification?** | No graph vs. $k$-hop/exposure graph | Affected-path recall; exposure error |
+| **2. Does retrieval help?** | No-RAG vs. fixed-RAG vs. agentic-RAG | Regret at equal cost; cost at equal regret |
+| **3. Is the retrieval itself good?** | Text-only vs. graph-aware vs. graph + time-series | Recall@$k$ on planted analogues; context precision |
+| **4. Are explanations grounded?** | With vs. without citation check | Claim-citation support rate; unsupported-claim rate |
+| **5. Is evidence-sufficiency gate calibrated?** | Gate vs. fixed number of retrievals | Calibration of sufficiency vs. correct analogue; steps |
+| **6. Does adaptive control save compute?** | Always-full vs. rule router vs. LLM vs. learned controller | Regret vs. cost frontier; AUROC for depth; ECE |
+| **7. Does propagation add value?** | Hop-decay vs. simulator (vs. GNN if built) | Recall@10, error, runtime |
+| **8. Does scenario planning help?** | Single-state vs. scenario-aware | Tail regret / CVaR; unmet demand; line-stop events |
+| **9. Does it work on real events?** | Backtest on documented regional events | Agreement with PortWatch series; lead time; rank correlation |
+
+### 11.2 Benchmark Suites
+* **Suite S1 (Single-Event Core)**: Across network sizes and ambiguity tiers.
+* **Suite S2 (Timelines)**: Multi-day compound disruptions with updates, retractions, and related reports.
+* **Suite S3 (Adversarial Robustness)**: False/conflicting reports, prompt injection in articles and in retrieved docs, poisoned/stale chunks.
+* **Suite S4 (Plan Fault Mutations)**: Injected constraint and objective faults.
+* **Suite S5 (Live Episodes)**: Short live-feed streaming episodes for qualitative demonstration.
+* **Suite S6 (Historical Backtests)**: Real-event backtests against PortWatch series; networks split by topology.
+
+### 11.3 Empirical Targets
+
+| Area | Target / Success Rule |
+| :--- | :--- |
+| **Adaptive Computation** | $\ge 40\%$ lower mean cost at comparable regret versus fixed-full routing |
+| **Depth Prediction** | $\text{AUROC} \ge 0.80$; $\text{ECE} \le 0.08$ |
+| **Propagation** | Recall@$10 \ge 10$ points above hop-decay; $\ge 10\times$ faster than simulator (if GNN built) |
+| **Risk-Aware Planning** | $\ge 15\%$ lower 95th-percentile regret at $\le 5\%$ higher mean cost |
+| **Verification** | $\ge 99\%$ injected-fault catch rate; $0\%$ state change from injected instructions |
+| **Retrieval Value** | Agentic RAG achieves lower regret than no-RAG at $\le 1.5\times$ cost; Recall@$5 \ge 0.80$ |
+| **Grounding** | $\ge 95\%$ of released explanation claims supported by cited evidence |
+| **Demonstration** | Live event $\rightarrow$ graph update $\rightarrow$ affected paths $\rightarrow$ agentic trace with retrieval $\rightarrow$ verified plan, end to end |
 
 ---
 
-## 12. Engineering Ownership & 14-Week Roadmap
+## 12. Technical Stack & API Specification
 
-### 12.1 Engineering Ownership Matrix
-* **M1 (Agent Core & RAG Lead)**: Stage C controller, baseline planners, evidence grader, query rewriters, and explainer.
-* **M2 (Graph & Optimization Lead)**: Stage B corridor network model, path engine, line-stop calculations, propagation simulators, and OR-Tools solvers.
-* **M3 (Data & Integration Backbone Lead)**: Stage A source adapters, PortWatch anomaly detectors, canonical Entity Registry, USKL stores, and FastAPI core.
-* **M4 (Frontend & Visualization Lead)**: Stage E Cytoscape.js corridor mapping, evidence view, computation trace panel, and what-if sandbox.
-* **M5 (QA, Evaluation & Delivery Lead)**: Verification testing suites, synthetic benchmark generation with planted analogues, CI/CD pipeline, and Docker reproducibility.
+### 12.1 REST API Surface
 
-### 12.2 Tiered MVP Rollout
-* **Tier 1 (Core MVP)**: Unified pipeline over canonical Entity Registry, rule-based controller router, text + graph retrieval, hop-decay propagation, OR-Tools deterministic flow solver, L1–L3 verifier, and baseline dashboard.
-* **Tier 2 (Advanced Adaptive)**: Time-series retrieval, dynamic load-redistribution simulator, multi-scenario CVaR optimization, learned masked MLP controller policy, and S6 real-event backtests.
-* **Tier 3 (Stretch Capabilities)**: Graph Neural Network (GNN) surrogate propagation model (retained only if outperforming simulation benchmarks), DAgger policy refinement, and RoRo finished-vehicle commodity support.
-
-### 12.3 14-Week Vertical Slice Roadmap
-
-```
-W1-W2: Data Readiness (Gate G0) & Walking Skeleton in CI (Gate G1)
-  │
-W3-W4: Ingestion Adapters, Entity Gazetteer & Tagged Vector Store
-  │
-W5-W6: Path Risk Engine, Line-Stop KPI, Synthetic Benchmark & Verifiers L1-L3 (Gate G2/G3)
-  │
-W7-W8: Time-Series Engine, Load Propagation, Scenario Builder & Dashboard v1
-  │
-W9:    Operator Cost Profiling & Rule/Fixed/LLM Baselines
-  │
-W10-W11: Oracle Trajectory Labeling & Learned Masked Controller Training (Gate G4)
-  │
-W12:   Comprehensive Benchmark Execution, Ablations & S6 Event Backtests
-  │
-W13:   End-to-End Live Integration, Trace Visualizations & S3 Red-Team Audit
-  │
-W14:   System Code Freeze, One-Command Reproducibility Run & Demo (Gate G5)
-```
-
-* **Gate G0 (Week 2)**: Verification of API accessibility, licensing terms, and geographical coverage for all external data sources, or fallback activation.
-* **Gate G1 (Week 2)**: Walking skeleton executes end-to-end (Event $\rightarrow$ Graph $\rightarrow$ Router $\rightarrow$ Optimiser $\rightarrow$ Verifier $\rightarrow$ Dashboard stub) with passing CI tests.
-* **Gate G2 (Week 6)**: Path impact and line-stop calculations prove reproducible under fixed random seeds; baseline optimization yields zero constraint breaches.
-* **Gate G3 (Week 6)**: L1–L3 verifier catches $\ge 99\%$ of injected synthetic faults across mutation test suite S4.
-* **Gate G4 (Week 11)**: Learned controller policy emits strictly valid operators under masking; explanation outputs pass automated citation checks.
-* **Gate G5 (Week 14)**: Complete evaluation benchmarks and historical backtests execute and regenerate from a single shell command within Docker.
+| Endpoint | Purpose |
+| :--- | :--- |
+| `POST /events` | Submit an event; return event ID and extraction record |
+| `GET /events/{id}` | Event, cluster, confidence, lifecycle |
+| `POST /events/{id}/plan?lambda=` | Run the agentic controller; return plan, verdict and trace ID |
+| `GET /plans/{id}` | Reservations, scenario flows, costs, verification report |
+| `GET /traces/{id}` | Operator sequence, cost, timing, state features, retrieved evidence IDs |
+| `GET /evidence/{id}` | Retrieved item with source, date, trust tier and claims supported |
+| `GET /network` | Current graph, multipliers, predicted impact and uncertainty |
+| `GET /registry` | Canonical entity registry (IDs, names, aliases, geography) |
+| `POST /whatif` | Change severity/multiplier and recompute a fast path |
+| `POST /decisions` | Store human approve / edit / reject |
+| `POST /outcomes` | Ingest realised outcomes (e.g. PortWatch series) to recalibrate graph (Loop L1) |
 
 ---
 
-## 13. Risk Management & Design Decisions
+## 13. Team Distribution, Roadmap & Development Gates
+
+### 13.1 Engineering Ownership Matrix (Seams of the Integrated System)
+
+| Member | Owns | Key Responsibilities | Primary Stack |
+| :--- | :--- | :--- | :--- |
+| **M1 — Agent Core & RAG Lead** | Stage C | Controller, baselines, grader, query rewriter, retrieval tools, explainer, oracle labels, LLM interface | Python, PyTorch, LLM API, FAISS |
+| **M2 — Graph & Optimisation Lead** | Stage B + Optimiser | Corridor graph, path engine, line-stop risk, propagation, scenarios, OR-Tools | NetworkX, OSMnx, OR-Tools, SciPy |
+| **M3 — Data & Integration Backbone** | Stage A + USKL + API | Source adapters, PortWatch detector, entity registry, stores, ingestion of tagged documents, FastAPI | FastAPI, Pydantic, SQLite/DuckDB |
+| **M4 — Frontend & Visualisation** | Stage E | Corridor map, evidence panel, trace view, scenario and plan views, what-if | React, Cytoscape.js, TypeScript |
+| **M5 — QA, Evaluation & Delivery** | Cross-cutting | Verifier tests, synthetic generator with planted analogues, backtest harness, metrics, CI/CD, reproducibility | PyTest, Hypothesis, Docker, GitHub Actions |
+
+* **Joint Seams Ownership**: M1 + M2 jointly own the controller–graph feature boundary; M2 + M3 own graph and event contracts; M1 + M3 own vector-memory schema and tagging.
+* **Weekly Integration Build**: On a fixed day, the end-to-end scripted event must pass before new features merge.
+
+### 13.2 Fourteen-Week Vertical Slice Roadmap
+
+| Weeks | Milestone | Owners |
+| :---: | :--- | :--- |
+| **1–2** | Data-readiness check (Gate G0); entity registry; corridor graph v0; walking skeleton with stubs and CI integration test | M2, M3, M5 |
+| **3–4** | Live adapters (GDACS, GDELT/RSS, PortWatch anomaly detector); extraction and entity resolution; vector memory ingestion with graph tags; curated regional case library | M1, M3 |
+| **5–6** | Path-impact engine and line-stop risk; text + graph RAG with grader; synthetic generator with planted analogues; verifier L1–L3 | M1, M2, M5 |
+| **7–8** | Time-series retrieval; hop-decay and simulator propagation; scenarios; backtest harness; dashboard v1 with evidence panel | M2, M4, M5 |
+| **9** | Operator wrappers, cost profiling, agent executor, rule/LLM/fixed-RAG baselines | M1, M2, M3 |
+| **10–11**| Oracle labels, imitation policy, safety masks; GNN only if time remains | M1, M5 |
+| **12** | Full benchmark, ablations, backtests, statistical evaluation | M5, all |
+| **13** | Live end-to-end integration, trace/evidence visualisation, red-team suite S3 | M3, M4, M5 |
+| **14** | Freeze, one-command reproducibility run, report and demo | All |
+
+### 13.3 Development Gates
+
+| Gate | Target | Pass Condition |
+| :---: | :--- | :--- |
+| **G0** | Week 2 | Each dataset in Section 2.4 verified for access, licence, and coverage, or its fallback chosen |
+| **G1** | Week 2 | Walking skeleton runs event $\rightarrow$ verified plan; CI integration test green |
+| **G2** | Week 6 | Affected-path and line-stop outputs reproducible for fixed seeds; baseline optimisation has zero unintended violations |
+| **G3** | Week 6 | Verifier catches injected faults in the mutation suite ($\ge 99\%$) |
+| **G4** | Week 11| Controller emits only valid actions; trace includes retrieved evidence IDs; explanations pass citation check |
+| **G5** | Week 14| Held-out evaluation and backtests frozen; all results regenerate from one command |
+
+---
+
+## 14. Risks & Design Decisions
 
 | Risk Identified | System Impact | Technical Mitigation |
 | :--- | :--- | :--- |
-| **Public Data Sparsity** | Insufficient port granularity or publishing delays | Gate G0 data verification; fallback to calibrated aggregates; open disclosure of synthetic boundaries |
-| **Synthetic-to-Real Gap** | Synthetic evaluations fail to reflect reality | S6 historical event backtests against IMF PortWatch AIS data; benchmark method efficiency rather than forecasting accuracy |
-| **Live API Unavailability** | Live demo interruptions from external rate limits | Local caching of historical alerts; manual event entry form; replayable scenario episodes |
-| **LLM Hallucinations / Injections** | Graph corruption or ungrounded claims | Tool-isolated extraction agent; untrusted quoting containers; document trust tiers; mandatory L1/L3 verifier checks |
-| **Agent Execution Runaway** | Cost inflation or execution deadlocks | Hard limit of 12 steps; per-tool quotas; static action masks; forced `ESCALATE` on budget depletion |
-| **Learned Policy Neutrality** | Learned controller does not beat simple heuristics | Treat rule router as an authentic baseline; report parity openly if advanced policy ties threshold rules |
+| **Public data coarser or less available than assumed** | Weak calibration; thin backtests | Gate G0; documented fallbacks; synthetic generator calibrated to aggregates; state limits openly |
+| **Synthetic-to-real gap** | Results do not transfer | Backtests on real events; claim method-level results only |
+| **Live API instability / rate limits** | Demo interruption | Cached events; analyst-input fallback; replayable episodes |
+| **LLM hallucination, prompt injection, poisoned documents** | Wrong graph update or unsupported claim | No-tools extractor; untrusted-text handling; trust tiers; L1 and L3 verification; S3 suite |
+| **Agent loops or runaway cost** | Slow or expensive runs | Step, tool and budget limits; hard masks; forced `ESCALATE` |
+| **Adaptive policy ties rule router** | Weaker novelty claim | Treat router as real baseline; report ties |
+| **GNN underperforms heuristic** | Weak research result | GNN is Tier 3; heuristic stays default |
+| **Scope creep** | Schedule failure | Fixed industry and region; tiered MVP; one commodity |
+| **Integration delays** | Team blocking | Walking skeleton Week 2; CI integration test; typed contracts; weekly integration build |
+
+---
+
+## Appendix A — Unified State Schema Excerpt (JSON)
+
+```json
+{
+  "event": {
+    "id": "ev_0188",
+    "type": "HAZARD_PORT",
+    "targets": [{"id": "PORT_KAMARAJAR", "p": 0.92}],
+    "capacity_multiplier": 0.40,
+    "duration_days": 3,
+    "confidence": 0.78
+  },
+  "graph": {
+    "version": "g_2026-10-16",
+    "affected_paths": 14,
+    "flow_exposure": 0.38,
+    "plant_line_stop": {
+      "PLANT_ORAGADAM": {"time_to_line_stop_days": 2.1}
+    }
+  },
+  "evidence": [
+    {
+      "id": "doc_0412",
+      "source": "rss",
+      "date": "2023-12-05",
+      "trust": "B",
+      "entities": ["PORT_CHENNAI"]
+    }
+  ],
+  "sufficiency": 0.82,
+  "results": {
+    "propagation": "art_p07",
+    "scenarios": "art_s03",
+    "plan": "plan_0091"
+  },
+  "budget": {
+    "lambda": 0.2,
+    "steps": 8,
+    "cost_spent": 6.4,
+    "step_limit": 12
+  },
+  "trace": [
+    "GRAPH_ANALYZE",
+    "RETRIEVE_TEXT",
+    "REWRITE_QUERY",
+    "RETRIEVE_TS",
+    "GRADE",
+    "PROPAGATE",
+    "SCENARIOS",
+    "OPTIMIZE",
+    "VERIFY",
+    "STOP"
+  ]
+}
+```
+
+---
+
+## Appendix B — Agent Loop Pseudocode
+
+```python
+state = perceive(event)                        # always runs; resolves to registry IDs
+while not state.done:
+    mask = valid_operators(state)              # hard safety + precondition masks
+    action = policy(features(state), lam, mask)
+    if action == STOP:
+        break                                  # only valid after VERIFY == PASS
+    if action == ESCALATE:
+        state = escalate(state)
+        break
+    state, result = TOOLS[action].run(state, cfg, rng)  # retrieve OR compute; cost measured
+    if action in RETRIEVE_TOOLS:
+        state = grade(state)                   # relevance per item + evidence sufficiency
+        if state.sufficiency < GATE and state.rewrites < 2:
+            state.force = REWRITE_QUERY
+    if state.steps >= STEP_LIMIT or state.cost > BUDGET:
+        state = escalate(state)
+        break
+
+release(state) if state.verify == PASS else hand_to_human(state)
+```
+
+---
+
+## Appendix C — Data Sources to Verify in Week 1–2 (Gate G0)
+
+| Source | Address / URL | Verification Check |
+| :--- | :--- | :--- |
+| **IMF PortWatch** | `portwatch.imf.org` (also on `data.humdata.org/organization/portwatch`) | Indian port coverage, API access, update lag |
+| **GDACS** | `www.gdacs.org` | Feed format, regional alert history |
+| **GDELT** | `www.gdeltproject.org` | Query limits, India/logistics filters |
+| **OpenStreetMap** | `www.openstreetmap.org` (OSMnx for extraction) | Road/rail completeness; licence and attribution |
+| **UN Comtrade** | `comtradeplus.un.org` | Free-tier limits; HS codes for auto sector |
+| **India Open Data**| `data.gov.in`; Ministry of Ports, Shipping & Waterways | Port traffic granularity and recency |
+| **Weather** | `open-meteo.com`; `mausam.imd.gov.in` | Terms of use; programmatic access |

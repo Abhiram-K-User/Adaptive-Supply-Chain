@@ -1,8 +1,10 @@
 # Adaptive Supply Chain Intelligence (ASCI) Platform — Project Task Matrix
 
-> **Authoritative Master Reference**: [`adaptive_supply_chain_intelligence_prd.md`](adaptive_supply_chain_intelligence_prd.md) (v2.0, 16 October 2026)  
-> **Architecture & System Invariants**: [`project_context.md`](project_context.md)  
-> **Interactive Demo Status & Verification**: [`DEMO_NEXT_STEPS.md`](DEMO_NEXT_STEPS.md)  
+> **Authoritative Master References**:  
+> 1. [`docs/Adaptive_Supply_Chain_Intelligence_v2_Integrated_AgenticRAG_SouthIndia_Auto.pdf`](docs/Adaptive_Supply_Chain_Intelligence_v2_Integrated_AgenticRAG_SouthIndia_Auto.pdf) (Authoritative 20-page specification v2.0, 16 October 2026)  
+> 2. [`adaptive_supply_chain_intelligence_prd.md`](adaptive_supply_chain_intelligence_prd.md) (Complete Markdown PRD mirror)  
+> 3. [`project_context.md`](project_context.md) (Architecture invariants & system guidelines)  
+> 4. [`DEMO_NEXT_STEPS.md`](DEMO_NEXT_STEPS.md) (Interactive Demo Status & Verification)  
 >
 > **Project Scope**: Multimodal, agentic-RAG logistics control tower and corridor risk engine for the South India automotive corridor (Chennai, Kamarajar, Kattupalli, Krishnapatnam, VOC Tuticorin, Cochin, Mangalore $\leftrightarrow$ Bengaluru, Hosur, Oragadam, Sriperumbudur, Bidadi, Sri City).
 
@@ -11,7 +13,7 @@
 ## Executive Progress Summary
 
 ```
-Overall Progress: [=======================>.......] ~75% Complete
+Overall Progress: [=======================>.......] ~73% Complete
 Gates Passed:     Gate G0 [PASSED] | Gate G1 [PASSED] | Gate G2 [PASSED] | Gate G3 [PASSED]
 Gates Remaining:  Gate G4 [IN PROGRESS] | Gate G5 [PENDING FINAL AUDIT]
 ```
@@ -19,40 +21,40 @@ Gates Remaining:  Gate G4 [IN PROGRESS] | Gate G5 [PENDING FINAL AUDIT]
 | Metric / Dimension | Total | Completed (`[x]`) | In Progress / Next (`[ ]`) |
 | :--- | :---: | :---: | :---: |
 | **Phases (1–9)** | 9 | 5 Complete, 2 Active | 2 Long-Term |
-| **All Engineering Tasks** | 56 | 41 | 15 |
-| **M1: Agent Core & RAG Lead** | 12 | 8 | 4 |
-| **M2: Graph & Optimization Lead** | 12 | 10 | 2 |
-| **M3: Data & Backbone Lead** | 11 | 9 | 2 |
+| **All Engineering Tasks** | 65 | 42 | 23 |
+| **M1: Agent Core & RAG Lead** | 15 | 8 | 7 |
+| **M2: Graph & Optimization Lead** | 14 | 10 | 4 |
+| **M3: Data & Backbone Lead** | 12 | 10 | 2 |
 | **M4: Frontend & Visualization Lead** | 11 | 9 | 2 |
-| **M5: QA, Evaluation & Delivery Lead**| 10 | 5 | 5 |
+| **M5: QA, Evaluation & Delivery Lead**| 13 | 5 | 8 |
 
 ---
 
-## 1. Cross-Functional Engineering Ownership (PRD Sec. 12.1)
+## 1. Cross-Functional Engineering Ownership (PRD Sec. 12.1 / PDF Sec. 13.1)
 
 The implementation and verification workload is divided across 5 core engineering leads:
 
-* **`[M1]` — Agent Core & RAG Lead**: Stage C budget-aware controller, heuristic and learned masked MLP policies, cross-encoder evidence grading, canonical query reformulation, contextual RAG explainer, and Loop L4 analogue indexing.
+* **`[M1]` — Agent Core & RAG Lead**: Stage C budget-aware controller (Appendix B agent loop), heuristic and learned masked MLP policies, cross-encoder evidence grading, canonical query reformulation, contextual RAG explainer, and Loop L4 analogue indexing.
 * **`[M2]` — Graph & Optimization Lead**: Stage B corridor multigraph modeling, structural vulnerability metrics (Exposure, Criticality, PathRisk), plant-level Time-to-Line-Stop (TTLS), Tier 1/2 disruption propagation engines, Stage D Google OR-Tools flow solver with SciPy HiGHS dual-solver verification, and Layer 2/3 mathematical constraint gateways.
 * **`[M3]` — Data & Integration Backbone Lead**: Stage A live/replay ingestion adapters (GDACS, GDELT, IMD Weather, IMF PortWatch), Canonical Entity Registry, Unified State & Knowledge Layer (USKL) stores (Corridor Graph, Event Store, Semantic Vector Memory, Time-Series Store, Decision Store), and core FastAPI REST endpoints.
 * **`[M4]` — Frontend & Visualization Lead**: Stage E React 18 + TypeScript + Tailwind CSS industrial enterprise dashboard, Cytoscape.js interactive corridor topology graph, Leaflet GIS spatial routes, What-If sensitivity sandbox, citation drill-down curves, decision memory audit log, and operator trace telemetry.
-* **`[M5]` — QA, Evaluation & Delivery Lead**: Statistical evaluation suites (Suites S1 through S6), systematic fault injection mutation testing, red-team prompt injection audits, CI/CD pipeline, and multi-stage Docker containerization for one-command thesis reproducibility.
+* **`[M5]` — QA, Evaluation & Delivery Lead**: Statistical evaluation suites (Suites S1 through S6), systematic fault injection mutation testing, red-team prompt injection audits, 9 systematic ablation studies (PDF Sec. 11), CI/CD pipeline, and multi-stage Docker containerization for one-command thesis reproducibility.
 
 ---
 
 ## 2. Phased Roadmap & Task Breakdown
 
 ### Phase 1: USKL Data Architecture & Canonical Entity Registry (Weeks 1–2 / Gate G0)
-*Focus: Immutable physical registry, unified multi-store USKL architecture, Pydantic v2 core contracts, and Gate G0 external source accessibility verification.*
+*Focus: Immutable physical registry, unified multi-store USKL architecture, Pydantic v2 core contracts, and Gate G0 external source accessibility verification (PDF Appendix C).*
 
 - [x] **`[M3]` Canonical Entity Registry**: Build `src/asci/core/registry.py` with immutable string IDs (`PORT_CHENNAI`, `PLANT_ORAGADAM`), fuzzy gazetteer matching, geospatial coordinates, and entity classification. Grounded in `data/seeds/corridor_registry_v1.json` (118 nodes, 364 links).
-- [x] **`[M3]` Pydantic v2 Core Contracts**: Build `src/asci/core/contracts.py` and `src/asci/core/state.py` establishing immutable `PipelineState.transition()`, `DisruptionEvent`, `ImpactedSubgraph`, `MitigationPlan`, `EvidenceItem`, and `OperatorTraceItem`.
+- [x] **`[M3]` Pydantic v2 Core Contracts**: Build `src/asci/core/contracts.py` and `src/asci/core/state.py` establishing immutable `PipelineState.transition()`, `DisruptionEvent`, `ImpactedSubgraph`, `MitigationPlan`, `EvidenceItem`, and `OperatorTraceItem` (matching PDF Appendix A schema).
 - [x] **`[M3]` USKL Corridor Graph Store**: Build `src/asci/uskl/graph_store.py` backed by NetworkX and SQLite/JSON storing multigraph topology, edge capacities (TEU/day), transit times, and free-flow distances.
 - [x] **`[M3]` USKL Event Store**: Build `src/asci/uskl/event_store.py` with SQLite backing supporting event lifecycles (`NEW`, `UPDATED`, `RESOLVED`, `RETRACTED`).
 - [x] **`[M3]` USKL Time-Series Store**: Build `src/asci/uskl/timeseries_store.py` with DuckDB/SQLite storing seasonal vessel calls, container throughput, and empirical recovery trajectories.
 - [x] **`[M3]` USKL Decision & Trace Store**: Build `src/asci/uskl/decision_store.py` for recording operator traces, compute costs, and human approval/rejection audits.
 - [x] **`[M1]` USKL Vector Memory**: Build `src/asci/uskl/vector_store.py` using FAISS / cosine embeddings with metadata filtering (entity IDs, hazard class, publication date, trust tier) over `data/seeds/playbooks_corpus.json`.
-- [x] **`[M5]` Gate G0 Validation Suite**: Build `tests/unit/test_gate_g0_g1_contracts.py`, `tests/unit/test_registry.py`, and `tests/unit/test_gazetteer.py` verifying registry coverage, contract serialization, and schema integrity.
+- [x] **`[M5]` Gate G0 Validation Suite**: Build `tests/unit/test_gate_g0_g1_contracts.py`, `tests/unit/test_registry.py`, and `tests/unit/test_gazetteer.py` verifying registry coverage, contract serialization, and schema integrity against PDF Appendix C sources.
 
 ---
 
@@ -83,10 +85,10 @@ The implementation and verification workload is divided across 5 core engineerin
 *Focus: Multimodal multigraph modeling, structural vulnerability metrics, Time-to-Line-Stop (TTLS), and dynamic disruption propagation.*
 
 - [x] **`[M2]` Stage B Corridor Risk Engine**: Build `src/asci/stages/stage_b_graph.py` computing $k$-hop impacted subgraphs, capacity attenuation multipliers, and alternate routes.
-- [x] **`[M2]` Structural Vulnerability Metrics**: Implement Exposure ($E(e)$), Criticality ($C(e)$), and PathRisk ($PR(p)$) formulas in `stage_b_graph.py` (PRD Sec. 5.2).
+- [x] **`[M2]` Structural Vulnerability Metrics**: Implement Exposure ($E(e)$), Criticality ($C(e)$), and PathRisk ($PR(p)$) formulas in `stage_b_graph.py` (PRD Sec. 5.3).
 - [x] **`[M2]` Plant-Level Time-to-Line-Stop (TTLS)**: Implement assembly plant inventory depletion timeline:
   $$\text{TTLS}(v) = \text{Days-of-Cover}(v) - \text{Expected Delay}(v)$$
-- [x] **`[M2]` Tier-1 Disruption Propagation (Hop-Decay)**: Implement BFS hop-decay model in `src/asci/stages/stage_b_propagate.py` attenuating adjacent corridor capacities.
+- [x] **`[M2]` Tier-1 Disruption Propagation (Hop-Decay)**: Implement BFS hop-decay model in `src/asci/stages/stage_b_propagate.py` attenuating adjacent corridor capacities ($m \times \gamma^{\text{hop}}$).
 - [x] **`[M2]` Tier-2 Dynamic Load Redistribution**: Implement nonlinear BPR volume-delay spillover and route-diverted highway congestion modeling in `stage_b_propagate.py`.
 - [x] **`[M5]` Gate G2 Determinism & Verification Suite**: Build `tests/integration/test_gate_g2_benchmarks.py` and `tests/unit/test_stage_b_graph.py` proving exact reproducibility under fixed random seeds across all 23 corridor anchor points.
 
@@ -109,15 +111,15 @@ The implementation and verification workload is divided across 5 core engineerin
 ---
 
 ### Phase 6: Stage C Agentic Core & Controller Policy Training (Weeks 7–11 / Gate G4)
-*Focus: State-action budget controller, masked operator catalog, contextual RAG explainer, and learned masked MLP policy.*
+*Focus: State-action budget controller, masked operator catalog (PDF Appendix B), contextual RAG explainer, and learned masked MLP policy.*
 
 - [x] **`[M1]` Budget-Aware Controller State Machine**: Build `src/asci/stages/stage_c_controller.py` executing under cost parameter $\lambda$ and hard step limit ($T \le 12$).
 - [x] **`[M1]` Action Masking Rules**: Implement static pre-condition masking in `stage_c_controller.py` (`GRAPH_ANALYZE` first, `SCENARIOS` masked until graph context exists, `STOP` masked until `VERIFY` passes).
 - [x] **`[M1]` Cross-Encoder Evidence Grading**: Implement `GRADE` operator scoring retrieved vector passages and computing evidence sufficiency ($0.0$ to $1.0$).
-- [x] **`[M1]` Canonical Query Reformulation**: Implement `REWRITE_QUERY` operator expanding failed queries with canonical regional aliases and playbook keywords.
+- [x] **`[M1]` Canonical Query Reformulation**: Implement `REWRITE_QUERY` operator expanding failed queries with canonical regional aliases and playbook keywords (enforcing max 2 rewrites).
 - [x] **`[M1]` Grounded RAG Explanation Generator**: Build `src/asci/llm/explainer.py` producing executive briefings citing specific `[CIT_...]` evidence IDs with isolated prompt quoting.
-- [ ] **`[M1]` Dynamic Multi-Step Loop & Decision Memory Retrieval (Task 2B)**: *[NEXT]* Implement `RETRIEVE_DECISIONS` operator querying prior human `APPROVE`/`EDIT` choices from `DecisionTraceStore` and conditioning scenario generation on past precedents.
-- [ ] **`[M1]` Oracle Trajectory Generator & Dataset**: Build trajectory simulation harness collecting 1,000+ expert (oracle) state-operator-verdict sequences with regret labels.
+- [ ] **`[M1]` Dynamic Multi-Step Loop & Decision Memory Retrieval (Task 2B)**: *[NEXT]* Implement `RETRIEVE_DECISIONS` operator querying prior human `APPROVE`/`EDIT` choices from `DecisionTraceStore` and conditioning scenario generation on past precedents (PDF Appendix B loop).
+- [ ] **`[M1]` Oracle Trajectory Generator & Dataset**: Build trajectory simulation harness collecting 1,000+ expert (oracle) state-operator-verdict sequences with regret labels across diverse $\lambda$ settings.
 - [ ] **`[M1]` Learned Masked MLP Controller Policy (Gate G4)**: Train a PyTorch neural policy $\pi_\theta(a \mid S_t)$ predicting optimal operator selection under budget $\lambda$:
   $$\min_\theta \mathcal{L}_{\text{policy}} = -\sum \log \pi_\theta(a^* \mid S_t) + \beta \mathcal{R}_{\text{regret}}$$
 - [ ] **`[M5]` Gate G4 Controller & Citation Audit**: Build validation suite verifying learned policy produces zero masking violations and $\ge 95\%$ citation support across test scenarios.
@@ -142,8 +144,8 @@ The implementation and verification workload is divided across 5 core engineerin
 
 ---
 
-### Phase 8: Comprehensive Benchmark Suites (S1–S6) & Ablations (Weeks 12–13)
-*Focus: Empirical verification of thesis targets (40% compute reduction, 15% CVaR regret reduction, 99% fault catch, 95% citation grounding).*
+### Phase 8: Comprehensive Benchmark Suites (S1–S6) & 9 Systematic Ablations (Weeks 12–13)
+*Focus: Empirical verification of thesis targets (40% compute reduction, 15% CVaR regret reduction, 99% fault catch, 95% citation grounding) across PDF Section 11.*
 
 - [x] **`[M5]` Suite S1: Single-Event Core Benchmark**: Build `src/asci/benchmarks/suite_s1.py` and `scripts/run_suite_s1.py` running statistical tests across all 23 anchor entities and both graph scales (`v0_core`, `v1_corridor`).
 - [ ] **`[M5]` Suite S2: Cascading Multi-Day Event Timelines**: *[NEXT]* Build `src/asci/benchmarks/suite_s2.py` simulating multi-day compound disruptions with sequential event updates, escalations, and weather retractions.
@@ -151,18 +153,26 @@ The implementation and verification workload is divided across 5 core engineerin
 - [x] **`[M5]` Suite S4: Plan Fault Mutation Harness**: Build and verify `tests/unit/test_gate_g3_fault_mutations.py` across 20+ edge capacity, flow conservation, and destination delivery mutations.
 - [ ] **`[M5]` Suite S5: Live Demonstration Episodes**: Build replayable end-to-end streaming scenario test harness verifying multi-event concurrent processing.
 - [ ] **`[M5 & M3]` Suite S6: Historical Backtest (Cyclone Michaung)**: *[NEXT]* Build `src/asci/benchmarks/suite_s6.py` replaying documented December 2023 Cyclone Michaung data against real historical IMF PortWatch AIS volume drops.
-- [ ] **`[M1 & M5]` Adaptive Computation Ablation Study**: Compute empirical cost-regret Pareto frontier comparing adaptive policy against fixed-full and no-RAG baselines (targeting $\ge 40\%$ compute cost reduction).
+- [ ] **`[M2 & M5]` Ablation Study 1 (Graph Analysis)**: Evaluate *No graph* vs. *$k$-hop exposure graph* on affected-path recall and exposure error.
+- [ ] **`[M1 & M5]` Ablation Study 2 (Retrieval Value)**: Evaluate *No-RAG* vs. *Fixed-RAG* vs. *Agentic-RAG* on regret-at-equal-cost frontier ($\le 1.5\times$ cost target).
+- [ ] **`[M1 & M5]` Ablation Study 3 (Retrieval Modalities)**: Evaluate *Text-only* vs. *Graph-aware* vs. *Graph + Time-Series* on Recall@5 and context precision.
+- [ ] **`[M1 & M5]` Ablation Study 4 (Explanation Grounding)**: Evaluate explanation claims *With* vs. *Without* citation checks targeting $\ge 95\%$ support rate.
+- [ ] **`[M1 & M5]` Ablation Study 5 (Sufficiency Gate Calibration)**: Evaluate *Gate* vs. *Fixed number of retrievals* on steps-to-answer and calibration error.
+- [ ] **`[M1 & M5]` Ablation Study 6 (Adaptive Control Compute Savings)**: Evaluate *Always-full* vs. *Rule router* vs. *LLM planner* vs. *Learned MLP controller* targeting $\ge 40\%$ compute cost savings, $\text{AUROC} \ge 0.80$, and $\text{ECE} \le 0.08$.
+- [ ] **`[M2 & M5]` Ablation Study 7 (Propagation Engines)**: Evaluate *Hop-decay* vs. *Dynamic load simulator* (vs. GNN surrogate) on Recall@10, error, and runtime.
+- [ ] **`[M2 & M5]` Ablation Study 8 (Scenario Planning & CVaR)**: Evaluate *Single-state deterministic* vs. *Scenario-aware CVaR* on tail regret, unmet demand, and line-stops (targeting $\ge 15\%$ tail regret reduction).
+- [ ] **`[M3 & M5]` Ablation Study 9 (Real-Event PortWatch Alignment)**: Evaluate qualitative agreement, lead time, and rank correlation of predicted port impact vs. observed PortWatch AIS series.
 - [ ] **`[M3]` Autonomous Background Ingestion Daemon**: Implement standing OS-level daemon / background service for polling GDACS and PortWatch feeds with webhook alerts.
 
 ---
 
 ### Phase 9: System Hardening, Docker Reproducibility & Thesis Demo (Week 14 / Gate G5)
-*Focus: Production build containerization, one-command reproducibility harness, and final Gate G5 thesis demonstration.*
+*Focus: Production build containerization, one-command reproducibility harness, and final Gate G5 thesis demonstration (PDF Sec. 8 walkthrough).*
 
 - [x] **`[M5]` Multi-Stage Dockerfile**: Build production `Dockerfile` with Stage 0 (`node:22-alpine` compiling `frontend/dist`) and Stage 1 (`python:3.11-slim` running Uvicorn).
 - [x] **`[M3]` Persistence CLI & Seed Defaults**: Build `scripts/run_demo.py` supporting `--data-dir ./local_data`, `--preload`, and `--ephemeral` options.
-- [ ] **`[M5]` Master One-Command Reproducibility Runner (Gate G5)**: *[NEXT]* Build `scripts/run_all_benchmarks.py` executing Suites S1, S2, S3, S4, and S6 sequentially, generating thesis-ready tables and LaTeX charts.
-- [ ] **`[M4 & M5]` End-to-End Demo Rehearsal & Freeze**: Execute full multi-scenario rehearsal (Cyclone Michaung, Kamarajar Strike, Ranipet Flood) with zero UI or backend errors.
+- [ ] **`[M5]` Master One-Command Reproducibility Runner (Gate G5)**: *[NEXT]* Build `scripts/run_all_benchmarks.py` executing Suites S1, S2, S3, S4, and S6 sequentially, generating the 9 thesis ablation tables and LaTeX figures from a single shell command inside Docker.
+- [ ] **`[M4 & M5]` End-to-End Demo Rehearsal & Freeze**: Execute full multi-scenario rehearsal (Cyclone Michaung Steps 0–9, Kamarajar Strike, Ranipet Flood) with zero UI or backend errors.
 - [ ] **`[M5]` Final Gate G5 Sign-Off**: Confirm all 5 gates pass and Docker container builds and executes completely offline from cached seeds.
 
 ---
@@ -184,7 +194,7 @@ flowchart TD
 
 ### 1. `[M1]` Task 2B — Multi-Step Stage C Controller & Decision Memory Ingestion
 * **Location**: `src/asci/stages/stage_c_controller.py`, `src/asci/uskl/decision_store.py`
-* **Objective**: Query historical planner modifications (`RETRIEVE_DECISIONS`) and condition scenario generation on prior human overrides. Split controller execution into visible intermediate steps (`RETRIEVE_TEXT` $\rightarrow$ `GRADE` $\rightarrow$ `REWRITE_QUERY` $\rightarrow$ `RETRIEVE_TS` $\rightarrow$ `RETRIEVE_DECISIONS` $\rightarrow$ `SCENARIOS`).
+* **Objective**: Query historical planner modifications (`RETRIEVE_DECISIONS`) and condition scenario generation on prior human overrides. Split controller execution into visible intermediate steps (`RETRIEVE_TEXT` $\rightarrow$ `GRADE` $\rightarrow$ `REWRITE_QUERY` $\rightarrow$ `RETRIEVE_TS` $\rightarrow$ `RETRIEVE_DECISIONS` $\rightarrow$ `SCENARIOS`) following PDF Appendix B.
 * **Verification**: `python -m pytest tests/unit/test_state.py tests/integration/test_walking_skeleton.py -v`
 
 ### 2. `[M2]` Task 2C — Gate G3 Remaining L3 Verifier Rules
@@ -192,7 +202,7 @@ flowchart TD
 * **Objective**: Add `L3: LINE_STOP_SAFETY_THRESHOLD` checking that critical assembly plants maintain safe buffer margins whenever idle network capacity permits, and add `L3: PLAN_CHURN_LIMIT` checking that flow allocations don't oscillate wildly against prior active plans.
 * **Verification**: `python -m pytest tests/unit/test_stage_d_verifier.py tests/unit/test_gate_g3_fault_mutations.py -v`
 
-### 3. `[M5]` Suite S2 — Cascading Event Timelines Benchmark Runner
+### 3. `[M5]` Suite S2 — Cascading Multi-Day Event Timelines Benchmark Runner
 * **Location**: `src/asci/benchmarks/suite_s2.py`, `scripts/run_suite_s2.py`
 * **Objective**: Implement multi-day timeline runner evaluating compound events with severity escalations, route reopenings, and weather bulletin updates.
 * **Verification**: `python scripts/run_suite_s2.py --days 7 --cases 10`
@@ -223,19 +233,19 @@ flowchart TD
 
 | Lead | Role & Scope | Completed Tasks | Remaining Tasks | Active Sprint Focus |
 | :--- | :--- | :---: | :---: | :--- |
-| **`[M1]`** | **Agent Core & RAG Lead**<br>Stage C controller, baseline planners, grading, query rewrites, explainer, learned policy | 8 | 4 | **Task 2B**: Multi-Step Controller & Loop L2 memory lookup (`RETRIEVE_DECISIONS`); Gate G4 learned policy |
-| **`[M2]`** | **Graph & Optimization Lead**<br>Stage B network graph, TTLS, propagation tiers, Stage D OR-Tools + HiGHS, verifiers | 10 | 2 | **Task 2C**: L3 Line-Stop margin check & plan churn limit in `stage_d_optimiser.py` |
-| **`[M3]`** | **Data & Backbone Lead**<br>Stage A adapters, PortWatch detector, Entity Registry, USKL stores, FastAPI core | 9 | 2 | Loop L4 vector indexing of resolved events; standing ingestion daemon |
+| **`[M1]`** | **Agent Core & RAG Lead**<br>Stage C controller, baseline planners, grading, query rewrites, explainer, learned policy | 8 | 7 | **Task 2B**: Multi-Step Controller & Loop L2 memory lookup (`RETRIEVE_DECISIONS`); Gate G4 learned policy; Ablations 2–6 |
+| **`[M2]`** | **Graph & Optimization Lead**<br>Stage B network graph, TTLS, propagation tiers, Stage D OR-Tools + HiGHS, verifiers | 10 | 4 | **Task 2C**: L3 Line-Stop margin check & plan churn limit in `stage_d_optimiser.py`; Ablations 1, 7, 8 |
+| **`[M3]`** | **Data & Backbone Lead**<br>Stage A adapters, PortWatch detector, Entity Registry, USKL stores, FastAPI core | 10 | 2 | Loop L4 vector indexing of resolved events; standing ingestion daemon; Ablation 9 |
 | **`[M4]`** | **Frontend & Visualization Lead**<br>React dashboard, Cytoscape graph, Leaflet map, What-If sandbox, Evidence view, Trace UI | 9 | 2 | Step-by-step trace inspection panel; real-time operator cost-tradeoff visualizer |
-| **`[M5]`** | **QA, Evaluation & Delivery Lead**<br>Testing suites S1–S6, fault mutation harness, red-team audit, Docker, Gate G0–G5 sign-off | 5 | 5 | **Suite S2**, **Suite S3**, **Suite S6**, and master Gate G5 runner `run_all_benchmarks.py` |
+| **`[M5]`** | **QA, Evaluation & Delivery Lead**<br>Testing suites S1–S6, fault mutation harness, red-team audit, Docker, Gate G0–G5 sign-off | 5 | 8 | **Suite S2**, **Suite S3**, **Suite S6**, master Gate G5 runner `run_all_benchmarks.py`, and 9 ablation studies |
 
 ---
 
-## 5. Verification Gate Status Matrix (PRD Sec. 12.3)
+## 5. Verification Gate Status Matrix (PRD Sec. 12.3 / PDF Sec. 13.3)
 
 | Gate | Target Milestone | Criteria / Empirical Threshold | Status | Evidence / Verification Method |
 | :---: | :--- | :--- | :---: | :--- |
-| **G0** | **Data Readiness** (W2) | Canonical Entity Registry complete; API accessibility verified | ✅ **PASSED** | `tests/unit/test_registry.py` (118 nodes, 364 links) |
+| **G0** | **Data Readiness** (W2) | Canonical Entity Registry complete; API accessibility verified | ✅ **PASSED** | `tests/unit/test_registry.py` (118 nodes, 364 links; PDF App. C) |
 | **G1** | **Walking Skeleton** (W2) | End-to-end 5-stage pipeline runs in CI with zero unhandled errors | ✅ **PASSED** | `tests/integration/test_walking_skeleton.py` |
 | **G2** | **Graph & Solvers** (W6) | Stage B & D reproducible under fixed seeds; zero constraint breaches | ✅ **PASSED** | `tests/integration/test_gate_g2_benchmarks.py` |
 | **G3** | **Fault Catch Rate** (W6) | L1–L3 verifiers catch $\ge 99\%$ of injected synthetic plan faults | ✅ **PASSED** | `tests/unit/test_gate_g3_fault_mutations.py` (100% caught) |
