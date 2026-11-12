@@ -110,6 +110,63 @@ class CorridorGraphStore:
         edge_data = self._graph.get_edge_data(source, target)
         return list(edge_data.values()) if edge_data else []
 
+    def get_active_edges(self, source: str, target: str) -> list[tuple[str, dict[str, Any]]]:
+        """Retrieve (key, attrs) for all active parallel edges between source and target."""
+        if not self._graph.has_edge(source, target):
+            return []
+        edge_data = self._graph.get_edge_data(source, target) or {}
+        return [
+            (str(key), attrs)
+            for key, attrs in edge_data.items()
+            if attrs.get("active", True)
+        ]
+
+    def has_active_edge(self, source: str, target: str) -> bool:
+        """Return True if at least one active directed edge exists from source to target."""
+        return len(self.get_active_edges(source, target)) > 0
+
+    def get_path_mode(self, path: list[str]) -> str:
+        """
+        Infer path transport mode from traversed MultiDiGraph edge attributes.
+        Returns 'INTERMODAL' if any hop includes a RAIL edge, 'ROAD' if all hops are road,
+        or 'UNKNOWN' if any hop is missing.
+        """
+        if len(path) < 2:
+            return "UNKNOWN"
+        saw_rail = False
+        for u, v in zip(path, path[1:]):
+            active_edges = self.get_active_edges(u, v)
+            if not active_edges:
+                return "UNKNOWN"
+            if any(str(attrs.get("mode", "")).upper() == "RAIL" for _, attrs in active_edges):
+                saw_rail = True
+        return "INTERMODAL" if saw_rail else "ROAD"
+
+    def find_ranked_paths(
+        self,
+        origin: str,
+        destination: str,
+        max_paths: int = 3,
+        cutoff: int = 6,
+    ) -> list[list[str]]:
+        """Find simple directed paths ranked by nominal edge transit time."""
+        raw_paths = self.find_candidate_paths(origin, destination, cutoff=cutoff)
+        if not raw_paths:
+            return []
+
+        def _nominal_time(p: list[str]) -> float:
+            total = 0.0
+            for u, v in zip(p, p[1:]):
+                edges = self.get_active_edges(u, v)
+                if not edges:
+                    return float("inf")
+                total += min(float(attrs.get("transit_time_hrs", 2.0)) for _, attrs in edges)
+            return total
+
+        valid = [p for p in raw_paths if _nominal_time(p) < float("inf")]
+        valid.sort(key=lambda p: (_nominal_time(p), len(p), p))
+        return valid[:max_paths]
+
     def get_all_nodes(self) -> list[str]:
         return list(self._graph.nodes)
 

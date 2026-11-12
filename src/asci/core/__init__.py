@@ -3,12 +3,19 @@ ASCI Core domain schemas, canonical registry, state models, and contracts.
 """
 
 from asci.core.contracts import Operator, OperatorResult, PipelineConfig
-from asci.core.registry import CanonicalEntityRegistry, Entity, EntityType, UnknownEntityError
+from asci.core.registry import (
+    CanonicalEntityRegistry,
+    Entity,
+    EntityMatch,
+    EntityType,
+    UnknownEntityError,
+)
 from asci.core.state import (
     DashboardPayload,
     DisruptionEvent,
     DisruptionEventType,
     EventStatus,
+    EvidenceItem,
     FlowAllocation,
     GraphContext,
     MitigationPlan,
@@ -16,6 +23,7 @@ from asci.core.state import (
     OperatorType,
     PipelineState,
     PipelineStatus,
+    RawSignal,
     TrustTier,
     VerificationCheck,
     VerificationReport,
@@ -28,8 +36,10 @@ __all__ = [
     "DisruptionEvent",
     "DisruptionEventType",
     "Entity",
+    "EntityMatch",
     "EntityType",
     "EventStatus",
+    "EvidenceItem",
     "FlowAllocation",
     "GraphContext",
     "MitigationPlan",
@@ -40,6 +50,7 @@ __all__ = [
     "PipelineConfig",
     "PipelineState",
     "PipelineStatus",
+    "RawSignal",
     "TrustTier",
     "UnknownEntityError",
     "VerificationCheck",

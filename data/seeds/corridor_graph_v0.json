@@ -339,6 +339,160 @@
       "capacity_teu_per_day": 1200.0,
       "base_cost_per_teu": 195.0,
       "active": true
+    },
+    {
+      "source": "ICD_TONDIARPET",
+      "target": "PLANT_SRIPERUMBUDUR",
+      "key": "ROAD_0",
+      "mode": "ROAD",
+      "distance_km": 46.0,
+      "transit_time_hrs": 2.0,
+      "capacity_teu_per_day": 1800.0,
+      "base_cost_per_teu": 90.0,
+      "active": true
+    },
+    {
+      "source": "ICD_TONDIARPET",
+      "target": "PLANT_ORAGADAM",
+      "key": "ROAD_0",
+      "mode": "ROAD",
+      "distance_km": 52.0,
+      "transit_time_hrs": 2.3,
+      "capacity_teu_per_day": 1800.0,
+      "base_cost_per_teu": 100.0,
+      "active": true
+    },
+    {
+      "source": "ICD_TONDIARPET",
+      "target": "ICD_WHITEFIELD",
+      "key": "RAIL_CONCOR",
+      "mode": "RAIL",
+      "distance_km": 350.0,
+      "transit_time_hrs": 12.5,
+      "capacity_teu_per_day": 1500.0,
+      "base_cost_per_teu": 190.0,
+      "active": true
+    },
+    {
+      "source": "ICD_WHITEFIELD",
+      "target": "CFS_WHITEFIELD",
+      "key": "ROAD_LOCAL",
+      "mode": "ROAD",
+      "distance_km": 5.0,
+      "transit_time_hrs": 0.3,
+      "capacity_teu_per_day": 2500.0,
+      "base_cost_per_teu": 20.0,
+      "active": true
+    },
+    {
+      "source": "CFS_WHITEFIELD",
+      "target": "PLANT_HOSUR",
+      "key": "ROAD_0",
+      "mode": "ROAD",
+      "distance_km": 42.0,
+      "transit_time_hrs": 1.5,
+      "capacity_teu_per_day": 2000.0,
+      "base_cost_per_teu": 80.0,
+      "active": true
+    },
+    {
+      "source": "PORT_KRISHNAPATNAM",
+      "target": "JUNCTION_CHITTOOR",
+      "key": "ROAD_NH71",
+      "mode": "ROAD",
+      "distance_km": 175.0,
+      "transit_time_hrs": 4.2,
+      "capacity_teu_per_day": 2000.0,
+      "base_cost_per_teu": 215.0,
+      "active": true
+    },
+    {
+      "source": "PLANT_SRICITY",
+      "target": "JUNCTION_CHITTOOR",
+      "key": "ROAD_0",
+      "mode": "ROAD",
+      "distance_km": 115.0,
+      "transit_time_hrs": 3.0,
+      "capacity_teu_per_day": 1500.0,
+      "base_cost_per_teu": 155.0,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_CHITTOOR",
+      "target": "JUNCTION_RANIPET",
+      "key": "ROAD_NH40",
+      "mode": "ROAD",
+      "distance_km": 45.0,
+      "transit_time_hrs": 1.2,
+      "capacity_teu_per_day": 2500.0,
+      "base_cost_per_teu": 75.0,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_CHITTOOR",
+      "target": "PLANT_HOSUR",
+      "key": "ROAD_NH69",
+      "mode": "ROAD",
+      "distance_km": 170.0,
+      "transit_time_hrs": 4.0,
+      "capacity_teu_per_day": 2200.0,
+      "base_cost_per_teu": 210.0,
+      "active": true
+    },
+    {
+      "source": "ICD_IRUGUR",
+      "target": "JUNCTION_KRISHNAGIRI",
+      "key": "ROAD_NH544",
+      "mode": "ROAD",
+      "distance_km": 240.0,
+      "transit_time_hrs": 5.5,
+      "capacity_teu_per_day": 1200.0,
+      "base_cost_per_teu": 280.0,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_RANIPET",
+      "target": "PLANT_SRIPERUMBUDUR",
+      "key": "ROAD_NH48_EB",
+      "mode": "ROAD",
+      "distance_km": 72.0,
+      "transit_time_hrs": 2.0,
+      "capacity_teu_per_day": 3500.0,
+      "base_cost_per_teu": 110.0,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_RANIPET",
+      "target": "PLANT_ORAGADAM",
+      "key": "ROAD_NH48_EB",
+      "mode": "ROAD",
+      "distance_km": 76.0,
+      "transit_time_hrs": 2.1,
+      "capacity_teu_per_day": 3500.0,
+      "base_cost_per_teu": 115.0,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_VELLORE",
+      "target": "JUNCTION_RANIPET",
+      "key": "ROAD_NH48_EB",
+      "mode": "ROAD",
+      "distance_km": 28.0,
+      "transit_time_hrs": 0.8,
+      "capacity_teu_per_day": 4000.0,
+      "base_cost_per_teu": 50.0,
+      "active": true
+    },
+    {
+      "source": "JUNCTION_KRISHNAGIRI",
+      "target": "JUNCTION_VELLORE",
+      "key": "ROAD_NH48_EB",
+      "mode": "ROAD",
+      "distance_km": 115.0,
+      "transit_time_hrs": 2.5,
+      "capacity_teu_per_day": 4000.0,
+      "base_cost_per_teu": 160.0,
+      "active": true
     }
   ]
 }

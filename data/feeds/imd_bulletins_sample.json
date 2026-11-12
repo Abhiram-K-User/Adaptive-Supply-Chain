@@ -1,0 +1,35 @@
+{
+  "feed": "IMD_WEATHER_BULLETIN",
+  "retrieved_at": "2026-11-10T05:30:00Z",
+  "bulletins": [
+    {
+      "bulletin_id": "IMD_2026_11_10_TN",
+      "alert_color": "RED",
+      "hazard_category": "CYCLONE_STORM_SURGE",
+      "region": "Tamil Nadu",
+      "latitude": 13.2611,
+      "longitude": 80.3314,
+      "wind_speed_kmph": 105.0,
+      "rainfall_24h_mm": 210.0,
+      "estimated_duration_days": 4.0,
+      "issued_at": "2026-11-10T05:00:00Z",
+      "headline": "IMD Red Warning: Severe Cyclonic Storm over North Tamil Nadu coast near Ennore and Chennai",
+      "text": "Extremely heavy rainfall exceeding 200mm and gale winds of 105 km/h forecast across Tiruvallur, Ennore, Kamarajar Port, Chennai Port, and Sriperumbudur industrial belt over next 96 hours."
+    },
+    {
+      "bulletin_id": "IMD_2026_11_11_KA",
+      "alert_color": "ORANGE",
+      "hazard_category": "HEAVY_RAINFALL",
+      "region": "Karnataka",
+      "latitude": 12.7984,
+      "longitude": 77.3824,
+      "wind_speed_kmph": 45.0,
+      "rainfall_24h_mm": 135.0,
+      "estimated_duration_days": 2.0,
+      "issued_at": "2026-11-11T05:00:00Z",
+      "headline": "IMD Orange Warning: Heavy monsoon rain affecting Bengaluru Whitefield ICD and Bidadi highway approaches",
+      "text": "Localized arterial waterlogging likely around Whitefield ICD, Hosur highway, and Bidadi industrial corridors."
+    }
+  ]
+}
+

@@ -86,6 +86,31 @@ class PipelineStatus(str, Enum):
 # ---------------------------------------------------------------------------
 
 
+class RawSignal(BaseModel):
+    """
+    Untrusted raw ingestion signal container passed into Stage A perception.
+    Raw text fields remain strictly isolated from system instructions.
+    """
+
+    model_config = ConfigDict(frozen=True)
+
+    signal_id: str
+    source_feed: str
+    trust_tier: TrustTier = TrustTier.TIER_B
+    raw_headline: str
+    raw_text: str
+    published_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    latitude: float | None = None
+    longitude: float | None = None
+    polygon: list[tuple[float, float]] = Field(default_factory=list)
+    source_url: str | None = None
+    hint_entity_id: str | None = None
+    hint_event_type: DisruptionEventType | None = None
+    hint_severity: float | None = Field(default=None, ge=0.0, le=1.0)
+    hint_duration_days: float | None = Field(default=None, gt=0.0)
+    metadata: dict[str, Any] = Field(default_factory=dict)
+
+
 class DisruptionEvent(BaseModel):
     """Validated disruption alert record grounded in canonical registry IDs."""
 
@@ -104,6 +129,8 @@ class DisruptionEvent(BaseModel):
     timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     corroboration_count: int = Field(default=1, ge=1)
     confidence: float = Field(ge=0.0, le=1.0, default=0.85)
+    spatial_footprint: list[tuple[float, float]] = Field(default_factory=list)
+    source_urls: list[str] = Field(default_factory=list)
 
 
 class PathRiskMetric(BaseModel):
@@ -160,6 +187,10 @@ class EvidenceItem(BaseModel):
     publication_date: str
     supported_claims: list[str] = Field(default_factory=list)
     relevance_score: float = Field(default=1.0, ge=0.0, le=1.0)
+    region: str | None = None
+    hazard_types: list[DisruptionEventType] = Field(default_factory=list)
+    untrusted_quoted: bool = True
+    expires_at: str | None = None
 
 
 class Scenario(BaseModel):
@@ -271,6 +302,7 @@ class PipelineState(BaseModel):
 
     session_id: str
     status: PipelineStatus = PipelineStatus.INITIALIZED
+    raw_signal: RawSignal | None = None
     event: DisruptionEvent | None = None
     graph_context: GraphContext | None = None
     evidence_set: list[EvidenceItem] = Field(default_factory=list)

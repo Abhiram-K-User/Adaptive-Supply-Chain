@@ -17,7 +17,7 @@ SRC_DIR = Path(__file__).resolve().parents[1] / "src"
 if str(SRC_DIR) not in sys.path:
     sys.path.insert(0, str(SRC_DIR))
 
-from asci.api.main import app
+from asci.api.main import create_app
 from asci.core.contracts import PipelineConfig
 from asci.core.registry import CanonicalEntityRegistry, get_canonical_registry
 from asci.core.state import (
@@ -106,6 +106,6 @@ def pipeline_config() -> PipelineConfig:
 
 @pytest.fixture
 def client() -> TestClient:
-    """Fixture providing FastAPI TestClient."""
-    return TestClient(app)
+    """Fixture providing an isolated FastAPI TestClient per test."""
+    return TestClient(create_app())
 

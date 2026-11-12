@@ -1,0 +1,119 @@
+{
+  "version": "2.0.0",
+  "documents": [
+    {
+      "citation_id": "CIT_PLAYBOOK_CYCLONE_001",
+      "source": "IMD & Chennai Port Trust Disaster Standard Operating Procedure",
+      "trust_tier": "TIER_A",
+      "region": "Tamil Nadu",
+      "hazard_types": ["HAZARD_PORT", "HAZARD_ROAD"],
+      "entity_ids": ["PORT_KAMARAJAR", "PORT_CHENNAI", "ICD_TONDIARPET"],
+      "publication_date": "2026-08-15",
+      "expires_at": null,
+      "snippet": "In the event of severe cyclonic weather or storm surges impacting Kamarajar Port (Ennore), berth operations suspend within 6 hours. Divert inbound containerized auto components to Chennai Port CFS Madhavaram or shift long-distance inland cargo to CONCOR Tondiarpet railhead.",
+      "supported_claims": [
+        "Kamarajar Port operations suspend under cyclonic storm warning.",
+        "Chennai Port and ICD Tondiarpet serve as secondary road/rail diversion nodes."
+      ]
+    },
+    {
+      "citation_id": "CIT_PLAYBOOK_ORAGADAM_002",
+      "source": "Society of Indian Automobile Manufacturers (SIAM) Logistics Advisory",
+      "trust_tier": "TIER_A",
+      "region": "Tamil Nadu",
+      "hazard_types": ["HAZARD_PORT", "PORT_CONGESTION_STRIKE", "SHIPPING_SCHEDULE"],
+      "entity_ids": ["PLANT_ORAGADAM", "PLANT_SRIPERUMBUDUR", "ICD_WHITEFIELD", "PORT_KRISHNAPATNAM"],
+      "publication_date": "2026-09-01",
+      "expires_at": null,
+      "snippet": "Sriperumbudur and Oragadam automotive assembly hubs maintain 3.5 to 4.5 days of component cover. During eastern coastal port stoppages exceeding 48 hours, activate intermodal rail bypass via ICD Whitefield or divert shipments to Krishnapatnam Port to prevent assembly line stoppage.",
+      "supported_claims": [
+        "Oragadam cluster requires 48-hour rerouting activation to prevent line stoppage.",
+        "ICD Whitefield and Krishnapatnam provide primary redundancy buffers."
+      ]
+    },
+    {
+      "citation_id": "CIT_TRADE_PRESS_003",
+      "source": "Hindu BusinessLine Logistics Bureau",
+      "trust_tier": "TIER_B",
+      "region": "Tamil Nadu",
+      "hazard_types": ["HAZARD_ROAD", "HAZARD_PORT"],
+      "entity_ids": ["PORT_KAMARAJAR", "CFS_ENNORE_LOGISTICS", "PLANT_ORAGADAM"],
+      "publication_date": "2026-10-05",
+      "expires_at": null,
+      "snippet": "Ennore Express freight highway experiences localized waterlogging during northeast monsoon peak, causing average truck turn-around delays of 18 to 24 hours between Ennore CFS and Oragadam.",
+      "supported_claims": [
+        "Ennore freight access routes suffer 18-24 hour transit delays during heavy rainfall."
+      ]
+    },
+    {
+      "citation_id": "CIT_ANALOGUE_MICHAUNG_004",
+      "source": "Ministry of Ports, Shipping & Waterways Post-Cyclone Audit",
+      "trust_tier": "TIER_A",
+      "region": "Tamil Nadu",
+      "hazard_types": ["HAZARD_PORT"],
+      "entity_ids": ["PORT_KAMARAJAR", "PORT_CHENNAI", "PORT_KATTUPALLI", "CFS_CHENNAI_CENTRAL"],
+      "publication_date": "2025-12-20",
+      "expires_at": null,
+      "snippet": "Historical Cyclone Michaung backtest shows container arrivals at Ennore and Kattupalli drop by 80-85% for 72 hours, recovering linearly to 65% by day 3 and 100% by day 5. Early vessel diversion to Krishnapatnam and Cochin reduced OEM downtime by 62%.",
+      "supported_claims": [
+        "Cyclone Michaung historical drop at Ennore reaches 80-85% for 72 hours.",
+        "Linear port recovery reaches full throughput by day 5."
+      ]
+    },
+    {
+      "citation_id": "CIT_RAIL_CORRIDOR_005",
+      "source": "CONCOR Southern Region Intermodal Operations Manual",
+      "trust_tier": "TIER_A",
+      "region": "Karnataka",
+      "hazard_types": ["HAZARD_ROAD", "RAIL_DISRUPTION", "PORT_CONGESTION_STRIKE"],
+      "entity_ids": ["ICD_WHITEFIELD", "PLANT_HOSUR", "PLANT_BIDADI", "PORT_CHENNAI", "PORT_NEW_MANGALORE"],
+      "publication_date": "2026-07-10",
+      "expires_at": null,
+      "snippet": "When NH48 highway bottlenecks occur near Ranipet or Vellore, containerized auto parts for Hosur and Bidadi assembly plants can shift from road haulage to daily block trains linking Chennai Port and New Mangalore Port directly into CONCOR Whitefield ICD.",
+      "supported_claims": [
+        "Block trains to ICD Whitefield bypass NH48 highway bottlenecks for Hosur and Bidadi."
+      ]
+    },
+    {
+      "citation_id": "CIT_VOC_COIMBATORE_006",
+      "source": "Southern India Chamber of Commerce & Industry Trade Bulletin",
+      "trust_tier": "TIER_B",
+      "region": "Tamil Nadu",
+      "hazard_types": ["PORT_CONGESTION_STRIKE", "RAIL_DISRUPTION"],
+      "entity_ids": ["PORT_VOC", "PORT_COCHIN", "ICD_IRUGUR", "PLANT_COIMBATORE"],
+      "publication_date": "2026-09-18",
+      "expires_at": null,
+      "snippet": "During berth strikes or customs delays at V.O. Chidambaranar Port (Tuticorin), tier-1 automotive precision component suppliers in Coimbatore shift imports to Cochin Vallarpadam ICTT with daily rail feeder service into Irugur ICD.",
+      "supported_claims": [
+        "Cochin Port and ICD Irugur provide alternative gateway access for Coimbatore during Tuticorin disruptions."
+      ]
+    },
+    {
+      "citation_id": "CIT_CHATTER_LOWTRUST_007",
+      "source": "Unverified Freight Forum Chatter",
+      "trust_tier": "TIER_C",
+      "region": "Tamil Nadu",
+      "hazard_types": ["HAZARD_PORT"],
+      "entity_ids": ["PORT_KAMARAJAR"],
+      "publication_date": "2026-11-10",
+      "expires_at": null,
+      "snippet": "Rumors circulating among truck drivers that Kamarajar Port crane collapse will shut down the entire terminal for three weeks with zero rail access.",
+      "supported_claims": [
+        "Unverified social chatter claiming multi-week shutdown at Kamarajar Port."
+      ]
+    },
+    {
+      "citation_id": "CIT_EXPIRED_ADVISORY_008",
+      "source": "Legacy Port Advisory Archive",
+      "trust_tier": "TIER_B",
+      "region": "Tamil Nadu",
+      "hazard_types": ["PORT_CONGESTION_STRIKE"],
+      "entity_ids": ["PORT_CHENNAI"],
+      "publication_date": "2024-05-01",
+      "expires_at": "2025-01-01",
+      "snippet": "Temporary 2024 customs EDI maintenance window at Chennai Port expired on January 1, 2025.",
+      "supported_claims": []
+    }
+  ]
+}
+

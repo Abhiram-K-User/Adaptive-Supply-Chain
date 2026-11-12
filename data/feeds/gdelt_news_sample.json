@@ -1,0 +1,43 @@
+{
+  "feed": "GDELT_RSS",
+  "retrieved_at": "2026-11-10T08:30:00Z",
+  "articles": [
+    {
+      "article_id": "GDELT_ART_001",
+      "source": "Hindu BusinessLine Logistics Bureau",
+      "trust_tier": "TIER_B",
+      "published_at": "2026-11-10T07:15:00Z",
+      "url": "https://www.thehindubusinessline.com/logistics/ennore-chennai-cyclone-impact",
+      "headline": "Cyclone Michaung forces berth closure at Ennore Port; Chennai Port and Oragadam auto plants activate rail bypass",
+      "body": "Container crane operations at Kamarajar Port (Ennore) and Kattupalli Port were suspended ahead of landfall. OEMs at Oragadam and Sriperumbudur have begun shifting urgent auto component shipments through CONCOR Whitefield ICD and Chennai Harbour."
+    },
+    {
+      "article_id": "GDELT_ART_002",
+      "source": "Port Trade Dispatch RSS",
+      "trust_tier": "TIER_B",
+      "published_at": "2026-11-11T09:00:00Z",
+      "url": "https://portdispatch.example.in/tuticorin-labor-slowdown",
+      "headline": "Berth labor strike slows container clearances at Tuticorin Port",
+      "body": "Stevedore union protest at V.O. Chidambaranar Port (Tuticorin) has created a 36-hour customs and berth backlog impacting shipments headed to Irugur ICD and Coimbatore automotive suppliers."
+    },
+    {
+      "article_id": "GDELT_ART_003",
+      "source": "South Freight Social Feed",
+      "trust_tier": "TIER_C",
+      "published_at": "2026-11-11T10:15:00Z",
+      "url": "https://social.example.in/nh48-waterlogging",
+      "headline": "Heavy trucks stranded near Ranipet Junction on NH48 after overnight downpour",
+      "body": "Long queues reported at Ranipet Junction and Vellore bypass on NH48 heading toward Hosur and Bidadi assembly hubs."
+    },
+    {
+      "article_id": "GDELT_ART_OUT_OF_SCOPE",
+      "source": "European Maritime News",
+      "trust_tier": "TIER_B",
+      "published_at": "2026-11-11T11:00:00Z",
+      "url": "https://eu-shipping.example.com/rotterdam-fog",
+      "headline": "Dense fog delays barges at Rotterdam and Antwerp terminals",
+      "body": "North Sea fog suspended inland barge dispatch across the Rhine delta for 12 hours."
+    }
+  ]
+}
+

@@ -18,6 +18,7 @@ from asci.core.state import (
     PipelineStatus,
     VerificationVerdict,
 )
+from asci.ingestion import GDACSAdapter
 from asci.stages import (
     StageDOptimiserAndVerifier,
     WalkingSkeletonPipeline,
@@ -228,3 +229,163 @@ def test_api_walking_skeleton_e2e(client: TestClient):
     trace_res = client.get(f"/traces/{session_id}")
     assert trace_res.status_code == 200
     assert len(trace_res.json()) >= 4
+
+
+def test_phase2_raw_signal_pipeline_e2e(pipeline_config: PipelineConfig):
+    """
+    Phase 2 End-to-End: GDACS RawSignal -> Stage A (Tool-Isolated Extractor + Gazetteer)
+    -> Stage B -> Stage C (Tagged Vector Store + TS) -> Stage D (Verifier) -> Stage E.
+    """
+    gdacs_signals = GDACSAdapter().fetch(use_fallback=True)
+    assert len(gdacs_signals) >= 1
+
+    raw_state = PipelineState(
+        session_id="SESS_PHASE2_GDACS",
+        status=PipelineStatus.INITIALIZED,
+        raw_signal=gdacs_signals[0],
+    )
+
+    pipeline = WalkingSkeletonPipeline()
+    final_state, results = pipeline.run(raw_state, pipeline_config, random.Random(42))
+
+    assert len(results) == 5
+    assert all(r.success for r in results)
+    assert final_state.status == PipelineStatus.COMPLETED
+    assert final_state.event is not None
+    assert final_state.event.primary_entity_id == "PORT_KAMARAJAR"
+    assert "PORT_CHENNAI" in final_state.event.affected_entity_ids
+    assert len(final_state.event.spatial_footprint) >= 4
+    assert final_state.verification_report is not None
+    assert final_state.verification_report.passed is True
+    assert len(final_state.evidence_set) >= 1
+
+
+def test_api_phase2_replay_and_evidence_search(client: TestClient):
+    """
+    Phase 2 API Integration:
+    POST /ingest/replay -> GET /events -> POST /events/{id}/plan -> GET /evidence/search.
+    """
+    replay_res = client.post("/ingest/replay")
+    assert replay_res.status_code == 200
+    replay_data = replay_res.json()
+
+    assert replay_data["signals_collected"] >= 7
+    assert replay_data["events_persisted"] >= 2
+    assert any(e["corroboration_count"] >= 2 for e in replay_data["events"])
+
+    # List active/updated events
+    list_res = client.get("/events")
+    assert list_res.status_code == 200
+    assert len(list_res.json()) >= 2
+
+    # Plan for the top corroborated event
+    top_event_id = replay_data["events"][0]["event_id"]
+    plan_res = client.post(
+        f"/events/{top_event_id}/plan",
+        json={"lambda_cost_budget": 0.05, "random_seed": 42, "k_hop_neighborhood": 2},
+    )
+    assert plan_res.status_code == 200
+    assert plan_res.json()["verification"]["passed"] is True
+
+    # Query tagged semantic vector store via API
+    ev_res = client.get(
+        "/evidence/search",
+        params={"q": "Ennore cyclone diversion", "entity_id": "PORT_KAMARAJAR", "min_trust_tier": "TIER_B"},
+    )
+    assert ev_res.status_code == 200
+    docs = ev_res.json()
+    assert len(docs) >= 1
+    assert all(d["trust_tier"] in ("TIER_A", "TIER_B") for d in docs)
+
+
+def test_api_multi_port_planning_and_human_decisions(client: TestClient):
+    """
+    Verify /events/{id}/plan handles PORT_CHENNAI & PORT_VOC disruptions cleanly
+    and POST /decisions records human approval to Decision Memory.
+    """
+    for headline, text, entity_id, severity in [
+        (
+            "Chennai Port Red Cyclone Closure",
+            "Severe cyclone halts Chennai Port Trust operations.",
+            "PORT_CHENNAI",
+            0.92,
+        ),
+        (
+            "Tuticorin Port stevedore strike slows berths",
+            "Labor walkout at V.O. Chidambaranar Port (Tuticorin) halts loading.",
+            "PORT_VOC",
+            0.85,
+        ),
+    ]:
+        evt_res = client.post(
+            "/events",
+            json={
+                "raw_headline": headline,
+                "raw_text": text,
+                "primary_entity_id": entity_id,
+                "severity": severity,
+            },
+        )
+        assert evt_res.status_code == 201
+        event_id = evt_res.json()["event_id"]
+
+        plan_res = client.post(f"/events/{event_id}/plan", json={})
+        assert plan_res.status_code == 200
+        body = plan_res.json()
+        assert body["status"] == "COMPLETED"
+        assert body["verification"]["passed"] is True
+        assert entity_id in body["plan"]["summary"]
+
+        dec_res = client.post(
+            "/decisions",
+            json={
+                "plan_id": body["plan"]["plan_id"],
+                "session_id": body["session_id"],
+                "decision": "APPROVE",
+                "planner_id": "planner_south_01",
+                "comments": f"Verified diversion for {entity_id}",
+            },
+        )
+        assert dec_res.status_code == 201
+        assert dec_res.json()["decision"] == "APPROVE"
+
+
+def test_api_sqlite_file_persistence_across_restarts(tmp_path):
+    """Verify events, plans, traces, and decisions survive app reconstruction when ASCI_DATA_DIR is used."""
+    from asci.api.main import create_app
+
+    c1 = TestClient(create_app(data_dir=tmp_path))
+    assert c1.get("/health").json()["persistence"] == "sqlite_file"
+
+    evt = c1.post(
+        "/events",
+        json={
+            "raw_headline": "Kamarajar Port cyclone stoppage",
+            "raw_text": "Cyclone winds force Ennore berth suspension.",
+            "primary_entity_id": "PORT_KAMARAJAR",
+            "severity": 0.85,
+        },
+    ).json()
+    plan_res = c1.post(f"/events/{evt['event_id']}/plan", json={}).json()
+    plan_id = plan_res["plan"]["plan_id"]
+    session_id = plan_res["session_id"]
+
+    c1.post(
+        "/decisions",
+        json={
+            "plan_id": plan_id,
+            "session_id": session_id,
+            "decision": "EDIT",
+            "planner_id": "planner_ops",
+            "comments": "Prioritize Hosur axle cargo",
+            "modifications": {"priority_plant": "PLANT_HOSUR"},
+        },
+    )
+
+    # Simulate process restart on same storage directory
+    c2 = TestClient(create_app(data_dir=tmp_path))
+    assert c2.get(f"/events/{evt['event_id']}").status_code == 200
+    assert c2.get(f"/plans/{plan_id}").status_code == 200
+    assert len(c2.get(f"/traces/{session_id}").json()) == 5
+
+

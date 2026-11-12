@@ -1,6 +1,6 @@
 """
-Decision and Execution Trace Store.
-Maintains append-only traces (JSONL) and records human planner feedback (SQLite).
+Decision, Plan, and Execution Trace Store.
+Maintains append-only traces (JSONL) and records generated plans & human planner feedback (SQLite).
 Implements Architectural Feedback Loop L2 (Planner Actions -> Decision Memory).
 """
 
@@ -12,11 +12,13 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
-from asci.core.state import OperatorTraceItem
+from asci.core.state import MitigationPlan, OperatorTraceItem, VerificationReport
+
+VALID_DECISIONS = {"APPROVE", "EDIT", "REJECT"}
 
 
 class DecisionTraceStore:
-    """Store for pipeline execution traces and human-in-the-loop decisions."""
+    """Store for pipeline execution traces, persisted plans, and human-in-the-loop decisions."""
 
     def __init__(
         self,
@@ -25,6 +27,8 @@ class DecisionTraceStore:
     ) -> None:
         self.db_path = str(db_path)
         self.jsonl_trace_path = Path(jsonl_trace_path) if jsonl_trace_path else None
+        if self.db_path != ":memory:":
+            Path(self.db_path).parent.mkdir(parents=True, exist_ok=True)
         self._conn = sqlite3.connect(self.db_path, check_same_thread=False)
         self._conn.row_factory = sqlite3.Row
         self._init_db()
@@ -62,7 +66,59 @@ class DecisionTraceStore:
                 )
                 """
             )
+            conn.execute(
+                """
+                CREATE TABLE IF NOT EXISTS plans (
+                    plan_id TEXT PRIMARY KEY,
+                    session_id TEXT NOT NULL,
+                    event_id TEXT NOT NULL,
+                    status TEXT NOT NULL,
+                    plan_json TEXT NOT NULL,
+                    verification_json TEXT,
+                    created_at TEXT NOT NULL
+                )
+                """
+            )
             conn.commit()
+
+    def save_plan(
+        self,
+        plan: MitigationPlan,
+        session_id: str,
+        event_id: str,
+        status: str,
+        verification: VerificationReport | None = None,
+    ) -> None:
+        """Persist a generated mitigation plan and optional verification report to SQLite."""
+        with self._get_connection() as conn:
+            conn.execute(
+                """
+                INSERT OR REPLACE INTO plans (
+                    plan_id, session_id, event_id, status, plan_json, verification_json, created_at
+                ) VALUES (?, ?, ?, ?, ?, ?, ?)
+                """,
+                (
+                    plan.plan_id,
+                    session_id,
+                    event_id,
+                    status,
+                    plan.model_dump_json(),
+                    verification.model_dump_json() if verification else None,
+                    datetime.now(timezone.utc).isoformat(),
+                ),
+            )
+            conn.commit()
+
+    def get_plan(self, plan_id: str) -> MitigationPlan | None:
+        """Load a persisted mitigation plan by ID."""
+        with self._get_connection() as conn:
+            row = conn.execute(
+                "SELECT plan_json FROM plans WHERE plan_id = ?",
+                (plan_id,),
+            ).fetchone()
+            if not row:
+                return None
+            return MitigationPlan.model_validate_json(row["plan_json"])
 
     def record_trace(self, session_id: str, trace_items: list[OperatorTraceItem]) -> None:
         """Persist execution trace items to SQLite and optional JSONL file."""
@@ -106,6 +162,11 @@ class DecisionTraceStore:
         modifications: dict[str, Any] | None = None,
     ) -> int:
         """Log human planner approval, edit, or rejection."""
+        normalized = decision.strip().upper()
+        if normalized not in VALID_DECISIONS:
+            raise ValueError(
+                f"Invalid decision '{decision}'. Expected one of {sorted(VALID_DECISIONS)}."
+            )
         with self._get_connection() as conn:
             cur = conn.execute(
                 """
@@ -116,7 +177,7 @@ class DecisionTraceStore:
                 (
                     plan_id,
                     session_id,
-                    decision.upper(),
+                    normalized,
                     planner_id,
                     comments,
                     json.dumps(modifications or {}),
@@ -125,6 +186,15 @@ class DecisionTraceStore:
             )
             conn.commit()
             return int(cur.lastrowid or 0)
+
+    def get_decisions_for_plan(self, plan_id: str) -> list[dict[str, Any]]:
+        """Retrieve human planner decisions recorded for a given plan ID."""
+        with self._get_connection() as conn:
+            rows = conn.execute(
+                "SELECT * FROM human_decisions WHERE plan_id = ? ORDER BY decision_id DESC",
+                (plan_id,),
+            ).fetchall()
+            return [dict(r) for r in rows]
 
     def get_traces_for_session(self, session_id: str) -> list[dict[str, Any]]:
         """Retrieve chronological execution trace for a session."""

@@ -1,0 +1,64 @@
+{
+  "type": "FeatureCollection",
+  "feed": "GDACS",
+  "generated_at": "2026-11-10T06:00:00Z",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "eventid": "GDACS_TC_MICHAUNG_2026",
+        "eventtype": "TC",
+        "alertlevel": "Red",
+        "alertscore": 3,
+        "name": "Tropical Cyclone MICHAUNG-26",
+        "description": "Red Cyclone Alert for North Tamil Nadu and South Andhra coast. High storm surge and gale-force winds disrupting Kamarajar Port, Kattupalli Port, and Chennai harbour.",
+        "fromdate": "2026-11-10T00:00:00Z",
+        "todate": "2026-11-14T00:00:00Z",
+        "severitydata": {
+          "severity": 0.88,
+          "severityunit": "km/h",
+          "severitytext": "Max wind speed 110 km/h"
+        },
+        "country": "India",
+        "url": "https://www.gdacs.org/report.aspx?eventtype=TC&eventid=GDACS_TC_MICHAUNG_2026"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [80.10, 12.95],
+            [80.45, 12.95],
+            [80.45, 13.45],
+            [80.10, 13.45],
+            [80.10, 12.95]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "eventid": "GDACS_FL_CAUV_2026",
+        "eventtype": "FL",
+        "alertlevel": "Orange",
+        "alertscore": 2,
+        "name": "Monsoon Floods in Krishnagiri-Hosur Industrial Belt",
+        "description": "Orange Flood Alert along NH44/NH48 near Hosur and Krishnagiri corridor affecting road container transit.",
+        "fromdate": "2026-11-11T03:00:00Z",
+        "todate": "2026-11-13T03:00:00Z",
+        "severitydata": {
+          "severity": 0.62,
+          "severityunit": "mm",
+          "severitytext": "24h accumulated rainfall 165 mm"
+        },
+        "country": "India",
+        "url": "https://www.gdacs.org/report.aspx?eventtype=FL&eventid=GDACS_FL_CAUV_2026"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [77.8253, 12.7409]
+      }
+    }
+  ]
+}
+

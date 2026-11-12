@@ -185,18 +185,28 @@ class StageEDashboard:
             timestamp=datetime.now(timezone.utc),
         )
 
+        new_status = (
+            PipelineStatus.FAILED
+            if state.status == PipelineStatus.FAILED or (verif is not None and not verif.passed)
+            else (
+                PipelineStatus.ESCALATED
+                if state.status == PipelineStatus.ESCALATED
+                else PipelineStatus.COMPLETED
+            )
+        )
+
         new_state = state.transition(
             updates={
                 "dashboard_payload": dashboard_payload,
-                "status": PipelineStatus.COMPLETED,
+                "status": new_status,
             },
             trace_item=trace_item,
         )
 
         result = OperatorResult(
             operator_type=OperatorType.STOP,
-            success=True,
-            message=f"Stage E generated dashboard payload for session {state.session_id}.",
+            success=new_status == PipelineStatus.COMPLETED,
+            message=f"Stage E generated dashboard payload for session {state.session_id} (status={new_status.value}).",
             duration_ms=round(duration_ms, 2),
             cost=op_cost,
             artifacts={"nodes": len(nodes_payload), "edges": len(edges_payload)},

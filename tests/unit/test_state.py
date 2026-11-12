@@ -3,8 +3,6 @@ Unit tests for PipelineState and Pydantic v2 immutable contracts.
 Verifies immutability, copy-on-write state transitions, and schema validation.
 """
 
-from datetime import datetime, timezone
-
 import pytest
 from pydantic import ValidationError
 
