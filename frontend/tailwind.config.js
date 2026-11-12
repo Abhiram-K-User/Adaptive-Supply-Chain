@@ -10,6 +10,8 @@ export default {
           bg: "#101820",
           sidebar: "#111A24",
           surface: "#18232E",
+          card: "#18232E",
+          cardElevated: "#202D39",
           elevated: "#202D39",
           border: "#303E4B",
           hover: "#223140",
@@ -24,6 +26,8 @@ export default {
           bg: "#F4F6F8",
           sidebar: "#FFFFFF",
           surface: "#FFFFFF",
+          card: "#FFFFFF",
+          cardElevated: "#F8FAFB",
           secondary: "#F8FAFB",
           elevated: "#F8FAFB",
           border: "#DFE5EB",
@@ -34,6 +38,10 @@ export default {
             muted: "#7D8A99",
           },
         },
+        // Direct surface and line tokens
+        panel: "#18232E",
+        panel2: "#202D39",
+        line: "#303E4B",
         // Official Google / GDG Color System
         google: {
           blue: "#4285F4",
@@ -69,6 +77,7 @@ export default {
       boxShadow: {
         subtle: "0 1px 2px 0 rgba(0, 0, 0, 0.05)",
         card: "0 1px 3px 0 rgba(0, 0, 0, 0.08), 0 1px 2px -1px rgba(0, 0, 0, 0.04)",
+        "dark-card": "0 1px 3px 0 rgba(0, 0, 0, 0.4), 0 1px 2px -1px rgba(0, 0, 0, 0.25)",
         elevated: "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.05)",
       },
     },

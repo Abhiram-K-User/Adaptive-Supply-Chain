@@ -162,10 +162,9 @@ export function App() {
         }
       } catch (err) {
         if (!active) return;
+        const msg = err instanceof Error ? err.message : String(err);
         setStatusBanner({
-          message: `Backend connection error: ${
-            err instanceof Error ? err.message : String(err)
-          }`,
+          message: `Backend notice: ${msg}. (Start backend server on port 8000 via 'python -m uvicorn backend.app.main:app' to stream live corridor data)`,
           kind: "err",
         });
       }
@@ -313,7 +312,7 @@ export function App() {
         sidebarCollapsed
           ? "grid-cols-[76px_minmax(0,1fr)]"
           : "grid-cols-[260px_minmax(0,1fr)]"
-      } bg-light-bg dark:bg-dark-bg text-light-text-primary dark:text-dark-text-primary`}
+      } bg-transparent text-light-text-primary dark:text-dark-text-primary`}
     >
       {/* 1. Left Enterprise Sidebar (Column 1 of Grid) */}
       <Sidebar

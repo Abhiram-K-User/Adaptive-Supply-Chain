@@ -31,12 +31,26 @@ async function requestJson<T>(path: string, init?: RequestInit): Promise<T> {
   if (!res.ok) {
     let detail = `HTTP ${res.status}`;
     try {
-      const parsed = (await res.json()) as { detail?: unknown };
-      if (parsed?.detail) {
-        detail = typeof parsed.detail === "string" ? parsed.detail : JSON.stringify(parsed.detail);
+      const rawText = await res.text();
+      try {
+        const parsed = JSON.parse(rawText) as {
+          detail?: unknown;
+          message?: unknown;
+          error?: unknown;
+        };
+        const msg = parsed?.detail ?? parsed?.message ?? parsed?.error;
+        if (msg) {
+          detail = typeof msg === "string" ? msg : JSON.stringify(msg);
+        } else if (rawText.trim()) {
+          detail = rawText.trim();
+        }
+      } catch {
+        if (rawText.trim()) {
+          detail = rawText.trim();
+        }
       }
     } catch {
-      detail = await res.text();
+      // Body stream could not be read; fallback to status code
     }
     throw new Error(detail);
   }

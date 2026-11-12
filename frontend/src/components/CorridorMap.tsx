@@ -581,28 +581,28 @@ export function CorridorMap({
   };
 
   return (
-    <section className="rounded-xl border border-line bg-panel shadow-lg shadow-black/25">
-      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-line px-4 py-2.5">
+    <section className="rounded-md border border-light-border bg-white dark:border-dark-border dark:bg-dark-surface shadow-sm overflow-hidden">
+      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-light-border bg-light-elevated px-4 py-2.5 dark:border-dark-border dark:bg-dark-surface">
         <div className="flex items-center gap-2">
-          <Compass className="h-4 w-4 text-sky-400" />
-          <h2 className="text-xs font-bold uppercase tracking-wider text-sky-300">
+          <Compass className="h-4 w-4 text-google-blue" />
+          <h2 className="text-xs font-bold uppercase tracking-wider text-light-text-primary dark:text-dark-text-primary">
             India Corridor Geospatial Map & Reallocated Flows
           </h2>
-          <span className="rounded-full bg-panel2 px-2 py-0.5 text-[11px] font-medium text-slate-300">
+          <span className="rounded-full bg-white dark:bg-dark-elevated px-2 py-0.5 text-[11px] font-medium text-light-text-secondary dark:text-dark-text-secondary border border-light-border dark:border-dark-border">
             {filteredNodes.length} nodes · {filteredEdges.length} links
           </span>
         </div>
 
         <div className="flex flex-wrap items-center gap-1.5">
           {/* Map vs Cytoscape View Switcher */}
-          <div className="inline-flex rounded-md border border-line bg-[#090f1d] p-0.5">
+          <div className="inline-flex rounded-md border border-light-border dark:border-dark-border bg-white dark:bg-dark-bg p-0.5">
             <button
               type="button"
               onClick={() => setViewMode("india_map")}
               className={`inline-flex items-center gap-1 rounded px-2 py-0.5 text-[11px] font-semibold transition ${
                 viewMode === "india_map"
-                  ? "bg-sky-500/20 text-sky-300"
-                  : "text-slate-400 hover:text-white"
+                  ? "bg-google-blue text-white shadow-xs"
+                  : "text-light-text-secondary dark:text-dark-text-secondary hover:text-light-text-primary dark:hover:text-dark-text-primary"
               }`}
             >
               <MapIcon className="h-3 w-3" />
@@ -613,8 +613,8 @@ export function CorridorMap({
               onClick={() => setViewMode("cytoscape")}
               className={`inline-flex items-center gap-1 rounded px-2 py-0.5 text-[11px] font-semibold transition ${
                 viewMode === "cytoscape"
-                  ? "bg-sky-500/20 text-sky-300"
-                  : "text-slate-400 hover:text-white"
+                  ? "bg-google-blue text-white shadow-xs"
+                  : "text-light-text-secondary dark:text-dark-text-secondary hover:text-light-text-primary dark:hover:text-dark-text-primary"
               }`}
             >
               <Network className="h-3 w-3" />
@@ -628,7 +628,7 @@ export function CorridorMap({
               onClick={() =>
                 setTileStyle((prev) => (prev === "dark" ? "voyager" : "dark"))
               }
-              className="rounded-md border border-line bg-panel2 px-2 py-1 text-[11px] font-semibold text-slate-200 hover:border-sky-400/50"
+              className="rounded-md border border-light-border bg-white px-2 py-1 text-[11px] font-semibold text-light-text-secondary hover:text-light-text-primary hover:border-google-blue/40 dark:border-dark-border dark:bg-dark-surface dark:text-dark-text-secondary dark:hover:text-dark-text-primary dark:hover:border-google-blue/40 transition"
             >
               {tileStyle === "dark" ? "Dark Tiles" : "Street Tiles"}
             </button>
@@ -640,8 +640,8 @@ export function CorridorMap({
               onClick={() => setActiveOnly((prev) => !prev)}
               className={`inline-flex items-center gap-1 rounded-md border px-2 py-1 text-[11px] font-semibold transition ${
                 activeOnly
-                  ? "border-sky-400/50 bg-sky-500/15 text-sky-300"
-                  : "border-line bg-panel2 text-slate-300 hover:text-white"
+                  ? "border-google-blue/40 bg-google-blue/15 text-google-blue"
+                  : "border-light-border bg-white text-light-text-secondary hover:text-light-text-primary dark:border-dark-border dark:bg-dark-surface dark:text-dark-text-secondary dark:hover:text-dark-text-primary"
               }`}
             >
               {activeOnly ? <Eye className="h-3 w-3" /> : <EyeOff className="h-3 w-3" />}
@@ -652,15 +652,15 @@ export function CorridorMap({
           <button
             type="button"
             onClick={zoomAllIndia}
-            className="inline-flex items-center gap-1 rounded-md border border-line bg-panel2 px-2 py-1 text-[11px] font-semibold text-slate-200 hover:border-sky-400/50"
+            className="inline-flex items-center gap-1 rounded-md border border-light-border bg-white px-2 py-1 text-[11px] font-semibold text-light-text-secondary hover:text-light-text-primary hover:border-google-blue/40 dark:border-dark-border dark:bg-dark-surface dark:text-dark-text-secondary dark:hover:text-dark-text-primary transition"
           >
-            <Globe className="h-3 w-3 text-sky-400" />
+            <Globe className="h-3 w-3 text-google-blue" />
             All India
           </button>
           <button
             type="button"
             onClick={zoomSouthCorridor}
-            className="inline-flex items-center gap-1 rounded-md border border-line bg-panel2 px-2 py-1 text-[11px] font-semibold text-slate-200 hover:border-sky-400/50"
+            className="inline-flex items-center gap-1 rounded-md border border-light-border bg-white px-2 py-1 text-[11px] font-semibold text-light-text-secondary hover:text-light-text-primary hover:border-google-blue/40 dark:border-dark-border dark:bg-dark-surface dark:text-dark-text-secondary dark:hover:text-dark-text-primary transition"
           >
             <Maximize2 className="h-3 w-3" />
             South India
@@ -668,16 +668,16 @@ export function CorridorMap({
           <button
             type="button"
             onClick={zoomChennaiHub}
-            className="inline-flex items-center gap-1 rounded-md border border-line bg-panel2 px-2 py-1 text-[11px] font-semibold text-slate-200 hover:border-sky-400/50"
+            className="inline-flex items-center gap-1 rounded-md border border-light-border bg-white px-2 py-1 text-[11px] font-semibold text-light-text-secondary hover:text-light-text-primary hover:border-google-blue/40 dark:border-dark-border dark:bg-dark-surface dark:text-dark-text-secondary dark:hover:text-dark-text-primary transition"
           >
             Chennai Hub
           </button>
           <button
             type="button"
             onClick={zoomDisrupted}
-            className="inline-flex items-center gap-1 rounded-md border border-line bg-panel2 px-2 py-1 text-[11px] font-semibold text-slate-200 hover:border-red-400/50"
+            className="inline-flex items-center gap-1 rounded-md border border-light-border bg-white px-2 py-1 text-[11px] font-semibold text-light-text-secondary hover:text-google-red hover:border-google-red/40 dark:border-dark-border dark:bg-dark-surface dark:text-dark-text-secondary dark:hover:text-google-red dark:hover:border-google-red/40 transition"
           >
-            <Focus className="h-3 w-3 text-red-400" />
+            <Focus className="h-3 w-3 text-google-red" />
             Disrupted
           </button>
         </div>
@@ -694,28 +694,28 @@ export function CorridorMap({
         )}
 
         {inspected && (
-          <div className="absolute bottom-3 right-3 z-[450] w-72 rounded-lg border border-sky-400/40 bg-panel/95 p-3 shadow-xl backdrop-blur">
+          <div className="absolute bottom-3 right-3 z-[450] w-72 rounded-lg border border-light-border bg-white p-3 shadow-xl dark:border-dark-border dark:bg-dark-elevated">
             <div className="flex items-start justify-between gap-2">
               <div>
-                <div className="text-[10px] font-bold uppercase tracking-wider text-sky-400">
+                <div className="text-[10px] font-bold uppercase tracking-wider text-google-blue">
                   {inspected.kind === "node" ? "Facility Node" : "Corridor Link"}
                 </div>
-                <div className="text-xs font-bold text-white">{inspected.title}</div>
-                <div className="font-mono text-[10px] text-slate-400">{inspected.subtitle}</div>
+                <div className="text-xs font-bold text-light-text-primary dark:text-dark-text-primary">{inspected.title}</div>
+                <div className="font-mono text-[10px] text-light-text-muted dark:text-dark-text-muted">{inspected.subtitle}</div>
               </div>
               <button
                 type="button"
                 onClick={() => setInspected(null)}
-                className="rounded px-1.5 py-0.5 text-xs text-slate-400 hover:bg-panel2 hover:text-white"
+                className="rounded px-1.5 py-0.5 text-xs text-light-text-muted hover:bg-light-elevated hover:text-light-text-primary dark:text-dark-text-muted dark:hover:bg-dark-surface dark:hover:text-dark-text-primary"
               >
-                x
+                ✕
               </button>
             </div>
-            <div className="mt-2 space-y-1 border-t border-line pt-2">
+            <div className="mt-2 space-y-1 border-t border-light-border dark:border-dark-border pt-2">
               {inspected.details.map((row) => (
                 <div key={row.label} className="flex justify-between gap-2 text-[11px]">
-                  <span className="text-slate-400">{row.label}</span>
-                  <span className="font-mono font-semibold text-slate-100">{row.value}</span>
+                  <span className="text-light-text-muted dark:text-dark-text-muted">{row.label}</span>
+                  <span className="font-mono font-semibold text-light-text-primary dark:text-dark-text-primary">{row.value}</span>
                 </div>
               ))}
             </div>
@@ -723,29 +723,29 @@ export function CorridorMap({
         )}
       </div>
 
-      <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 border-t border-line bg-[#0a1122] px-4 py-2 text-[11px] text-slate-300">
+      <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 border-t border-light-border bg-light-elevated px-4 py-2 text-[11px] text-light-text-secondary dark:border-dark-border dark:bg-dark-surface dark:text-dark-text-secondary">
         <span className="inline-flex items-center gap-1.5">
-          <span className="h-2.5 w-2.5 rounded-full bg-sky-400" /> Port
+          <span className="h-2.5 w-2.5 rounded-full bg-google-blue" /> Port
         </span>
         <span className="inline-flex items-center gap-1.5">
-          <span className="h-2.5 w-2.5 rounded-full bg-emerald-500" /> Assembly Plant
+          <span className="h-2.5 w-2.5 rounded-full bg-google-green" /> Assembly Plant
         </span>
         <span className="inline-flex items-center gap-1.5">
-          <span className="h-2.5 w-2.5 rounded-full bg-purple-500" /> ICD / CFS
+          <span className="h-2.5 w-2.5 rounded-full bg-[#8E24AA]" /> ICD / CFS
         </span>
         <span className="inline-flex items-center gap-1.5">
-          <span className="h-2.5 w-2.5 rounded-full bg-amber-500" /> Restricted (&lt;90%)
+          <span className="h-2.5 w-2.5 rounded-full bg-google-yellow" /> Restricted (&lt;90%)
         </span>
         <span className="inline-flex items-center gap-1.5">
-          <span className="h-2.5 w-2.5 rounded-full bg-red-500" /> Disrupted (&lt;50%)
+          <span className="h-2.5 w-2.5 rounded-full bg-google-red" /> Disrupted (&lt;50%)
         </span>
         <span className="inline-flex items-center gap-1.5">
-          <span className="h-0.5 w-4 bg-sky-400" /> Road Flow
+          <span className="h-0.5 w-4 bg-google-blue" /> Road Flow
         </span>
         <span className="inline-flex items-center gap-1.5">
-          <span className="h-0.5 w-4 border-t-2 border-dashed border-purple-400" /> Intermodal Rail Flow
+          <span className="h-0.5 w-4 border-t-2 border-dashed border-[#8E24AA]" /> Intermodal Rail Flow
         </span>
-        <span className="ml-auto text-[10px] text-slate-500">Click any marker or route to inspect</span>
+        <span className="ml-auto text-[10px] text-light-text-muted dark:text-dark-text-muted">Click any marker or route to inspect</span>
       </div>
     </section>
   );

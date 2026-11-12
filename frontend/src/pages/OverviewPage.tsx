@@ -101,9 +101,20 @@ export function OverviewPage({
   return (
     <div className="space-y-4">
       {/* 1. Executive Operations Header Bar */}
-      <div className="flex flex-wrap items-center justify-between gap-3 rounded-md border border-light-border bg-white p-4 shadow-sm dark:border-dark-border dark:bg-dark-card dark:shadow-dark-card">
-        <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-teal-50 text-teal-700 dark:bg-gradient-to-br dark:from-accent-cyan/20 dark:to-accent-purple/20 dark:text-accent-cyanGlow">
+      <div className="relative overflow-hidden flex flex-wrap items-center justify-between gap-3 rounded-md border border-light-border bg-light-surface p-4 shadow-sm dark:border-dark-border dark:bg-dark-surface dark:shadow-dark-card">
+        {/* Subtle Industrial Telemetry Background Watermark */}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 opacity-[0.06] dark:opacity-[0.14] overflow-hidden"
+          style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg width='320' height='120' viewBox='0 0 320 120' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M10 60 H90 L120 20 L160 90 L210 40 L260 70 H310' stroke='%234285F4' stroke-width='1.5' stroke-dasharray='4 4' fill='none'/%3E%3Ccircle cx='90' cy='60' r='3.5' fill='%2334A853'/%3E%3Ccircle cx='120' cy='20' r='3.5' fill='%234285F4'/%3E%3Ccircle cx='160' cy='90' r='3.5' fill='%23FBBC04'/%3E%3Ccircle cx='210' cy='40' r='3.5' fill='%234285F4'/%3E%3Ccircle cx='260' cy='70' r='3.5' fill='%23EA4335'/%3E%3Ccircle cx='260' cy='70' r='8' stroke='%23EA4335' stroke-width='0.75' stroke-dasharray='2 2' fill='none'/%3E%3Ccircle cx='120' cy='20' r='8' stroke='%234285F4' stroke-width='0.75' stroke-dasharray='2 2' fill='none'/%3E%3Cpath d='M0 119 H320' stroke='%234285F4' stroke-width='0.5'/%3E%3C/svg%3E")`,
+            backgroundRepeat: "repeat-x",
+            backgroundPosition: "right center",
+          }}
+        />
+
+        <div className="relative z-10 flex items-center gap-3">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-google-blue/10 text-google-blue dark:bg-google-blue/20 dark:text-google-blue">
             <Radio className="h-5 w-5 animate-pulse" />
           </div>
           <div>
@@ -121,7 +132,7 @@ export function OverviewPage({
           </div>
         </div>
 
-        <div className="flex flex-wrap items-center gap-2.5">
+        <div className="relative z-10 flex flex-wrap items-center gap-2.5">
           {/* Time range selector */}
           <div className="flex rounded-xl border border-light-border bg-light-elevated p-0.5 text-xs dark:border-dark-border dark:bg-dark-surface">
             <button
@@ -161,7 +172,7 @@ export function OverviewPage({
 
           {/* Sync indicator */}
           <div className="hidden sm:flex items-center gap-1.5 text-xs text-light-text-muted dark:text-dark-text-muted">
-            <Clock className="h-3.5 w-3.5 text-teal-600 dark:text-accent-cyan" />
+            <Clock className="h-3.5 w-3.5 text-google-blue" />
             <span>
               {feedsStatus?.last_polled_at
                 ? `Sync: ${new Date(feedsStatus.last_polled_at).toLocaleTimeString()}`
@@ -261,10 +272,10 @@ export function OverviewPage({
       {/* 3. Main Operational Layout (Map & Analytics Grid) */}
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
         {/* Left 2 Cols: Multimodal Flow Map */}
-        <div className="lg:col-span-2 overflow-hidden rounded-md border border-light-border bg-white shadow-sm dark:border-dark-border dark:bg-dark-card dark:shadow-dark-card">
+        <div className="lg:col-span-2 overflow-hidden rounded-md border border-light-border bg-light-surface shadow-sm dark:border-dark-border dark:bg-dark-surface dark:shadow-dark-card">
           <div className="flex flex-wrap items-center justify-between gap-3 border-b border-light-border px-4 py-3 bg-light-elevated dark:border-dark-border dark:bg-dark-surface">
             <div className="flex items-center gap-2">
-              <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-teal-50 text-teal-700 dark:bg-accent-cyan/15 dark:text-accent-cyan">
+              <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-google-blue/10 text-google-blue dark:bg-google-blue/20 dark:text-google-blue">
                 <Layers className="h-4 w-4" />
               </div>
               <div>
@@ -280,13 +291,13 @@ export function OverviewPage({
             <button
               type="button"
               onClick={() => onOpenTab("network")}
-              className="text-xs font-semibold text-teal-700 dark:text-accent-cyan hover:underline transition"
+              className="text-xs font-semibold text-google-blue hover:underline transition"
             >
               Network Explorer &rarr;
             </button>
           </div>
 
-          <div className="p-3">
+          <div className="p-3 bg-light-bg/50 dark:bg-dark-bg/60">
             <CorridorMap
               entities={entities}
               baseEdges={baseEdges}
@@ -297,7 +308,7 @@ export function OverviewPage({
         </div>
 
         {/* Right Col: Segmented Mode Split Donut & Port Watch */}
-        <div className="rounded-md border border-light-border bg-white p-4 shadow-sm dark:border-dark-border dark:bg-dark-card dark:shadow-dark-card flex flex-col justify-between">
+        <div className="relative overflow-hidden rounded-md border border-light-border bg-light-surface p-4 shadow-sm dark:border-dark-border dark:bg-dark-surface dark:shadow-dark-card flex flex-col justify-between">
           <div>
             <div className="border-b border-light-border pb-2.5 dark:border-dark-border">
               <h3 className="text-xs font-bold uppercase tracking-wider text-light-text-primary dark:text-dark-text-primary">
@@ -318,8 +329,8 @@ export function OverviewPage({
             </div>
           </div>
 
-          <div className="mt-4 rounded-xl border border-teal-200 bg-teal-50/50 p-3 text-xs text-teal-900 dark:border-accent-cyan/30 dark:bg-accent-cyan/10 dark:text-accent-cyanGlow">
-            <span className="font-bold">Intermodal Diversion Active: </span>
+          <div className="mt-4 rounded border border-google-blue/30 bg-google-blue/5 p-3 text-xs text-light-text-primary dark:border-google-blue/40 dark:bg-google-blue/10 dark:text-dark-text-primary">
+            <span className="font-bold text-google-blue">Intermodal Diversion Active: </span>
             {railPct}% of container volume moved via electric rail avoids NH48
             monsoon flooding and gate bottlenecks.
           </div>
@@ -327,7 +338,7 @@ export function OverviewPage({
       </div>
 
       {/* 4. Dual Curve Glowing Trend Chart */}
-      <div className="rounded-md border border-light-border bg-white p-4 shadow-sm dark:border-dark-border dark:bg-dark-card dark:shadow-dark-card">
+      <div className="rounded-md border border-light-border bg-light-surface p-4 shadow-sm dark:border-dark-border dark:bg-dark-surface dark:shadow-dark-card">
         <div className="flex items-center justify-between border-b border-light-border pb-3 dark:border-dark-border">
           <div>
             <h3 className="text-xs font-bold uppercase tracking-wider text-light-text-primary dark:text-dark-text-primary">
@@ -340,7 +351,7 @@ export function OverviewPage({
           <button
             type="button"
             onClick={() => onOpenTab("forecasting")}
-            className="text-xs font-semibold text-teal-700 dark:text-accent-cyan hover:underline"
+            className="text-xs font-semibold text-google-blue hover:underline"
           >
             Predictive Forecasts &rarr;
           </button>
@@ -358,13 +369,13 @@ export function OverviewPage({
       </div>
 
       {/* 5. Deep Tabs: Diversion Allocations, Plant Risk, AI Briefing, Math Verifier */}
-      <div className="overflow-hidden rounded-md border border-light-border bg-white shadow-sm dark:border-dark-border dark:bg-dark-card dark:shadow-dark-card">
+      <div className="overflow-hidden rounded-md border border-light-border bg-light-surface shadow-sm dark:border-dark-border dark:bg-dark-surface dark:shadow-dark-card">
         <div className="flex flex-wrap items-center justify-between border-b border-light-border px-4 py-2.5 bg-light-elevated dark:border-dark-border dark:bg-dark-surface">
           <div className="flex gap-2">
             <button
               type="button"
               onClick={() => setActiveBottomTab("diversions")}
-              className={`rounded-xl px-3 py-1.5 text-xs font-semibold transition ${
+              className={`rounded px-3 py-1.5 text-xs font-semibold transition ${
                 activeBottomTab === "diversions"
                   ? "bg-white text-light-text-primary shadow-xs border border-light-border dark:bg-dark-elevated dark:text-dark-text-primary dark:border-dark-border"
                   : "text-light-text-muted hover:text-light-text-primary dark:text-dark-text-muted dark:hover:text-dark-text-primary"
@@ -375,7 +386,7 @@ export function OverviewPage({
             <button
               type="button"
               onClick={() => setActiveBottomTab("plants")}
-              className={`rounded-xl px-3 py-1.5 text-xs font-semibold transition ${
+              className={`rounded px-3 py-1.5 text-xs font-semibold transition ${
                 activeBottomTab === "plants"
                   ? "bg-white text-light-text-primary shadow-xs border border-light-border dark:bg-dark-elevated dark:text-dark-text-primary dark:border-dark-border"
                   : "text-light-text-muted hover:text-light-text-primary dark:text-dark-text-muted dark:hover:text-dark-text-primary"
@@ -386,7 +397,7 @@ export function OverviewPage({
             <button
               type="button"
               onClick={() => setActiveBottomTab("briefing")}
-              className={`rounded-xl px-3 py-1.5 text-xs font-semibold transition ${
+              className={`rounded px-3 py-1.5 text-xs font-semibold transition ${
                 activeBottomTab === "briefing"
                   ? "bg-white text-light-text-primary shadow-xs border border-light-border dark:bg-dark-elevated dark:text-dark-text-primary dark:border-dark-border"
                   : "text-light-text-muted hover:text-light-text-primary dark:text-dark-text-muted dark:hover:text-dark-text-primary"
@@ -397,7 +408,7 @@ export function OverviewPage({
             <button
               type="button"
               onClick={() => setActiveBottomTab("verifier")}
-              className={`rounded-xl px-3 py-1.5 text-xs font-semibold transition ${
+              className={`rounded px-3 py-1.5 text-xs font-semibold transition ${
                 activeBottomTab === "verifier"
                   ? "bg-white text-light-text-primary shadow-xs border border-light-border dark:bg-dark-elevated dark:text-dark-text-primary dark:border-dark-border"
                   : "text-light-text-muted hover:text-light-text-primary dark:text-dark-text-muted dark:hover:text-dark-text-primary"
@@ -418,8 +429,8 @@ export function OverviewPage({
           {activeBottomTab === "diversions" && (
             <div className="space-y-3">
               {plan?.summary && (
-                <div className="rounded-xl border border-teal-200 bg-teal-50/50 p-3 text-xs text-teal-900 dark:border-accent-cyan/30 dark:bg-accent-cyan/10 dark:text-accent-cyanGlow">
-                  <span className="font-bold">Solver Summary: </span>
+                <div className="rounded border border-google-blue/30 bg-google-blue/5 p-3 text-xs text-light-text-primary dark:border-google-blue/40 dark:bg-google-blue/10 dark:text-dark-text-primary">
+                  <span className="font-bold text-google-blue">Solver Summary: </span>
                   {plan.summary}
                 </div>
               )}
@@ -464,8 +475,8 @@ export function OverviewPage({
                               <span
                                 className={`rounded px-1.5 py-0.5 text-[10px] font-bold ${
                                   isRail
-                                    ? "bg-purple-100 text-purple-800 dark:bg-accent-purple/20 dark:text-accent-purpleGlow"
-                                    : "bg-sky-100 text-sky-800 dark:bg-accent-blue/20 dark:text-accent-blue"
+                                    ? "bg-google-blue/10 text-google-blue dark:bg-google-blue/20 dark:text-google-blue"
+                                    : "bg-slate-100 text-slate-800 dark:bg-dark-elevated dark:text-slate-200"
                                 }`}
                               >
                                 {alloc.mode}
@@ -548,8 +559,8 @@ export function OverviewPage({
             <div>
               {briefing ? (
                 <div className="space-y-3">
-                  <div className="rounded-xl border border-teal-200 bg-teal-50/50 p-3.5 dark:border-accent-cyan/30 dark:bg-accent-cyan/10">
-                    <h4 className="text-xs font-bold text-teal-900 dark:text-accent-cyanGlow">
+                  <div className="rounded-md border border-google-blue/30 bg-google-blue/5 p-3.5 dark:border-google-blue/40 dark:bg-google-blue/10">
+                    <h4 className="text-xs font-bold text-google-blue dark:text-google-blue">
                       {briefing.headline}
                     </h4>
                     <p className="mt-1 text-xs text-light-text-secondary dark:text-dark-text-secondary leading-relaxed">
@@ -568,7 +579,7 @@ export function OverviewPage({
                             key={i}
                             className="flex items-start gap-1.5 text-light-text-secondary dark:text-dark-text-secondary"
                           >
-                            <CheckCircle2 className="h-3.5 w-3.5 text-teal-600 dark:text-accent-cyan mt-0.5 shrink-0" />
+                            <CheckCircle2 className="h-3.5 w-3.5 text-google-green mt-0.5 shrink-0" />
                             <span>{act}</span>
                           </li>
                         ))}
@@ -585,7 +596,7 @@ export function OverviewPage({
                             key={i}
                             className="flex items-start gap-1.5 text-rose-800 dark:text-rose-300"
                           >
-                            <AlertTriangle className="h-3.5 w-3.5 text-rose-600 dark:text-rose-400 mt-0.5 shrink-0" />
+                            <AlertTriangle className="h-3.5 w-3.5 text-google-red mt-0.5 shrink-0" />
                             <span>{wo}</span>
                           </li>
                         ))}
@@ -606,11 +617,11 @@ export function OverviewPage({
               {allChecks.map((chk, i) => (
                 <div
                   key={i}
-                  className="flex items-start justify-between rounded-xl border border-light-border bg-light-elevated p-2.5 text-xs dark:border-dark-border dark:bg-dark-surface"
+                  className="flex items-start justify-between rounded border border-light-border bg-light-elevated p-2.5 text-xs dark:border-dark-border dark:bg-dark-surface"
                 >
                   <div>
                     <div className="font-bold text-light-text-primary dark:text-dark-text-primary">
-                      <span className="font-mono text-teal-700 dark:text-accent-cyan">
+                      <span className="font-mono text-google-blue dark:text-google-blue">
                         {chk.layer}
                       </span>
                       : {chk.check_name}
