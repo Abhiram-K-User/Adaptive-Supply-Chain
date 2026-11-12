@@ -8,6 +8,7 @@ from __future__ import annotations
 import math
 import sqlite3
 from dataclasses import dataclass
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -195,6 +196,73 @@ class TimeSeriesStore:
             if rows:
                 return [float(r["capacity_multiplier"]) for r in rows]
             return [0.2, 0.5, 0.75, 0.9, 1.0]
+
+    def record_realized_outcome(
+        self,
+        entity_id: str,
+        hazard_type: str,
+        day_offset: int,
+        observed_teu: float,
+        vessel_calls: float = 0.0,
+        obs_date: str = "",
+    ) -> dict[str, Any]:
+        """
+        Record realized post-event port throughput & vessel calls, recalibrating
+        empirical recovery curves and logging daily observations (Feedback Loop L1).
+        """
+        if not self.registry.validate_id(entity_id):
+            raise ValueError(f"Unknown canonical entity ID '{entity_id}'.")
+
+        baseline_teu = self.get_baseline_throughput(entity_id)
+        realized_multiplier = round(min(2.0, observed_teu / max(1.0, baseline_teu)), 4)
+        deviation_pct = round((realized_multiplier - 1.0) * 100.0, 2)
+
+        with self._get_connection() as conn:
+            # Check existing curve for this day_offset
+            existing_row = conn.execute(
+                """
+                SELECT capacity_multiplier FROM recovery_curves
+                WHERE entity_id = ? AND hazard_type = ? AND day_offset = ?
+                """,
+                (entity_id, hazard_type, day_offset),
+            ).fetchone()
+
+            if existing_row:
+                blended_mult = round((float(existing_row["capacity_multiplier"]) + realized_multiplier) / 2.0, 4)
+            else:
+                blended_mult = realized_multiplier
+
+            conn.execute(
+                """
+                INSERT OR REPLACE INTO recovery_curves (
+                    entity_id, hazard_type, day_offset, capacity_multiplier
+                ) VALUES (?, ?, ?, ?)
+                """,
+                (entity_id, hazard_type, day_offset, blended_mult),
+            )
+
+            # Record daily port observation
+            eff_date = obs_date or datetime.now(UTC).strftime("%Y-%m-%d")
+            conn.execute(
+                """
+                INSERT OR REPLACE INTO daily_port_observations (
+                    entity_id, obs_date, vessel_calls, teu_volume, source
+                ) VALUES (?, ?, ?, ?, ?)
+                """,
+                (entity_id, eff_date, vessel_calls, observed_teu, "REALIZED_OUTCOME_FEEDBACK_L1"),
+            )
+            conn.commit()
+
+        return {
+            "entity_id": entity_id,
+            "hazard_type": hazard_type,
+            "day_offset": day_offset,
+            "observed_teu": observed_teu,
+            "baseline_teu": baseline_teu,
+            "realized_multiplier": blended_mult,
+            "deviation_pct": deviation_pct,
+            "updated_recovery_curve": self.get_recovery_curve(entity_id, hazard_type),
+        }
 
     def ingest_observations(self, observations: list[PortObservation]) -> int:
         """Persist daily AIS/PortWatch observations after validating canonical entity IDs."""

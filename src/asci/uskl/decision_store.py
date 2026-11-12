@@ -196,6 +196,23 @@ class DecisionTraceStore:
             ).fetchall()
             return [dict(r) for r in rows]
 
+    def list_recent_decisions(
+        self, limit: int = 20, plan_id: str | None = None
+    ) -> list[dict[str, Any]]:
+        """Retrieve recent human planner decisions across all plans or filtered by plan ID (Loop L2)."""
+        with self._get_connection() as conn:
+            if plan_id:
+                rows = conn.execute(
+                    "SELECT * FROM human_decisions WHERE plan_id = ? ORDER BY decision_id DESC LIMIT ?",
+                    (plan_id, limit),
+                ).fetchall()
+            else:
+                rows = conn.execute(
+                    "SELECT * FROM human_decisions ORDER BY decision_id DESC LIMIT ?",
+                    (limit,),
+                ).fetchall()
+            return [dict(r) for r in rows]
+
     def get_traces_for_session(self, session_id: str) -> list[dict[str, Any]]:
         """Retrieve chronological execution trace for a session."""
         with self._get_connection() as conn:

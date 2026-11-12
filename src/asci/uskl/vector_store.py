@@ -299,6 +299,13 @@ class SemanticVectorStore:
         ranked.sort(key=lambda item: (-item[0], item[1].citation_id))
         return [doc for _, doc in ranked[:limit]]
 
+    def get_document(self, citation_id: str) -> EvidenceItem | None:
+        """Retrieve a specific EvidenceItem by its canonical citation_id."""
+        for doc in self._documents:
+            if doc.citation_id == citation_id:
+                return doc
+        return None
+
     def save_index(self, directory: str | Path) -> Path:
         """Persist document metadata and dense vector matrix to disk."""
         out_dir = Path(directory)
