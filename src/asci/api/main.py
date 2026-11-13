@@ -230,7 +230,11 @@ def create_app(
         registry=registry,
         decision_store=decision_store,
     )
-    stage_d = StageDOptimiserAndVerifier(registry=registry, graph_store=graph_store)
+    stage_d = StageDOptimiserAndVerifier(
+        registry=registry,
+        graph_store=graph_store,
+        decision_store=decision_store,
+    )
     briefing_gen = PlanBriefingGenerator(llm_client=active_llm_client, registry=registry)
     stage_e = StageEDashboard(
         registry=registry,

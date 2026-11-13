@@ -302,6 +302,24 @@ class DecisionTraceStore:
                     break
         return matched
 
+    def latest_active_plan(self, event_id: str) -> MitigationPlan | None:
+        """Return the newest APPROVE or EDIT plan for this event, the live operating baseline."""
+        with self._get_connection() as conn:
+            row = conn.execute(
+                """
+                SELECT p.plan_json
+                FROM human_decisions d
+                JOIN plans p ON p.plan_id = d.plan_id
+                WHERE p.event_id = ? AND d.decision IN ('APPROVE', 'EDIT')
+                ORDER BY d.decision_id DESC
+                LIMIT 1
+                """,
+                (event_id,),
+            ).fetchone()
+        if not row:
+            return None
+        return MitigationPlan.model_validate_json(row["plan_json"])
+
     def get_traces_for_session(self, session_id: str) -> list[dict[str, Any]]:
         """Retrieve chronological execution trace for a session."""
         with self._get_connection() as conn:

@@ -219,11 +219,15 @@ def test_stage_e_and_api_demo_with_live_mock_llm(registry):
     app = create_app(network_scale="v1_corridor", llm_client=mock_llm)
     client = TestClient(app)
 
-    # 1. Verify UI HTML page & status endpoints
+    # 1. Verify UI HTML page & status endpoints.
+    # CI has no frontend/dist (gitignored), so it serves the legacy dashboard.
+    # A local build serves the React shell, which does not inline the cytoscape script.
     ui_resp = client.get("/")
     assert ui_resp.status_code == 200
-    assert "ASCI v2.0" in ui_resp.text
-    assert "cytoscape" in ui_resp.text.lower()
+    html = ui_resp.text
+    react_shell = "Adaptive Supply Chain Intelligence" in html and "/assets/" in html
+    legacy_shell = "ASCI v2.0" in html and "cytoscape" in html.lower()
+    assert react_shell or legacy_shell
 
     status_resp = client.get("/llm/status")
     assert status_resp.status_code == 200
