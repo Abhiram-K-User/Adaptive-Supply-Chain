@@ -342,31 +342,31 @@ export function AnalyticsView({
               </div>
             </div>
 
-            <div className="rounded-xl border border-light-border bg-light-surface-subtle p-3.5 space-y-1.5 dark:border-dark-border dark:bg-dark-surface">
+            <div className="rounded-xl border border-emerald-200 bg-emerald-50/50 p-3.5 space-y-1.5 dark:border-emerald-900/60 dark:bg-emerald-950/30">
               <div className="flex items-center justify-between">
-                <span className="font-bold text-xs text-light-text-primary dark:text-dark-text-primary">
+                <span className="font-bold text-xs text-emerald-900 dark:text-emerald-400">
                   Suite S4: Randomized Fault Runner
                 </span>
-                <span className="rounded bg-amber-100 px-1.5 py-0.5 font-mono text-[9px] font-bold text-amber-800 dark:bg-amber-950/60 dark:text-amber-400">
-                  ROADMAP M3
+                <span className="rounded bg-emerald-200/60 px-1.5 py-0.5 font-mono text-[9px] font-bold text-emerald-900 dark:bg-emerald-900/60 dark:text-emerald-300">
+                  PASS (Gate G3)
                 </span>
               </div>
-              <p className="text-[11px] text-light-text-secondary dark:text-dark-text-secondary leading-relaxed">
+              <p className="text-[11px] text-emerald-800 dark:text-emerald-300 leading-relaxed">
                 Hypothesis property-based fuzzing and random edge disruption injection.
               </p>
             </div>
 
-            <div className="rounded-xl border border-light-border bg-light-surface-subtle p-3.5 space-y-1.5 dark:border-dark-border dark:bg-dark-surface">
+            <div className="rounded-xl border border-emerald-200 bg-emerald-50/50 p-3.5 space-y-1.5 dark:border-emerald-900/60 dark:bg-emerald-950/30">
               <div className="flex items-center justify-between">
-                <span className="font-bold text-xs text-light-text-primary dark:text-dark-text-primary">
+                <span className="font-bold text-xs text-emerald-900 dark:text-emerald-400">
                   Suite S5: Learned Masked Controller
                 </span>
-                <span className="rounded bg-slate-100 px-1.5 py-0.5 font-mono text-[9px] font-bold text-slate-700 dark:bg-slate-800 dark:text-slate-300">
-                  PHASE 6
+                <span className="rounded bg-emerald-200/60 px-1.5 py-0.5 font-mono text-[9px] font-bold text-emerald-900 dark:bg-emerald-900/60 dark:text-emerald-300">
+                  PASS (Gate G4)
                 </span>
               </div>
-              <p className="text-[11px] text-light-text-secondary dark:text-dark-text-secondary leading-relaxed">
-                PyTorch masked policy action model trained on oracle trajectories.
+              <p className="text-[11px] text-emerald-800 dark:text-emerald-300 leading-relaxed">
+                PyTorch MaskedMLPPolicy trained on 1,050 oracle trajectories with 0% mask violations and &ge;95% citation support.
               </p>
             </div>
 

@@ -310,7 +310,7 @@ export function OptimizationView({
               <input
                 type="range"
                 min={0.01}
-                max={0.2}
+                max={0.45}
                 step={0.01}
                 value={controls.lambdaBudget}
                 onChange={(e) =>
@@ -319,8 +319,8 @@ export function OptimizationView({
                 className="w-full accent-teal-600 dark:accent-accent-cyan"
               />
               <div className="flex justify-between text-[10px] text-light-text-muted dark:text-dark-text-muted">
-                <span>Strict Cost (0.01)</span>
-                <span>Max Robustness (0.20)</span>
+                <span>Low Penalty (0.01)</span>
+                <span>Strict Budget (0.45)</span>
               </div>
             </div>
 
@@ -332,8 +332,56 @@ export function OptimizationView({
               className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#101C2C] hover:bg-slate-800 p-2.5 text-xs font-semibold text-white transition disabled:opacity-50 shadow-sm dark:bg-accent-cyan dark:text-[#090D14] dark:hover:bg-cyan-400"
             >
               <Play className="h-3.5 w-3.5 fill-current" />
-              <span>Solve Optimal Flow Allocation</span>
+              <span>{busy ? "Solving..." : "Solve Optimal Flow Allocation"}</span>
             </button>
+
+            {/* Live Stage C Agentic-RAG Telemetry */}
+            {planResponse && (
+              <div className="rounded-xl border border-light-border bg-light-surface-subtle p-3 space-y-2 dark:border-dark-border dark:bg-dark-surface">
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-light-text-muted dark:text-dark-text-muted">
+                    Last Stage C Run Telemetry
+                  </span>
+                  <span className="font-mono text-[10px] font-bold text-teal-700 dark:text-accent-cyan">
+                    {controls.controllerMode}
+                  </span>
+                </div>
+                <div className="grid grid-cols-3 gap-2 text-center">
+                  <div className="rounded-lg bg-white p-1.5 border border-light-border dark:bg-dark-card dark:border-dark-border">
+                    <div className="text-[9px] text-light-text-muted dark:text-dark-text-muted">Steps</div>
+                    <div className="font-mono text-xs font-bold text-light-text-primary dark:text-dark-text-primary">
+                      {planResponse.step_count}
+                    </div>
+                  </div>
+                  <div className="rounded-lg bg-white p-1.5 border border-light-border dark:bg-dark-card dark:border-dark-border">
+                    <div className="text-[9px] text-light-text-muted dark:text-dark-text-muted">Compute</div>
+                    <div className="font-mono text-xs font-bold text-purple-700 dark:text-accent-purple">
+                      ${planResponse.compute_cost.toFixed(4)}
+                    </div>
+                  </div>
+                  <div className="rounded-lg bg-white p-1.5 border border-light-border dark:bg-dark-card dark:border-dark-border">
+                    <div className="text-[9px] text-light-text-muted dark:text-dark-text-muted">Citations</div>
+                    <div className="font-mono text-xs font-bold text-emerald-700 dark:text-emerald-400">
+                      {planResponse.dashboard?.evidence_provenance?.length ?? 0}
+                    </div>
+                  </div>
+                </div>
+                {planResponse.dashboard?.trace_timeline && planResponse.dashboard.trace_timeline.length > 0 && (
+                  <div className="flex flex-wrap items-center gap-1 pt-1">
+                    {planResponse.dashboard.trace_timeline.map((t, idx) => (
+                      <span key={`${t.step_index}-${idx}`} className="inline-flex items-center gap-0.5">
+                        <span className="rounded bg-white px-1 py-0.5 font-mono text-[9px] font-semibold text-slate-700 border border-light-border dark:bg-dark-card dark:text-slate-200 dark:border-dark-border">
+                          {t.operator_type}
+                        </span>
+                        {idx < planResponse.dashboard!.trace_timeline.length - 1 && (
+                          <span className="text-[9px] text-light-text-muted">&rarr;</span>
+                        )}
+                      </span>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         </div>
 
