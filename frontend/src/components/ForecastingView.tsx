@@ -29,68 +29,147 @@ export function ForecastingView({
   const dash = planResponse?.dashboard ?? null;
   const lineStopForecast = dash?.line_stop_forecast ?? [];
 
-  // Generate historical vs predicted demand trend driven by selectedWindow
+  const commodityBases = useMemo(() => {
+    const defaults = {
+      POWERTRAIN_CKD: 5612,
+      EV_BATTERY_PACKS: 3118,
+      BODY_CHASSIS_PARTS: 3741,
+    };
+    const allocations = planResponse?.plan?.allocations ?? [];
+    if (allocations.length === 0) return defaults;
+
+    const sums: Record<string, number> = {};
+    for (const a of allocations) {
+      sums[a.commodity] = (sums[a.commodity] ?? 0) + (a.flow_teu ?? 0);
+    }
+    return {
+      POWERTRAIN_CKD: Math.round(sums.POWERTRAIN_CKD || defaults.POWERTRAIN_CKD),
+      EV_BATTERY_PACKS: Math.round(sums.EV_BATTERY_PACKS || defaults.EV_BATTERY_PACKS),
+      BODY_CHASSIS_PARTS: Math.round(sums.BODY_CHASSIS_PARTS || defaults.BODY_CHASSIS_PARTS),
+    };
+  }, [planResponse]);
+
+  const commodityMeta = useMemo(() => {
+    switch (selectedCommodity) {
+      case "POWERTRAIN_CKD":
+        return {
+          confidence: "± 3.1%",
+          regime: "Steady CKD Conveyor Cadence",
+        };
+      case "EV_BATTERY_PACKS":
+        return {
+          confidence: "± 5.8%",
+          regime: "Vessel-Pulse Arrivals & Bonded EV Ramp",
+        };
+      case "BODY_CHASSIS_PARTS":
+        return {
+          confidence: "± 2.9%",
+          regime: "Domestic Stamping Batch Cycles",
+        };
+      default:
+        return {
+          confidence: "± 4.2%",
+          regime: "Baseline Operating Model",
+        };
+    }
+  }, [selectedCommodity]);
+
+  // Generate distinct commodity-specific historical vs predicted demand curves driven by selectedWindow
   const forecastTrendData = useMemo(() => {
-    const days =
+    const offsets =
       selectedWindow === "7d"
-        ? ["D-3", "D-2", "D-1", "Today", "D+1", "D+2", "D+3"]
+        ? [-3, -2, -1, 0, 1, 2, 3]
         : selectedWindow === "30d"
-        ? ["D-15", "D-12", "D-9", "D-6", "D-3", "Today", "D+3", "D+6", "D+9", "D+12", "D+15"]
-        : [
-            "D-6",
-            "D-5",
-            "D-4",
-            "D-3",
-            "D-2",
-            "D-1",
-            "Today",
-            "D+1",
-            "D+2",
-            "D+3",
-            "D+4",
-            "D+5",
-            "D+6",
-            "D+7",
-          ];
-    const todayIdx = days.indexOf("Today");
+        ? [-15, -12, -9, -6, -3, 0, 3, 6, 9, 12, 15]
+        : [-6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6, 7];
 
-    const baseDemand = 12470;
-    const multiplier =
-      selectedCommodity === "POWERTRAIN_CKD"
-        ? 0.45
-        : selectedCommodity === "EV_BATTERY_PACKS"
-        ? 0.28
-        : selectedCommodity === "BODY_CHASSIS_PARTS"
-        ? 0.27
-        : 1.0;
+    const formatDay = (offset: number) =>
+      offset === 0 ? "Today" : offset > 0 ? `D+${offset}` : `D${offset}`;
 
-    return days.map((day, idx) => {
-      const historical =
-        idx <= todayIdx
-          ? Math.round(
-              baseDemand *
-                multiplier *
-                (0.96 + Math.sin(idx * 0.7) * 0.05 + ((idx * 3) % 7) / 100)
-            )
-          : Math.round(
-              baseDemand *
-                multiplier *
-                (1.01 + Math.sin(idx * 0.6) * 0.04)
-            );
+    const computeSeries = (
+      commodity: "POWERTRAIN_CKD" | "EV_BATTERY_PACKS" | "BODY_CHASSIS_PARTS",
+      offset: number
+    ) => {
+      const base = commodityBases[commodity];
+      if (commodity === "POWERTRAIN_CKD") {
+        // Regular mid-week plant shift cadence + steady post-today recovery ramp
+        const histFactor =
+          0.99 +
+          0.032 * Math.sin(offset * 0.85 + 0.4) -
+          0.015 * Math.cos(offset * 1.45) +
+          (offset > 0 ? offset * 0.003 : 0);
+        const predFactor =
+          0.995 +
+          0.022 * Math.sin(offset * 0.7 + 0.2) +
+          (offset > 0 ? Math.min(offset, 10) * 0.0055 : offset * 0.0015);
+        return {
+          predicted: Math.round(base * predFactor),
+          historical: Math.round(base * histFactor),
+        };
+      }
 
-      const predicted = Math.round(
-        baseDemand *
-          multiplier *
-          (0.98 + (idx > todayIdx ? (idx - todayIdx) * 0.015 : 0) + Math.cos(idx * 0.5) * 0.03)
-      );
+      if (commodity === "EV_BATTERY_PACKS") {
+        // Lumpy ocean-vessel arrival pulses, berth congestion dip around Today, steeper restock surge
+        const vesselPulse =
+          0.095 * Math.exp(-Math.pow((offset + 3.5) / 1.4, 2)) -
+          0.08 * Math.exp(-Math.pow((offset - 0.2) / 1.8, 2));
+        const histFactor =
+          0.96 +
+          vesselPulse +
+          0.04 * Math.sin(offset * 0.55 - 0.9) +
+          (offset > 2 ? (offset - 2) * 0.008 : 0);
+        const recoverySurge =
+          offset > 0 ? 0.135 * (1 - Math.exp(-offset / 4.2)) : 0;
+        const berthDip =
+          -0.075 * Math.exp(-Math.pow((offset + 0.3) / 1.6, 2));
+        const predFactor =
+          0.97 + berthDip + recoverySurge + 0.025 * Math.cos(offset * 0.9 + 1.1);
+        return {
+          predicted: Math.round(base * predFactor),
+          historical: Math.round(base * histFactor),
+        };
+      }
 
+      // BODY_CHASSIS_PARTS: counter-cyclical stamping batch peaks & slightly higher historical draw
+      const stampingCycle =
+        0.055 * Math.cos(offset * 1.15) + 0.028 * Math.sin(offset * 2.1 + 0.7);
+      const histFactor =
+        1.02 + stampingCycle - (offset > 0 ? Math.min(offset, 8) * 0.006 : 0);
+      const predFactor =
+        0.965 +
+        0.038 * Math.cos(offset * 0.8 - 1.2) +
+        (offset > 1 ? 0.018 * Math.sin((offset - 1) * 0.4) : 0);
       return {
-        label: day,
-        seriesA: predicted,
-        seriesB: historical,
+        predicted: Math.round(base * predFactor),
+        historical: Math.round(base * histFactor),
+      };
+    };
+
+    return offsets.map((offset) => {
+      if (
+        selectedCommodity === "POWERTRAIN_CKD" ||
+        selectedCommodity === "EV_BATTERY_PACKS" ||
+        selectedCommodity === "BODY_CHASSIS_PARTS"
+      ) {
+        const pt = computeSeries(selectedCommodity, offset);
+        return {
+          label: formatDay(offset),
+          seriesA: pt.predicted,
+          seriesB: pt.historical,
+        };
+      }
+
+      // Aggregate ALL strictly sums the three commodity streams per day
+      const pt = computeSeries("POWERTRAIN_CKD", offset);
+      const ev = computeSeries("EV_BATTERY_PACKS", offset);
+      const ch = computeSeries("BODY_CHASSIS_PARTS", offset);
+      return {
+        label: formatDay(offset),
+        seriesA: pt.predicted + ev.predicted + ch.predicted,
+        seriesB: pt.historical + ev.historical + ch.historical,
       };
     });
-  }, [selectedCommodity, selectedWindow]);
+  }, [selectedCommodity, selectedWindow, commodityBases]);
 
   return (
     <div className="space-y-4">
@@ -240,11 +319,11 @@ export function ForecastingView({
           <div className="flex items-center gap-4">
             <span className="flex items-center gap-1.5">
               <span className="h-2 w-2 rounded-full bg-teal-500 dark:bg-accent-cyan" />
-              <span>95% Confidence Band (± 4.2%)</span>
+              <span>95% Confidence Band ({commodityMeta.confidence})</span>
             </span>
             <span className="flex items-center gap-1.5">
               <span className="h-2 w-2 rounded-full bg-purple-500 dark:bg-accent-purple" />
-              <span>Baseline Operating Model</span>
+              <span>{commodityMeta.regime}</span>
             </span>
           </div>
           <span>Calibrated via USKL TimeSeriesStore</span>

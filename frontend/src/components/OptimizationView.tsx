@@ -6,6 +6,7 @@ import {
   Edit3,
   FileCheck,
   GitBranch,
+  Loader2,
   Lock,
   Play,
   RotateCcw,
@@ -38,6 +39,11 @@ interface OptimizationViewProps {
   controls: PlannerControlsState;
   onChangeControls: (patch: Partial<PlannerControlsState>) => void;
   onRunOptimization: () => void;
+  onMitigateEvent?: (
+    eventId: string,
+    planId?: string | null,
+    sessionId?: string | null
+  ) => void;
   onRecordDecision: (
     decision: "APPROVE" | "EDIT" | "REJECT",
     modifications?: Record<string, unknown>
@@ -45,6 +51,7 @@ interface OptimizationViewProps {
   plannerComments: string;
   onChangePlannerComments: (val: string) => void;
   busy: boolean;
+  mitigatingEventId?: string | null;
 }
 
 export function OptimizationView({
@@ -54,10 +61,12 @@ export function OptimizationView({
   controls,
   onChangeControls,
   onRunOptimization,
+  onMitigateEvent,
   onRecordDecision,
   plannerComments,
   onChangePlannerComments,
   busy,
+  mitigatingEventId = null,
 }: OptimizationViewProps) {
   const [activeTab, setActiveTab] = useState<"allocations" | "verification" | "edit" | "whatif">(
     "allocations"
@@ -127,6 +136,20 @@ export function OptimizationView({
     ...(verif?.l3_checks ?? []),
   ];
 
+  const totalAllocatedTeu = allocations.reduce((sum, a) => sum + a.flow_teu, 0);
+  const targetEntity = activeEvent
+    ? entities.find((e) => e.id === activeEvent.primary_entity_id) ?? null
+    : null;
+  const exposedCapacityTeu = Math.round(
+    (targetEntity?.daily_capacity_teu ?? 2200) * (activeEvent?.severity ?? 0.65)
+  );
+  const unmitigatedLineStopCost = Math.round(
+    exposedCapacityTeu * (activeEvent?.estimated_duration_days ?? 3) * 2500
+  );
+  const actualCost = plan?.objective_cost ?? 0;
+  const estimatedSavings = Math.max(0, unmitigatedLineStopCost - actualCost);
+  const isEventMitigated = activeEvent?.status === "MITIGATED";
+
   const handleConfirmEdit = () => {
     try {
       const parsed = JSON.parse(editModJson) as Record<string, unknown>;
@@ -195,13 +218,29 @@ export function OptimizationView({
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
         {/* Left Column: Parameter Configuration */}
         <div className="rounded-md border border-light-border bg-white p-4 shadow-sm dark:border-dark-border dark:bg-dark-card dark:shadow-dark-card space-y-4">
-          <div className="border-b border-light-border dark:border-dark-border pb-3">
+          <div className="border-b border-light-border dark:border-dark-border pb-3 space-y-1.5">
             <h3 className="text-xs font-bold uppercase tracking-wider text-light-text-primary dark:text-dark-text-primary">
               Optimization Formulation &amp; Constraints
             </h3>
             <p className="text-[11px] text-light-text-secondary dark:text-dark-text-secondary">
               Configure mathematical solver engine and risk sensitivity
             </p>
+            {activeEvent && (
+              <div className="flex items-center justify-between rounded-lg border border-light-border bg-light-surface-subtle px-2.5 py-1.5 text-[10px] dark:border-dark-border dark:bg-dark-surface">
+                <span className="font-mono font-bold text-light-text-primary dark:text-dark-text-primary truncate">
+                  Target: {activeEvent.primary_entity_id} ({activeEvent.event_id})
+                </span>
+                <span
+                  className={`rounded px-1.5 py-0.5 font-mono font-bold uppercase ${
+                    isEventMitigated
+                      ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300"
+                      : "bg-amber-100 text-amber-800 dark:bg-amber-950/60 dark:text-amber-300"
+                  }`}
+                >
+                  {activeEvent.status}
+                </span>
+              </div>
+            )}
           </div>
 
           <div className="space-y-3.5 text-xs">
@@ -397,9 +436,43 @@ export function OptimizationView({
                   Baseline unmitigated disruption vs Stage D optimized diversion
                 </p>
               </div>
-              <span className="rounded-full bg-emerald-50 px-2.5 py-0.5 font-mono text-[10px] font-bold text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-400">
-                HiGHS Dual Verified
-              </span>
+              <div className="flex items-center gap-2">
+                {onMitigateEvent && activeEvent && plan && !isEventMitigated && (
+                  <button
+                    type="button"
+                    disabled={busy}
+                    onClick={() =>
+                      onMitigateEvent(
+                        activeEvent.event_id,
+                        plan.plan_id,
+                        planResponse?.session_id ?? null
+                      )
+                    }
+                    className="inline-flex items-center gap-1 rounded-lg bg-emerald-600 px-3 py-1 text-[11px] font-semibold text-white hover:bg-emerald-700 transition disabled:opacity-60"
+                  >
+                    {mitigatingEventId === activeEvent.event_id ? (
+                      <>
+                        <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                        <span>Recalculating routes...</span>
+                      </>
+                    ) : (
+                      <>
+                        <ShieldCheck className="h-3.5 w-3.5" />
+                        <span>Apply Plan &amp; Fix Disruption</span>
+                      </>
+                    )}
+                  </button>
+                )}
+                {isEventMitigated && (
+                  <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-2.5 py-0.5 font-mono text-[10px] font-bold text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300">
+                    <CheckCircle2 className="h-3 w-3" />
+                    DISRUPTION MITIGATED
+                  </span>
+                )}
+                <span className="rounded-full bg-emerald-50 px-2.5 py-0.5 font-mono text-[10px] font-bold text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-400">
+                  {verif?.overall_verdict ?? "HiGHS Dual Verified"}
+                </span>
+              </div>
             </div>
 
             {/* Side-by-Side Comparison Cards */}
@@ -407,28 +480,32 @@ export function OptimizationView({
               {/* Baseline Disrupted */}
               <div className="rounded-xl border border-light-border bg-light-surface-subtle p-3.5 text-xs space-y-2 dark:border-dark-border dark:bg-dark-surface">
                 <div className="text-[10px] font-bold uppercase tracking-wider text-light-text-muted dark:text-dark-text-muted">
-                  Unmitigated Disruption Baseline
+                  Unmitigated Disruption Exposure
                 </div>
                 <div className="space-y-1.5">
                   <div className="flex justify-between">
-                    <span className="text-light-text-secondary dark:text-dark-text-secondary">Unmet Plant Demand:</span>
+                    <span className="text-light-text-secondary dark:text-dark-text-secondary">At-Risk Capacity:</span>
                     <span className="font-mono font-bold text-rose-600 dark:text-rose-400">
-                      1,840 TEU
+                      {exposedCapacityTeu.toLocaleString()} TEU/d
                     </span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-light-text-secondary dark:text-dark-text-secondary">Bottleneck Duration:</span>
-                    <span className="font-mono text-light-text-primary dark:text-dark-text-primary">4.0 Days</span>
+                    <span className="text-light-text-secondary dark:text-dark-text-secondary">Event Duration:</span>
+                    <span className="font-mono text-light-text-primary dark:text-dark-text-primary">
+                      {(activeEvent?.estimated_duration_days ?? 4.0).toFixed(1)} Days
+                    </span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-light-text-secondary dark:text-dark-text-secondary">Line-Stop Penalty:</span>
+                    <span className="text-light-text-secondary dark:text-dark-text-secondary">Estimated Line-Stop Exposure:</span>
                     <span className="font-mono text-rose-600 dark:text-rose-400 font-bold">
-                      $18,400,000
+                      ${unmitigatedLineStopCost.toLocaleString()}
                     </span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-light-text-secondary dark:text-dark-text-secondary">Road Congestion Index:</span>
-                    <span className="font-mono text-amber-600 dark:text-amber-400">2.4x delay</span>
+                    <span className="text-light-text-secondary dark:text-dark-text-secondary">Node Severity Shock:</span>
+                    <span className="font-mono text-amber-600 dark:text-amber-400">
+                      {Math.round((activeEvent?.severity ?? 0.65) * 100)}% capacity loss
+                    </span>
                   </div>
                 </div>
               </div>
@@ -436,31 +513,40 @@ export function OptimizationView({
               {/* ASCI Mitigated Optimal */}
               <div className="rounded-xl border border-teal-200 bg-teal-50/30 p-3.5 text-xs space-y-2 dark:border-accent-cyan/30 dark:bg-accent-cyan/10">
                 <div className="text-[10px] font-bold uppercase tracking-wider text-teal-800 dark:text-accent-cyan">
-                  ASCI Multi-Commodity Plan
+                  ASCI Multi-Commodity Plan ({plan?.plan_id ?? "Pending"})
                 </div>
                 <div className="space-y-1.5">
                   <div className="flex justify-between">
                     <span className="text-light-text-secondary dark:text-dark-text-secondary">Unmet Plant Demand:</span>
-                    <span className="font-mono font-bold text-emerald-600 dark:text-emerald-400">
-                      0.0 TEU (100% Cleared)
+                    <span
+                      className={`font-mono font-bold ${
+                        (plan?.unmet_demand_teu ?? 0) <= 0.01
+                          ? "text-emerald-600 dark:text-emerald-400"
+                          : "text-rose-600 dark:text-rose-400"
+                      }`}
+                    >
+                      {plan ? `${plan.unmet_demand_teu.toFixed(1)} TEU` : "—"}
+                      {plan && plan.unmet_demand_teu <= 0.01 ? " (100% Cleared)" : ""}
                     </span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-light-text-secondary dark:text-dark-text-secondary">Rail Diversion Share:</span>
+                    <span className="text-light-text-secondary dark:text-dark-text-secondary">Rerouted Flow / Rail Share:</span>
                     <span className="font-mono font-bold text-teal-700 dark:text-accent-cyan">
-                      {railPct}% Intermodal
+                      {Math.round(totalAllocatedTeu).toLocaleString()} TEU ({railPct}% Rail)
                     </span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-light-text-secondary dark:text-dark-text-secondary">Optimized Cost:</span>
                     <span className="font-mono font-bold text-light-text-primary dark:text-dark-text-primary">
-                      ${plan?.objective_cost.toLocaleString() ?? "392,450"}
+                      {plan
+                        ? `$${plan.objective_cost.toLocaleString(undefined, { maximumFractionDigits: 0 })}`
+                        : "—"}
                     </span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-light-text-secondary dark:text-dark-text-secondary">Estimated Cost Savings:</span>
+                    <span className="text-light-text-secondary dark:text-dark-text-secondary">Net Avoided Exposure:</span>
                     <span className="font-mono text-emerald-600 dark:text-emerald-400 font-bold">
-                      &gt; $17.8M vs Line-Stop
+                      {plan ? `$${estimatedSavings.toLocaleString()} protected` : "—"}
                     </span>
                   </div>
                 </div>
@@ -767,7 +853,7 @@ export function OptimizationView({
                   className="flex items-center gap-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 px-4 py-2 text-xs font-semibold text-white transition disabled:opacity-50 shadow-sm"
                 >
                   <CheckCircle2 className="h-4 w-4" />
-                  <span>Approve Plan to Memory</span>
+                  <span>Approve &amp; Apply Mitigation</span>
                 </button>
 
                 <button

@@ -5,6 +5,7 @@ import { type PlannerControlsState } from "./components/EventWorkbench";
 import { Sidebar } from "./components/layout/Sidebar";
 import { TopNavbar } from "./components/layout/TopNavbar";
 import { GlobalSearchModal } from "./components/layout/GlobalSearchModal";
+import { NodeDetailDrawer } from "./components/layout/NodeDetailDrawer";
 import { NotificationDrawer } from "./components/layout/NotificationDrawer";
 import { OverviewPage } from "./pages/OverviewPage";
 import { NetworkView } from "./components/NetworkView";
@@ -43,8 +44,12 @@ export function App() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
+  const [inspectedNodeId, setInspectedNodeId] = useState<string | null>(null);
 
   const [busy, setBusy] = useState(false);
+  const [mitigatingEventId, setMitigatingEventId] = useState<string | null>(null);
+  const pauseMs = (ms: number) =>
+    new Promise<void>((resolve) => window.setTimeout(resolve, ms));
   const [plannerComments, setPlannerComments] = useState(
     "Approved in ASCI Control Tower React Console"
   );
@@ -78,7 +83,7 @@ export function App() {
 
   const pickTopActiveEvent = useCallback((list: DisruptionEvent[]) => {
     const active = list.filter(
-      (e) => e.status !== "EXPIRED" && e.status !== "RETRACTED"
+      (e) => e.status === "NEW" || e.status === "UPDATED"
     );
     const pool = active.length > 0 ? active : list;
     if (pool.length === 0) return null;
@@ -228,6 +233,39 @@ export function App() {
       kind: "info",
     });
     try {
+      const isMichaungBatch =
+        cfg.headline === INITIAL_PRESET.headline &&
+        (INITIAL_PRESET.incidents?.length ?? 0) > 0;
+
+      if (isMichaungBatch && INITIAL_PRESET.incidents) {
+        setStatusBanner({
+          message: `Generating ${INITIAL_PRESET.incidents.length} port-specific Cyclone Michaung disruptions across the East Coast...`,
+          kind: "info",
+        });
+        const createdEvents = [];
+        for (const inc of INITIAL_PRESET.incidents) {
+          const created = await asciApi.ingestEvent({
+            raw_headline: inc.headline,
+            raw_text: inc.text,
+            trust_tier: inc.trustTier,
+            primary_entity_id: inc.primaryEntityId,
+            affected_entity_ids: inc.affectedEntityIds,
+            event_type: inc.eventType,
+            severity: inc.severity,
+            estimated_duration_days: inc.estimatedDurationDays,
+            enable_llm: false,
+            llm_provider: cfg.llmProvider,
+          });
+          createdEvents.push(created);
+        }
+        await refreshEvents();
+        setActiveTab("overview");
+        if (createdEvents[0]) {
+          await runPlanForEvent(createdEvents[0].event_id, cfg);
+        }
+        return;
+      }
+
       const ev = await asciApi.ingestEvent({
         raw_headline: cfg.headline,
         raw_text: cfg.rawText,
@@ -280,9 +318,13 @@ export function App() {
         comments: plannerComments.trim() || `Recorded ${decision} from React UI`,
         modifications: modifications ?? {},
       });
+      if (decision === "APPROVE") {
+        await refreshEvents();
+      }
       setStatusBanner({
         message:
-          `Decision #${res.decision_id} (${res.decision}) saved to Decision Memory for ${res.plan_id}` +
+          `Decision #${res.decision_id} (${res.decision}) saved for ${res.plan_id}` +
+          (res.event_status === "MITIGATED" ? " · Disruption marked MITIGATED" : "") +
           (res.indexed_citation_id
             ? ` · Indexed Loop L4 Playbook [${res.indexed_citation_id}]`
             : "."),
@@ -299,6 +341,154 @@ export function App() {
       setBusy(false);
     }
   };
+
+  const handleMitigateEvent = useCallback(
+    async (eventId: string, planId?: string | null, sessionId?: string | null) => {
+      const targetEv = events.find((e) => e.event_id === eventId);
+      const targetLabel = targetEv?.primary_entity_id ?? eventId;
+      setBusy(true);
+      setMitigatingEventId(eventId);
+      setStatusBanner({
+        message: `Recalculating bypass & rail diversion routes for ${targetLabel}...`,
+        kind: "info",
+      });
+      try {
+        const calcStart = Date.now();
+        let effectivePlanId = planId ?? null;
+        let effectiveSessionId = sessionId ?? null;
+
+        // Calculate dedicated recovery routes for this port if not currently planned
+        if (!effectivePlanId || planResponse?.event_id !== eventId) {
+          const generated = await asciApi.generatePlan(eventId, {
+            lambda_cost_budget: controls.lambdaBudget,
+            k_hop_neighborhood: controls.kHop,
+            risk_mode: controls.riskMode,
+            propagation_tier: controls.propagationTier,
+            solver_type: controls.solverType,
+            controller_mode: controls.controllerMode,
+            enable_llm: false,
+            llm_provider: controls.llmProvider,
+          });
+          setPlanResponse(generated);
+          setSelectedEventId(eventId);
+          effectivePlanId = generated.plan?.plan_id ?? null;
+          effectiveSessionId = generated.session_id ?? null;
+        }
+
+        const phase1Remaining = 1300 - (Date.now() - calcStart);
+        if (phase1Remaining > 0) {
+          await pauseMs(phase1Remaining);
+        }
+
+        setStatusBanner({
+          message: `Applying recalculated diversion routes and restoring capacity at ${targetLabel}...`,
+          kind: "info",
+        });
+
+        const res = await asciApi.mitigateEvent(eventId, {
+          plan_id: effectivePlanId ?? undefined,
+          session_id: effectiveSessionId ?? undefined,
+          planner_id: "control_tower_operator",
+          comments: plannerComments.trim() || "Mitigation plan applied from Control Tower UI",
+        });
+
+        await pauseMs(700);
+        const updatedEvents = await refreshEvents();
+        const remainingActive = updatedEvents.filter(
+          (e) => e.status === "NEW" || e.status === "UPDATED"
+        );
+
+        if (remainingActive.length > 0) {
+          const nextEv = pickTopActiveEvent(remainingActive);
+          if (nextEv) {
+            setStatusBanner({
+              message: `Fixed ${res.event.primary_entity_id} · Re-optimizing routes around ${remainingActive.length} remaining disrupted port${remainingActive.length === 1 ? "" : "s"} (${nextEv.primary_entity_id})...`,
+              kind: "info",
+            });
+            const nextPlan = await asciApi.generatePlan(nextEv.event_id, {
+              lambda_cost_budget: controls.lambdaBudget,
+              k_hop_neighborhood: controls.kHop,
+              risk_mode: controls.riskMode,
+              propagation_tier: controls.propagationTier,
+              solver_type: controls.solverType,
+              controller_mode: controls.controllerMode,
+              enable_llm: controls.enableLlm,
+              llm_provider: controls.llmProvider,
+            });
+            setSelectedEventId(nextEv.event_id);
+            setPlanResponse(nextPlan);
+            setStatusBanner({
+              message:
+                `Fixed ${res.event.primary_entity_id} (${eventId})` +
+                (res.plan_id ? ` via ${res.plan_id}` : "") +
+                ` · ${remainingActive.length} port disruption${remainingActive.length === 1 ? "" : "s"} still active (${nextEv.primary_entity_id} requires individual fix).`,
+              kind: "ok",
+            });
+            return;
+          }
+        }
+
+        setStatusBanner({
+          message:
+            `Mitigated ${res.event.primary_entity_id} (${eventId})` +
+            (res.plan_id ? ` via ${res.plan_id}` : "") +
+            (res.indexed_citation_id ? ` · Playbook [${res.indexed_citation_id}]` : "") +
+            " · All active corridor disruptions resolved.",
+          kind: "ok",
+        });
+      } catch (err) {
+        setStatusBanner({
+          message: `Mitigation error: ${err instanceof Error ? err.message : String(err)}`,
+          kind: "err",
+        });
+      } finally {
+        setMitigatingEventId(null);
+        setBusy(false);
+      }
+    },
+    [
+      controls,
+      events,
+      pickTopActiveEvent,
+      planResponse?.event_id,
+      plannerComments,
+      refreshEvents,
+    ]
+  );
+
+  const handleReopenEvent = useCallback(
+    async (eventId: string) => {
+      setBusy(true);
+      try {
+        const ev = await asciApi.reopenEvent(eventId);
+        await refreshEvents();
+        setStatusBanner({
+          message: `Reopened disruption ${ev.event_id} (${ev.primary_entity_id}) for active planning.`,
+          kind: "info",
+        });
+      } catch (err) {
+        setStatusBanner({
+          message: `Reopen error: ${err instanceof Error ? err.message : String(err)}`,
+          kind: "err",
+        });
+      } finally {
+        setBusy(false);
+      }
+    },
+    [refreshEvents]
+  );
+
+  const runSelectedOrTopOptimization = useCallback(() => {
+    const target =
+      events.find((e) => e.event_id === selectedEventId) ??
+      pickTopActiveEvent(events);
+    if (target) void runPlanForEvent(target.event_id);
+    else handleRunMichaungDemo();
+  }, [events, selectedEventId, pickTopActiveEvent, runPlanForEvent]);
+
+  const activeDisruptionCount = events.filter(
+    (e) => e.status === "NEW" || e.status === "UPDATED"
+  ).length;
 
   // Map legacy tabs to corresponding views
   const normalizedTab =
@@ -329,7 +519,7 @@ export function App() {
         health={health}
         nodeCount={entities.length}
         edgeCount={baseEdges.length}
-        disruptionCount={events.length}
+        disruptionCount={activeDisruptionCount}
       />
 
       {/* 2. Main Workspace (Column 2 of Grid - Automatically Resizes) */}
@@ -342,16 +532,12 @@ export function App() {
           feedsStatus={feedsStatus}
           nodeCount={entities.length}
           edgeCount={baseEdges.length}
-          alertCount={events.length}
+          alertCount={activeDisruptionCount}
           onOpenSearch={() => setSearchOpen(true)}
           onOpenNotifications={() => setNotificationsOpen(true)}
           onPollLive={() => void handlePollLive()}
           onRunMichaungDemo={handleRunMichaungDemo}
-          onRunOptimization={() => {
-            const top = pickTopActiveEvent(events);
-            if (top) void runPlanForEvent(top.event_id);
-            else handleRunMichaungDemo();
-          }}
+          onRunOptimization={runSelectedOrTopOptimization}
           autoPollEnabled={autoPollEnabled}
           onToggleAutoPoll={() => setAutoPollEnabled((prev) => !prev)}
           busy={busy}
@@ -364,16 +550,16 @@ export function App() {
             <OverviewPage
               entities={entities}
               baseEdges={baseEdges}
+              events={events}
               planResponse={planResponse}
               feedsStatus={feedsStatus}
               statusBanner={statusBanner}
               onOpenTab={setActiveTab}
-              onRunOptimization={() => {
-                const top = pickTopActiveEvent(events);
-                if (top) void runPlanForEvent(top.event_id);
-                else handleRunMichaungDemo();
-              }}
+              onRunOptimization={runSelectedOrTopOptimization}
+              onMitigateEvent={(eid, pid, sid) => void handleMitigateEvent(eid, pid, sid)}
+              onSelectNode={setInspectedNodeId}
               busy={busy}
+              mitigatingEventId={mitigatingEventId}
             />
           )}
 
@@ -381,13 +567,16 @@ export function App() {
             <NetworkView
               entities={entities}
               baseEdges={baseEdges}
+              events={events}
               planResponse={planResponse}
-              onSelectEntity={(ent) =>
+              onSelectNode={setInspectedNodeId}
+              onSelectEntity={(ent) => {
+                setInspectedNodeId(ent.id);
                 setStatusBanner({
                   message: `Selected ${ent.name} (${ent.id} · ${ent.entity_type} · ${ent.region})`,
                   kind: "info",
-                })
-              }
+                });
+              }}
             />
           )}
 
@@ -417,12 +606,18 @@ export function App() {
               events={events}
               feedsStatus={feedsStatus}
               selectedEventId={selectedEventId}
+              planResponse={planResponse}
+              statusBanner={statusBanner}
               onSelectEventAndPlan={(id) => void runPlanForEvent(id)}
+              onMitigateEvent={(eid, pid, sid) => void handleMitigateEvent(eid, pid, sid)}
+              onReopenEvent={(eid) => void handleReopenEvent(eid)}
+              onOpenOptimizationTab={() => setActiveTab("optimization")}
               controls={controls}
               onChangeControls={updateControls}
               onIngestAndPlan={() => void handleIngestAndPlan()}
               onPollLive={() => void handlePollLive()}
               busy={busy}
+              mitigatingEventId={mitigatingEventId}
             />
           )}
 
@@ -436,15 +631,13 @@ export function App() {
               planResponse={planResponse}
               controls={controls}
               onChangeControls={updateControls}
-              onRunOptimization={() => {
-                const top = pickTopActiveEvent(events);
-                if (top) void runPlanForEvent(top.event_id);
-                else handleRunMichaungDemo();
-              }}
+              onRunOptimization={runSelectedOrTopOptimization}
+              onMitigateEvent={(eid, pid, sid) => void handleMitigateEvent(eid, pid, sid)}
               onRecordDecision={handleRecordDecision}
               plannerComments={plannerComments}
               onChangePlannerComments={setPlannerComments}
               busy={busy}
+              mitigatingEventId={mitigatingEventId}
             />
           )}
 
@@ -474,6 +667,23 @@ export function App() {
         events={events}
         feedsStatus={feedsStatus}
         onSelectEvent={(id) => void runPlanForEvent(id)}
+      />
+
+      {/* 5. Interactive Node Operations & Disruptions Sidebar */}
+      <NodeDetailDrawer
+        nodeId={inspectedNodeId}
+        onClose={() => setInspectedNodeId(null)}
+        entities={entities}
+        baseEdges={baseEdges}
+        events={events}
+        planResponse={planResponse}
+        feedsStatus={feedsStatus}
+        onRunPlanForEvent={(id) => void runPlanForEvent(id)}
+        onMitigateEvent={(eid, pid, sid) => void handleMitigateEvent(eid, pid, sid)}
+        onReopenEvent={(eid) => void handleReopenEvent(eid)}
+        onOpenWhatIf={() => setActiveTab("optimization")}
+        busy={busy}
+        mitigatingEventId={mitigatingEventId}
       />
     </div>
   );

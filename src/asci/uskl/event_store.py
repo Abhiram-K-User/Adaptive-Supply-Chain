@@ -11,6 +11,7 @@ import json
 import sqlite3
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
+from typing import Any
 
 from asci.core.registry import CanonicalEntityRegistry, get_canonical_registry
 from asci.core.state import DisruptionEvent, DisruptionEventType, EventStatus
@@ -52,7 +53,9 @@ class SQLiteEventStore:
                     corroboration_count INTEGER NOT NULL,
                     confidence REAL NOT NULL,
                     spatial_footprint TEXT NOT NULL DEFAULT '[]',
-                    source_urls TEXT NOT NULL DEFAULT '[]'
+                    source_urls TEXT NOT NULL DEFAULT '[]',
+                    applied_plan_id TEXT DEFAULT NULL,
+                    mitigated_at TEXT DEFAULT NULL
                 )
                 """
             )
@@ -68,6 +71,14 @@ class SQLiteEventStore:
             if "source_urls" not in cols:
                 conn.execute(
                     "ALTER TABLE disruption_events ADD COLUMN source_urls TEXT NOT NULL DEFAULT '[]'"
+                )
+            if "applied_plan_id" not in cols:
+                conn.execute(
+                    "ALTER TABLE disruption_events ADD COLUMN applied_plan_id TEXT DEFAULT NULL"
+                )
+            if "mitigated_at" not in cols:
+                conn.execute(
+                    "ALTER TABLE disruption_events ADD COLUMN mitigated_at TEXT DEFAULT NULL"
                 )
             conn.commit()
 
@@ -93,8 +104,8 @@ class SQLiteEventStore:
                     event_id, event_type, status, primary_entity_id, affected_entity_ids,
                     severity, estimated_duration_days, source_feed, raw_headline,
                     raw_text, timestamp, corroboration_count, confidence,
-                    spatial_footprint, source_urls
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    spatial_footprint, source_urls, applied_plan_id, mitigated_at
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """,
                 (
                     event.event_id,
@@ -112,14 +123,20 @@ class SQLiteEventStore:
                     event.confidence,
                     json.dumps([list(pt) for pt in event.spatial_footprint]),
                     json.dumps(event.source_urls),
+                    event.applied_plan_id,
+                    event.mitigated_at.isoformat() if event.mitigated_at else None,
                 ),
             )
             conn.commit()
 
-    def upsert_with_corroboration(self, event: DisruptionEvent) -> DisruptionEvent:
+    def upsert_with_corroboration(
+        self, event: DisruptionEvent, force_activate: bool = False
+    ) -> DisruptionEvent:
         """
         Insert a new event, or corroborate/update an active event sharing the same
         (primary_entity_id, event_type). Updates status from NEW -> UPDATED and merges evidence.
+        Preserves MITIGATED status during background feed polls unless severity spikes (> +0.15)
+        or `force_activate=True` (explicit manual/preset alert submission).
         """
         self._validate_event_entities(event)
 
@@ -129,7 +146,7 @@ class SQLiteEventStore:
                 SELECT * FROM disruption_events
                 WHERE primary_entity_id = ?
                   AND event_type = ?
-                  AND status IN ('NEW', 'UPDATED')
+                  AND status IN ('NEW', 'UPDATED', 'MITIGATED')
                 ORDER BY timestamp DESC
                 LIMIT 1
                 """,
@@ -150,22 +167,38 @@ class SQLiteEventStore:
         )
         merged_footprint = existing.spatial_footprint or event.spatial_footprint
 
-        merged_event = existing.model_copy(
-            update={
-                "status": EventStatus.UPDATED,
-                "affected_entity_ids": merged_affected,
-                "severity": max(existing.severity, event.severity),
-                "estimated_duration_days": max(
-                    existing.estimated_duration_days, event.estimated_duration_days
-                ),
-                "source_feed": merged_feeds,
-                "corroboration_count": existing.corroboration_count + event.corroboration_count,
-                "confidence": min(0.99, round(max(existing.confidence, event.confidence) + 0.05, 4)),
-                "timestamp": max(existing.timestamp, event.timestamp),
-                "spatial_footprint": merged_footprint,
-                "source_urls": merged_urls,
-            }
+        keep_mitigated = (
+            not force_activate
+            and existing.status == EventStatus.MITIGATED
+            and event.severity <= existing.severity + 0.15
         )
+        next_status = EventStatus.MITIGATED if keep_mitigated else EventStatus.UPDATED
+        next_plan_id = existing.applied_plan_id if keep_mitigated else None
+        next_mitigated_at = existing.mitigated_at if keep_mitigated else None
+
+        update_fields: dict[str, Any] = {
+            "status": next_status,
+            "affected_entity_ids": merged_affected,
+            "severity": event.severity if force_activate else max(existing.severity, event.severity),
+            "estimated_duration_days": (
+                event.estimated_duration_days
+                if force_activate
+                else max(existing.estimated_duration_days, event.estimated_duration_days)
+            ),
+            "source_feed": merged_feeds,
+            "corroboration_count": existing.corroboration_count + event.corroboration_count,
+            "confidence": min(0.99, round(max(existing.confidence, event.confidence) + 0.05, 4)),
+            "timestamp": max(existing.timestamp, event.timestamp),
+            "spatial_footprint": merged_footprint,
+            "source_urls": merged_urls,
+            "applied_plan_id": next_plan_id,
+            "mitigated_at": next_mitigated_at,
+        }
+        if force_activate:
+            update_fields["raw_headline"] = event.raw_headline
+            update_fields["raw_text"] = event.raw_text
+
+        merged_event = existing.model_copy(update=update_fields)
         self.save_event(merged_event)
         return merged_event
 
@@ -193,6 +226,41 @@ class SQLiteEventStore:
     def retract_event(self, event_id: str) -> bool:
         """Retract an active event (false alarm or withdrawn bulletin)."""
         return self.update_status(event_id, EventStatus.RETRACTED)
+
+    def mitigate_event(
+        self, event_id: str, plan_id: str | None = None
+    ) -> DisruptionEvent | None:
+        """Mark an active disruption event as MITIGATED once an approved plan is applied."""
+        now_iso = datetime.now(UTC).isoformat()
+        with self._get_connection() as conn:
+            cur = conn.execute(
+                """
+                UPDATE disruption_events
+                SET status = ?, applied_plan_id = ?, mitigated_at = ?
+                WHERE event_id = ?
+                """,
+                (EventStatus.MITIGATED.value, plan_id, now_iso, event_id),
+            )
+            conn.commit()
+            if cur.rowcount == 0:
+                return None
+        return self.get_event(event_id)
+
+    def reopen_event(self, event_id: str) -> DisruptionEvent | None:
+        """Reopen a mitigated/retracted event back to active UPDATED status."""
+        with self._get_connection() as conn:
+            cur = conn.execute(
+                """
+                UPDATE disruption_events
+                SET status = ?, applied_plan_id = NULL, mitigated_at = NULL
+                WHERE event_id = ?
+                """,
+                (EventStatus.UPDATED.value, event_id),
+            )
+            conn.commit()
+            if cur.rowcount == 0:
+                return None
+        return self.get_event(event_id)
 
     def expire_stale_events(self, as_of: datetime | None = None) -> int:
         """Mark active events whose estimated duration has elapsed by as_of as EXPIRED."""
@@ -232,6 +300,8 @@ class SQLiteEventStore:
     def _row_to_event(row: sqlite3.Row) -> DisruptionEvent:
         raw_fp = json.loads(row["spatial_footprint"]) if "spatial_footprint" in row.keys() else []
         raw_urls = json.loads(row["source_urls"]) if "source_urls" in row.keys() else []
+        raw_plan_id = row["applied_plan_id"] if "applied_plan_id" in row.keys() else None
+        raw_mitigated_at = row["mitigated_at"] if "mitigated_at" in row.keys() else None
         return DisruptionEvent(
             event_id=row["event_id"],
             event_type=DisruptionEventType(row["event_type"]),
@@ -248,4 +318,6 @@ class SQLiteEventStore:
             confidence=float(row["confidence"]),
             spatial_footprint=[(float(pt[0]), float(pt[1])) for pt in raw_fp],
             source_urls=list(raw_urls),
+            applied_plan_id=str(raw_plan_id) if raw_plan_id else None,
+            mitigated_at=datetime.fromisoformat(raw_mitigated_at) if raw_mitigated_at else None,
         )

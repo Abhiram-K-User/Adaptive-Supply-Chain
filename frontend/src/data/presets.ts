@@ -1,4 +1,15 @@
-import type { TrustTier } from "../types/asci";
+import type { DisruptionEventType, TrustTier } from "../types/asci";
+
+export interface PresetIncident {
+  primaryEntityId: string;
+  headline: string;
+  text: string;
+  trustTier: TrustTier;
+  eventType: DisruptionEventType;
+  severity: number;
+  estimatedDurationDays: number;
+  affectedEntityIds: string[];
+}
 
 export interface ScenarioPreset {
   id: string;
@@ -9,18 +20,71 @@ export interface ScenarioPreset {
   trustTier: TrustTier;
   affectedIds: string[];
   badgeTone: "amber" | "sky" | "purple" | "red";
+  incidents?: PresetIncident[];
 }
 
 export const SCENARIO_PRESETS: ScenarioPreset[] = [
   {
     id: "michaung",
     label: "Cyclone Michaung",
-    subtitle: "Chennai & Kamarajar",
-    headline: "Severe Cyclone Michaung forces berth closure at Chennai Port and Kamarajar Port",
-    text: "Severe cyclonic storm surge halts container crane operations at Chennai Port Trust and Ennore Kamarajar Port for 4 days; coastal highway access slowed.",
+    subtitle: "5 East Coast Ports",
+    headline: "Cyclone Michaung storm surge halts ship-to-shore gantry cranes at Chennai Port",
+    text: "3.4m cyclonic storm surge submerges Jawahar & Bharathi container berths and suspends outbound bay export gate traffic for 4 days; breakwater wave height at 4.8m.",
     trustTier: "TIER_A",
-    affectedIds: ["PORT_KAMARAJAR"],
+    affectedIds: ["PORT_CHENNAI", "OUTBOUND_CHENNAI_EXPORT_GATE"],
     badgeTone: "amber",
+    incidents: [
+      {
+        primaryEntityId: "PORT_CHENNAI",
+        headline: "Cyclone Michaung storm surge halts ship-to-shore gantry cranes at Chennai Port",
+        text: "3.4m cyclonic storm surge submerges Jawahar & Bharathi container berths and suspends outbound bay export gate traffic for 4 days; breakwater wave height at 4.8m.",
+        trustTier: "TIER_A",
+        eventType: "HAZARD_PORT",
+        severity: 0.89,
+        estimatedDurationDays: 4.0,
+        affectedEntityIds: ["PORT_CHENNAI", "OUTBOUND_CHENNAI_EXPORT_GATE"],
+      },
+      {
+        primaryEntityId: "PORT_KAMARAJAR",
+        headline: "Breakwater overtopping & coastal road flooding choke Kamarajar Port (Ennore) drayage",
+        text: "Cyclonic swell suspends outer-channel pilotage at Ennore Kamarajar Port while flooded coastal highway links block truck evacuation toward Minjur CFS for 3 days.",
+        trustTier: "TIER_A",
+        eventType: "HAZARD_ROAD",
+        severity: 0.78,
+        estimatedDurationDays: 3.0,
+        affectedEntityIds: ["PORT_KAMARAJAR", "CFS_MINJUR"],
+      },
+      {
+        primaryEntityId: "PORT_KATTUPALLI",
+        headline: "33kV feeder trip leaves Adani Kattupalli reefer stacks & RTG cranes offline",
+        text: "Gale-force outer rainbands trip TNEB feeder substations serving Adani Kattupalli container terminal, stranding 14 feeder vessels at anchorage and queuing Ponneri customs gates for 3.5 days.",
+        trustTier: "TIER_A",
+        eventType: "PORT_CONGESTION_STRIKE",
+        severity: 0.74,
+        estimatedDurationDays: 3.5,
+        affectedEntityIds: ["PORT_KATTUPALLI", "CFS_PONNERI"],
+      },
+      {
+        primaryEntityId: "PORT_KRISHNAPATNAM",
+        headline: "Overhead traction snap suspends double-stack container rail at Krishnapatnam Port",
+        text: "Cyclone feeder squalls snap 25kV overhead catenary masts along the Krishnapatnam dock rail spur, halting CONCOR double-stack evacuation to inland depots for 2.5 days.",
+        trustTier: "TIER_B",
+        eventType: "RAIL_DISRUPTION",
+        severity: 0.69,
+        estimatedDurationDays: 2.5,
+        affectedEntityIds: ["PORT_KRISHNAPATNAM", "ICD_KRISHNAPATNAM_RAIL"],
+      },
+      {
+        primaryEntityId: "PORT_KARAIKAL",
+        headline: "Heavy crosswinds restrict container barge & feeder berthing at Karaikal Port",
+        text: "Trailing cyclonic rainbands create 55 km/h crosswinds along the Puducherry-Karaikal coast, cutting crane productivity at Karaikal Port and local CFS staging by 58% for 2 days.",
+        trustTier: "TIER_B",
+        eventType: "HAZARD_PORT",
+        severity: 0.58,
+        estimatedDurationDays: 2.0,
+        affectedEntityIds: ["PORT_KARAIKAL", "CFS_KARAIKAL"],
+      },
+    ],
   },
   {
     id: "nh48_flood",

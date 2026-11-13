@@ -16,6 +16,7 @@ import type {
   CanonicalEntity,
   CytoscapeEdge,
   CytoscapeNode,
+  DisruptionEvent,
   NetworkEdgeSummary,
 } from "../types/asci";
 
@@ -24,6 +25,8 @@ interface CorridorMapProps {
   baseEdges: NetworkEdgeSummary[];
   planNodes: CytoscapeNode[];
   planEdges: CytoscapeEdge[];
+  events?: DisruptionEvent[];
+  onSelectNode?: (nodeId: string) => void;
 }
 
 interface InspectedElement {
@@ -43,6 +46,8 @@ export function CorridorMap({
   baseEdges,
   planNodes,
   planEdges,
+  events = [],
+  onSelectNode,
 }: CorridorMapProps) {
   const leafletContainerRef = useRef<HTMLDivElement | null>(null);
   const leafletMapRef = useRef<L.Map | null>(null);
@@ -51,10 +56,13 @@ export function CorridorMap({
 
   const cyContainerRef = useRef<HTMLDivElement | null>(null);
   const cyRef = useRef<Core | null>(null);
+  const onSelectNodeRef = useRef(onSelectNode);
+  onSelectNodeRef.current = onSelectNode;
 
   const [viewMode, setViewMode] = useState<ViewMode>("india_map");
   const [tileStyle, setTileStyle] = useState<TileStyle>("dark");
   const [activeOnly, setActiveOnly] = useState(true);
+  const [disruptedOnly, setDisruptedOnly] = useState(false);
   const [inspected, setInspected] = useState<InspectedElement | null>(null);
 
   const entityById = useMemo(() => {
@@ -72,7 +80,32 @@ export function CorridorMap({
     nodeLookup,
   } = useMemo(() => {
     const hasPlanData = planNodes.length > 0 && planEdges.length > 0;
-    const rawNodes: CytoscapeNode[] = hasPlanData
+    const activePrimaryIds = new Set<string>();
+    const activePrimarySeverity = new Map<string, number>();
+    const activeAffectedIds = new Set<string>();
+    const mitigatedPrimaryIds = new Set<string>();
+    const mitigatedCoveredIds = new Set<string>();
+    for (const ev of events) {
+      if (ev.status === "MITIGATED") {
+        mitigatedPrimaryIds.add(ev.primary_entity_id);
+        mitigatedCoveredIds.add(ev.primary_entity_id);
+        for (const aid of ev.affected_entity_ids) {
+          mitigatedCoveredIds.add(aid);
+        }
+      } else if (ev.status === "NEW" || ev.status === "UPDATED") {
+        activePrimaryIds.add(ev.primary_entity_id);
+        activePrimarySeverity.set(
+          ev.primary_entity_id,
+          Math.max(activePrimarySeverity.get(ev.primary_entity_id) ?? 0, ev.severity)
+        );
+        activeAffectedIds.add(ev.primary_entity_id);
+        for (const aid of ev.affected_entity_ids) {
+          activeAffectedIds.add(aid);
+        }
+      }
+    }
+
+    const baseNodes: CytoscapeNode[] = hasPlanData
       ? planNodes
       : entities.map((e) => ({
           data: {
@@ -86,6 +119,29 @@ export function CorridorMap({
             status: "NORMAL",
           },
         }));
+
+    const rawNodes: CytoscapeNode[] = baseNodes.map((node) => {
+      const nid = node.data.id;
+      let status = node.data.status;
+      if (activePrimaryIds.has(nid)) {
+        const primarySev = activePrimarySeverity.get(nid) ?? 0.6;
+        status = primarySev >= 0.7 || status === "DISRUPTED" ? "DISRUPTED" : "RESTRICTED";
+      } else if (activeAffectedIds.has(nid)) {
+        // Keep active spillover status computed by Stage B
+        if (status === "NORMAL" || status === "MITIGATED") {
+          status = "RESTRICTED";
+        }
+      } else if (
+        mitigatedPrimaryIds.has(nid) ||
+        ((status === "DISRUPTED" || status === "RESTRICTED") &&
+          (mitigatedCoveredIds.has(nid) || activePrimaryIds.size === 0))
+      ) {
+        status = "MITIGATED";
+      }
+      return status === node.data.status
+        ? node
+        : { ...node, data: { ...node.data, status } };
+    });
 
     const rawEdges: CytoscapeEdge[] = hasPlanData
       ? planEdges
@@ -107,6 +163,27 @@ export function CorridorMap({
     }
 
     const anyActiveFlows = rawEdges.some((e) => (e.data.freight_flow_teu ?? 0) > 0);
+
+    if (disruptedOnly) {
+      const onlyDisruptedNodes = rawNodes.filter(
+        (node) =>
+          node.data.status === "DISRUPTED" || node.data.status === "RESTRICTED"
+      );
+      const disruptedIdSet = new Set(onlyDisruptedNodes.map((n) => n.data.id));
+      const disruptedEdges = rawEdges.filter(
+        (edge) =>
+          disruptedIdSet.has(edge.data.source) &&
+          disruptedIdSet.has(edge.data.target)
+      );
+
+      return {
+        filteredNodes: onlyDisruptedNodes,
+        filteredEdges: disruptedEdges,
+        hasFlows: anyActiveFlows,
+        nodeLookup: lookup,
+      };
+    }
+
     const keepActiveNodes = new Set<string>();
 
     const keptEdges = rawEdges.filter((edge) => {
@@ -140,7 +217,7 @@ export function CorridorMap({
       hasFlows: anyActiveFlows,
       nodeLookup: lookup,
     };
-  }, [entities, baseEdges, planNodes, planEdges, activeOnly]);
+  }, [entities, baseEdges, planNodes, planEdges, events, activeOnly, disruptedOnly]);
 
   // ---------------------------------------------------------------------------
   // 1. Real Interactive India Map (Leaflet)
@@ -308,9 +385,14 @@ export function CorridorMap({
         radius = 10.5;
         stroke = "#fee2e2";
         strokeWeight = 3;
+      } else if (d.status === "MITIGATED") {
+        fill = "#10b981";
+        radius = 9;
+        stroke = "#d1fae5";
+        strokeWeight = 2.5;
       }
 
-      if (d.status === "DISRUPTED" || d.status === "RESTRICTED") {
+      if (d.status === "DISRUPTED" || d.status === "RESTRICTED" || d.status === "MITIGATED") {
         L.circleMarker([d.lat, d.lon], {
           radius: radius + 7,
           color: fill,
@@ -337,6 +419,7 @@ export function CorridorMap({
 
       marker.on("click", () => {
         const fullEnt = entityById.get(String(d.id));
+        onSelectNodeRef.current?.(String(d.id));
         setInspected({
           kind: "node",
           title: String(d.label || d.id),
@@ -476,6 +559,16 @@ export function CorridorMap({
           },
         },
         {
+          selector: 'node[status="MITIGATED"]',
+          style: {
+            "background-color": "#10b981",
+            width: 24,
+            height: 24,
+            "border-width": 2.5,
+            "border-color": "#d1fae5",
+          },
+        },
+        {
           selector: "edge",
           style: {
             width: 1.1,
@@ -509,6 +602,14 @@ export function CorridorMap({
           },
         },
       ],
+    });
+
+    cy.on("tap", "node", (evt) => {
+      const nodeData = evt.target.data();
+      const clickedId = String(nodeData.id || "");
+      if (clickedId) {
+        onSelectNodeRef.current?.(clickedId);
+      }
     });
 
     cy.fit(undefined, 36);
@@ -564,19 +665,29 @@ export function CorridorMap({
   };
 
   const zoomDisrupted = () => {
-    const affected = filteredNodes.filter((n) => n.data.status !== "NORMAL");
-    if (viewMode === "india_map" && leafletMapRef.current) {
-      if (affected.length > 0) {
-        const bounds = L.latLngBounds(
-          affected.map((n) => [n.data.lat, n.data.lon] as [number, number])
-        );
-        leafletMapRef.current.fitBounds(bounds.pad(0.4), { maxZoom: 9 });
-      } else {
-        zoomSouthCorridor();
+    const next = !disruptedOnly;
+    setDisruptedOnly(next);
+    if (next) {
+      const affected = (planNodes.length > 0 ? planNodes : filteredNodes).filter(
+        (n) =>
+          n.data.status === "DISRUPTED" ||
+          n.data.status === "RESTRICTED" ||
+          events.some(
+            (ev) =>
+              ev.primary_entity_id === n.data.id &&
+              (ev.status === "NEW" || ev.status === "UPDATED")
+          )
+      );
+      if (viewMode === "india_map" && leafletMapRef.current) {
+        if (affected.length > 0) {
+          const bounds = L.latLngBounds(
+            affected.map((n) => [n.data.lat, n.data.lon] as [number, number])
+          );
+          leafletMapRef.current.fitBounds(bounds.pad(0.4), { maxZoom: 9 });
+        }
       }
-    } else if (cyRef.current) {
-      const targets = cyRef.current.nodes('[status != "NORMAL"]');
-      cyRef.current.fit(targets.length > 0 ? targets : undefined, 72);
+    } else {
+      zoomSouthCorridor();
     }
   };
 
@@ -675,10 +786,15 @@ export function CorridorMap({
           <button
             type="button"
             onClick={zoomDisrupted}
-            className="inline-flex items-center gap-1 rounded-md border border-light-border bg-white px-2 py-1 text-[11px] font-semibold text-light-text-secondary hover:text-google-red hover:border-google-red/40 dark:border-dark-border dark:bg-dark-surface dark:text-dark-text-secondary dark:hover:text-google-red dark:hover:border-google-red/40 transition"
+            aria-pressed={disruptedOnly}
+            className={`inline-flex items-center gap-1 rounded-md border px-2 py-1 text-[11px] font-semibold transition ${
+              disruptedOnly
+                ? "border-google-red/60 bg-rose-50 text-google-red shadow-xs dark:bg-rose-950/50 dark:border-rose-700"
+                : "border-light-border bg-white text-light-text-secondary hover:text-google-red hover:border-google-red/40 dark:border-dark-border dark:bg-dark-surface dark:text-dark-text-secondary dark:hover:text-google-red dark:hover:border-google-red/40"
+            }`}
           >
             <Focus className="h-3 w-3 text-google-red" />
-            Disrupted
+            {disruptedOnly ? "Disrupted Only" : "Disrupted"}
           </button>
         </div>
       </div>
@@ -691,6 +807,21 @@ export function CorridorMap({
             ref={cyContainerRef}
             className="h-[430px] w-full bg-[radial-gradient(circle_at_top,#14203b_0%,#070c17_75%)]"
           />
+        )}
+
+        {disruptedOnly && filteredNodes.length === 0 && (
+          <div className="pointer-events-none absolute inset-x-0 top-4 z-[440] flex justify-center px-4">
+            <div className="pointer-events-auto flex items-center gap-2 rounded-full border border-emerald-300 bg-white/95 px-3.5 py-1.5 text-xs font-medium text-emerald-800 shadow-md dark:border-emerald-800 dark:bg-dark-elevated/95 dark:text-emerald-300">
+              <span>No active disrupted nodes right now.</span>
+              <button
+                type="button"
+                onClick={() => setDisruptedOnly(false)}
+                className="font-bold underline hover:no-underline"
+              >
+                Show all nodes
+              </button>
+            </div>
+          </div>
         )}
 
         {inspected && (

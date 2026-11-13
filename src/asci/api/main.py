@@ -148,6 +148,23 @@ class RecordDecisionResponse(BaseModel):
     decision: str
     planner_id: str
     indexed_citation_id: str | None = None
+    event_status: str | None = None
+
+
+class MitigateEventRequest(BaseModel):
+    """Apply an optimized mitigation plan to resolve/mitigate an active disruption."""
+
+    plan_id: str | None = None
+    session_id: str | None = None
+    planner_id: str = Field(default="control_tower_operator", min_length=1)
+    comments: str = ""
+
+
+class MitigateEventResponse(BaseModel):
+    event: DisruptionEvent
+    plan_id: str | None = None
+    decision_id: int | None = None
+    indexed_citation_id: str | None = None
 
 
 class WhatIfRequest(BaseModel):
@@ -400,7 +417,7 @@ def create_app(
             merged_affected = list(dict.fromkeys(parsed_event.affected_entity_ids + extra_affected))
             parsed_event = parsed_event.model_copy(update={"affected_entity_ids": merged_affected})
 
-        saved_event = event_store.upsert_with_corroboration(parsed_event)
+        saved_event = event_store.upsert_with_corroboration(parsed_event, force_activate=True)
 
         return IngestEventResponse(
             event_id=saved_event.event_id,
@@ -614,6 +631,7 @@ def create_app(
         )
 
         indexed_citation_id: str | None = None
+        updated_status: str | None = None
         if req.decision in ("APPROVE", "EDIT"):
             plan_meta = decision_store.get_plan_metadata(req.plan_id)
             linked_event = (
@@ -631,6 +649,13 @@ def create_app(
                     modifications=req.modifications,
                 )
                 indexed_citation_id = indexed_doc.citation_id
+                if req.decision == "APPROVE":
+                    mitigated = event_store.mitigate_event(
+                        linked_event.event_id,
+                        plan_id=req.plan_id,
+                    )
+                    if mitigated is not None:
+                        updated_status = mitigated.status.value
 
         return RecordDecisionResponse(
             decision_id=dec_id,
@@ -639,7 +664,88 @@ def create_app(
             decision=req.decision,
             planner_id=req.planner_id,
             indexed_citation_id=indexed_citation_id,
+            event_status=updated_status,
         )
+
+    @api.post(
+        "/events/{event_id}/mitigate",
+        response_model=MitigateEventResponse,
+        tags=["Planning"],
+    )
+    def mitigate_event(event_id: str, req: MitigateEventRequest) -> MitigateEventResponse:
+        """Apply an optimized mitigation plan and transition the disruption to MITIGATED."""
+        event = event_store.get_event(event_id)
+        if not event:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"Event '{event_id}' not found.",
+            )
+
+        resolved_plan_id = req.plan_id
+        resolved_session_id = req.session_id or f"SESS_MITIGATE_{uuid.uuid4().hex[:6].upper()}"
+        plan = decision_store.get_plan(resolved_plan_id) if resolved_plan_id else None
+
+        if plan is None:
+            cfg = PipelineConfig(network_scale=resolved_scale)  # type: ignore[arg-type]
+            rng = random.Random(cfg.random_seed)
+            init_state = PipelineState(
+                session_id=resolved_session_id,
+                status=PipelineStatus.PERCEIVED,
+                event=event,
+            )
+            final_state, _ = pipeline.run(init_state, cfg, rng)
+            plan = final_state.candidate_plan
+            if plan:
+                resolved_plan_id = plan.plan_id
+                decision_store.save_plan(
+                    plan=plan,
+                    session_id=resolved_session_id,
+                    event_id=event.event_id,
+                    status=final_state.status.value,
+                    verification=final_state.verification_report,
+                )
+                decision_store.record_trace(resolved_session_id, final_state.trace)
+
+        dec_id: int | None = None
+        indexed_citation_id: str | None = None
+        if plan is not None:
+            dec_id = decision_store.record_human_decision(
+                plan_id=plan.plan_id,
+                session_id=resolved_session_id,
+                decision="APPROVE",
+                planner_id=req.planner_id,
+                comments=req.comments or f"Applied mitigation plan {plan.plan_id} to resolve disruption.",
+                modifications={"applied_to_event": event_id},
+            )
+            indexed_doc = vector_store.index_validated_decision_playbook(
+                event=event,
+                plan=plan,
+                decision="APPROVE",
+                planner_id=req.planner_id,
+                comments=req.comments or "Control tower mitigation applied",
+                modifications={},
+            )
+            indexed_citation_id = indexed_doc.citation_id
+
+        updated_event = event_store.mitigate_event(event_id, plan_id=resolved_plan_id)
+        assert updated_event is not None
+        return MitigateEventResponse(
+            event=updated_event,
+            plan_id=resolved_plan_id,
+            decision_id=dec_id,
+            indexed_citation_id=indexed_citation_id,
+        )
+
+    @api.post("/events/{event_id}/reopen", tags=["Events"])
+    def reopen_event(event_id: str) -> dict[str, Any]:
+        """Reopen a mitigated or retracted disruption back to active monitoring."""
+        updated = event_store.reopen_event(event_id)
+        if not updated:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"Event '{event_id}' not found.",
+            )
+        return updated.model_dump(mode="json")
 
     @api.get("/traces/{session_id}", tags=["Planning"])
     def get_traces(session_id: str) -> list[dict[str, Any]]:

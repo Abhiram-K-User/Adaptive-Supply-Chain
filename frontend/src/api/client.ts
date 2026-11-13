@@ -9,6 +9,8 @@ import type {
   HealthResponse,
   IngestEventPayload,
   LLMStatusResponse,
+  MitigateEventPayload,
+  MitigateEventResponse,
   NetworkSummaryResponse,
   OperatorTraceEntry,
   PlanResponse,
@@ -101,6 +103,17 @@ export const asciApi = {
     requestJson<PlanResponse>(`/events/${encodeURIComponent(eventId)}/plan`, {
       method: "POST",
       body: JSON.stringify(payload),
+    }),
+
+  mitigateEvent: (eventId: string, payload: MitigateEventPayload = {}) =>
+    requestJson<MitigateEventResponse>(`/events/${encodeURIComponent(eventId)}/mitigate`, {
+      method: "POST",
+      body: JSON.stringify(payload),
+    }),
+
+  reopenEvent: (eventId: string) =>
+    requestJson<DisruptionEvent>(`/events/${encodeURIComponent(eventId)}/reopen`, {
+      method: "POST",
     }),
 
   recordDecision: (payload: RecordDecisionPayload) =>

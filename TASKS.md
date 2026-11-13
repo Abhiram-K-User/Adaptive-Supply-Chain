@@ -21,10 +21,10 @@ Gates Remaining:  Gate G5 [PENDING FINAL AUDIT]
 | Metric / Dimension | Total | Completed (`[x]`) | In Progress / Next (`[ ]`) |
 | :--- | :---: | :---: | :---: |
 | **Phases (1–9)** | 9 | 6 Complete, 1 Active | 2 Long-Term |
-| **All Engineering Tasks** | 65 | 46 | 19 |
+| **All Engineering Tasks** | 65 | 47 | 18 |
 | **M1: Agent Core & RAG Lead** | 15 | 11 | 4 |
 | **M2: Graph & Optimization Lead** | 14 | 10 | 4 |
-| **M3: Data & Backbone Lead** | 12 | 10 | 2 |
+| **M3: Data & Backbone Lead** | 12 | 11 | 1 |
 | **M4: Frontend & Visualization Lead** | 11 | 9 | 2 |
 | **M5: QA, Evaluation & Delivery Lead**| 13 | 6 | 7 |
 
@@ -139,7 +139,7 @@ The implementation and verification workload is divided across 5 core engineerin
 - [x] **`[M4]` Loop L1 Realized Outcomes UI**: Build `frontend/src/components/OutcomesMonitoringPlaceholderView.tsx` enabling operators to submit observed TEU/vessel telemetry and recalibrate recovery models.
 - [x] **`[M4]` Loop L2 Decision Audit Log UI**: Build `frontend/src/components/OptimizationView.tsx` embedding human approval actions and the live decision memory audit log table.
 - [x] **`[M4]` Risk Hedging Comparison Card**: Build expandable *Deterministic vs. CVaR* card in `OptimizationView.tsx` demonstrating tail-risk protection.
-- [ ] **`[M1 & M3]` Loop L4: Validated Event Playbook Ingestion**: Implement automated background pipeline indexing resolved disruption profiles and human-signed mitigation plans into `SemanticVectorStore` as new analogue playbooks.
+- [x] **`[M1 & M3]` Loop L4: Validated Event Playbook Ingestion**: Implemented `index_validated_decision_playbook()` in `SemanticVectorStore` wired to `POST /decisions` (`APPROVE`/`EDIT`) and `POST /events/{id}/mitigate` (plus `POST /events/{id}/reopen`, `MITIGATED` event lifecycle, and `NodeDetailDrawer.tsx` node-click inspection).
 - [ ] **`[M4]` Operator Trace Deep-Dive Visualizer**: *[NEXT]* Enhance `TraceView.tsx` to visualize step-by-step cost vs. information gain trade-offs and query rewrites in real time.
 
 ---

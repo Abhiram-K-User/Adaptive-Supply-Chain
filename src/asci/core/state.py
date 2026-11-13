@@ -29,6 +29,7 @@ class EventStatus(StrEnum):
 
     NEW = "NEW"
     UPDATED = "UPDATED"
+    MITIGATED = "MITIGATED"
     RETRACTED = "RETRACTED"
     EXPIRED = "EXPIRED"
 
@@ -131,6 +132,8 @@ class DisruptionEvent(BaseModel):
     confidence: float = Field(ge=0.0, le=1.0, default=0.85)
     spatial_footprint: list[tuple[float, float]] = Field(default_factory=list)
     source_urls: list[str] = Field(default_factory=list)
+    applied_plan_id: str | None = None
+    mitigated_at: datetime | None = None
 
 
 class PathRiskMetric(BaseModel):

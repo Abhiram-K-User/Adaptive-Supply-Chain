@@ -9,35 +9,34 @@
 ## 1. Repository & Git Sync Status
 
 * **Git Repository Root**: `asci-core/` (`origin` -> `https://github.com/Abhiram-K-User/Adaptive-Supply-Chain.git`, branch `main`).
-* **Remote vs. Local State**:
-  * Commit `d9350b1` on `origin/main` contains **Phase 1**, **Phase 2 (Ingestion Adapters, Gazetteer & Vector Store)**, and **Stage A–E pipeline hardening**.
-  * Uncommitted local work inside `asci-core/` adds:
-    * Pre-Phase 3 hardening & audit suites (`plan_id` determinism, sealed L2 bounds, `CIT_AP_SRICITY_009`, G0–G4 verification suites).
-    * **Gate G2 — Parts 1 & 2 (100% Complete)**: Full Stage B vulnerability factors + **Tier-1 & Tier-2 dynamic congestion `PROPAGATE`**, **Google OR-Tools (`GLOP`) primary LP + SciPy HiGHS dual-solver** (`L2:DUAL_SOLVER_AGREEMENT`), multi-commodity flow ($x_{ij}^k$), line-stop penalties, Expected-Cost / CVaR optimization over `state.scenario_set`, **scaled `v1_corridor` (118-node / 364-edge) OSMnx-calibrated topology eliminating all 3 v0 bottlenecks**, **Hypothesis** property-based fuzzing, and **Suite S1** statistical benchmark runner (`src/asci/benchmarks/suite_s1.py`, `scripts/run_suite_s1.py`).
-  * Commit/push these updates before teammates branch off `main`.
+* **Repository State**:
+  * **Phases 1–6 Complete (`Gates G0–G4 Passed`) & Phase 7 Active (`~77%` PRD Roadmap Complete)**:
+    * **Phase 5 (`Gate G3`)**: L3 `LINE_STOP_SAFETY_THRESHOLD`, `PLAN_CHURN_LIMIT`, claim-level citation validation, and 20+ S4 fault-mutation tests (`tests/unit/test_gate_g3_fault_mutations.py`).
+    * **Phase 6 (`Gate G4`)**: Tool-isolated LLM extraction & grounded explainer (`src/asci/llm/`), multi-step iterative Stage C `agentic_rag` loop + `RETRIEVE_DECISIONS`, oracle trajectory generator (`src/asci/policy/oracle.py`), and PyTorch `MaskedMLPPolicy` (`src/asci/policy/model.py`, `train_mlp_controller.py`, `learned_mlp` controller mode).
+    * **Phase 7 (`Loops L1–L4` & Industrial Control Tower UI)**: `POST /whatif`, `POST /outcomes`, `GET /evidence/{id}`, `GET /decisions`, `POST /events/{event_id}/mitigate`, `POST /events/{event_id}/reopen`, `EventStatus.MITIGATED` lifecycle, Loop L4 `index_validated_decision_playbook()`, and React + TypeScript + Cytoscape.js Control Tower (`frontend/`) with `NodeDetailDrawer`, commodity-differentiated forecasting curves, and live risk/corridor map sync.
 
 ---
 
 ## 2. Current Progress & What Has Been Implemented So Far
 
 ### Overall Progress Snapshot
-* **PRD Vertical-Slice Completion (PRD Sec. 12.3 — 9 Phases)**:
-  * **Complete (2 / 9)**: Phase 1 (`W1–W2`) and Phase 2 (`W3–W4`).
-  * **Partially Implemented (2 / 9)**: Phase 3 (`W5–W6`, **~85%** — Gate G2 passed 100%; remaining Gate G3 L3 rules + S4 fuzz runner pending) and Phase 4 (`W7–W8`, **~50%** — Tier-2 PROPAGATE done; `/whatif`, `/outcomes`, React UI pending).
-  * **Not Started (5 / 9)**: Phases 5–9 (`W9–W14`, **0%**).
-  * **Estimated Overall PRD v2.0 Completeness**: **~45%** (verified ingestion/gazetteer/vector memory, complete Stage B risk + Tier-1/Tier-2 PROPAGATE, 118-node `v1_corridor` network, multi-commodity OR-Tools + HiGHS dual-solver with Expected-Cost/CVaR, Hypothesis fuzzing, and Suite S1; Gate G3 extras, iterative RAG loop, frontend UI, ML policy, and S2–S6 suites remain).
-* **Current Active Milestone**: **Gate G3 Completion** (`LINE_STOP_SAFETY_THRESHOLD`, `PLAN_CHURN_LIMIT`, claim-level citation blocking, randomized S4 mutation runner) followed by **Phase 4 / Gate G4** (`/whatif`, `/outcomes`, React + Cytoscape.js UI, iterative Stage C RAG loop).
-* **Test Health**: **116 / 116 tests passing** (`73` unit tests across 13 files incl. Tier-2, `v1_corridor`, and Hypothesis fuzzing + `43` integration tests across 3 files incl. Suite S1). CI (`ruff check src tests` + `pytest`) is configured in `.github/workflows/ci.yml` (`ruff` binary is not installed locally; AST hygiene checks verified).
+* **PRD Vertical-Slice Completion (9-Phase Roadmap in `TASKS.md`)**:
+  * **Complete (6 / 9)**: Phases 1–6 (`G0`, `G1`, `G2`, `G3`, `G4` all **PASSED**).
+  * **Active (1 / 9)**: Phase 7 (`11 / 12` tasks complete — Loops L1–L4, What-If sandbox, Evidence/Recovery UI, `NodeDetailDrawer`, and mitigation lifecycle implemented; Trace deep-dive visualizer remaining).
+  * **Remaining (2 / 9)**: Phase 8 (Benchmark Suites S2, S3, S5, S6 & Ablations — S1 & S4 complete) and Phase 9 (Final Audit / Gate G5 Docker repro).
+  * **Estimated Overall Completeness**: **~77%** (`47 / 65` tracked tasks in `TASKS.md`).
+* **Current Active Milestone**: **Gate G5 Readiness** (Phase 7 trace deep-dive visualizer + Phase 8 Suites S2/S3/S5/S6 & ablations + Docker one-command benchmark repro).
+* **Test & Build Health**: **139 / 139 tests passing** (`96` unit tests across `16` files + `43` integration tests across `3` files), `ruff check src tests scripts` clean, and `frontend` production bundle (`tsc -b && vite build`) verified.
 
 ### PRD Milestone Gates (`G0–G5`) Status
 | Gate | Target | Current Status | Notes |
 | :--- | :--- | :--- | :--- |
 | **G0 (W2)** | Data readiness & fallback adapters | **Passed** | Replay fixtures, live HTTP-to-replay failover across all 4 adapters, & exact seed totals verified |
 | **G1 (W2)** | End-to-end Walking Skeleton in CI | **Passed** | Stage A -> E executes deterministically via CLI & REST API (same-second plan non-collision + SQLite/JSONL verified) |
-| **G2 (W6)** | Reproducible Stage B + zero-breach OR-Tools baseline | **Passed (100% — Parts 1 & 2)** | Stage B `Utilisation`/`Uncertainty`/`Concentration`/line-stop prob + Tier-1 & Tier-2 BPR `PROPAGATE`; `v1_corridor` (118 nodes / 364 links) clears all 3 v0 bottlenecks (`0.0` unmet TEU); OR-Tools GLOP + SciPy HiGHS (`< 0.1%` gap), multi-commodity, Expected-Cost/CVaR, Hypothesis fuzzing, & Suite S1 runner all verified |
-| **G3 (W6)** | L1–L3 verifier catches `>= 99%` injected S4 faults | **Partial (~65%)** | `L2:DUAL_SOLVER_AGREEMENT`, per-commodity checks, & L1–L3 S4 tests active; `LINE_STOP_SAFETY_THRESHOLD`, `PLAN_CHURN_LIMIT`, claim-level citation blocking, & randomized S4 runner pending |
-| **G4 (W11)** | Learned masked controller + citation gate (`>= 95%`) | **Partial (~15%)** | `TimeSeriesStore`, `DecisionTraceStore`, Tier-1 & Tier-2 `PROPAGATE`, Stage C budget rewrite, Cytoscape JSON exist; `/whatif`, `/outcomes`, React UI, iterative loop & PyTorch masked MLP pending |
-| **G5 (W14)** | Full benchmarks & S6 backtest in one Docker command | **Not Started** | Suite S1 CLI exists (`scripts/run_suite_s1.py`); S2–S6 & Docker one-command benchmark repro entrypoint pending |
+| **G2 (W6)** | Reproducible Stage B + zero-breach OR-Tools baseline | **Passed** | Stage B `Utilisation`/`Uncertainty`/`Concentration`/line-stop prob + Tier-1 & Tier-2 BPR `PROPAGATE`; `v1_corridor` (118 nodes / 364 links) clears all 3 v0 bottlenecks (`0.0` unmet TEU); OR-Tools GLOP + SciPy HiGHS (`< 0.1%` gap), multi-commodity, Expected-Cost/CVaR, Hypothesis fuzzing, & Suite S1 runner all verified |
+| **G3 (W6)** | L1–L3 verifier catches `>= 99%` injected S4 faults | **Passed** | `L2:DUAL_SOLVER_AGREEMENT`, `LINE_STOP_SAFETY_THRESHOLD`, `PLAN_CHURN_LIMIT`, claim-level citation checks, & 20+ S4 fault-mutation tests verified |
+| **G4 (W11)** | Learned masked controller + citation gate (`>= 95%`) | **Passed** | Iterative `agentic_rag` Stage C loop, `src/asci/llm/` grounded explainer, oracle trajectories (`oracle.py`), & PyTorch `MaskedMLPPolicy` (`learned_mlp`) verified in `test_learned_policy.py` |
+| **G5 (W14)** | Full benchmarks & S6 backtest in one Docker command | **Pending Final Audit** | Suite S1 & S4 complete; Suites S2, S3, S5, S6 (Cyclone Michaung backtest), ablations, & Docker one-command repro pending |
 
 ### What Has Been Implemented So Far (Verified Functional Components)
 1. **Immutable State & Contracts (`src/asci/core/`)**:
@@ -60,21 +59,18 @@
    * **Stage D**: Deterministic SHA-1 `plan_id`, **Google OR-Tools (`GLOP`) primary LP + independent SciPy HiGHS dual-solver verification**, multi-commodity cargo (`POWERTRAIN_CKD`, `EV_BATTERY_PACKS`, `BODY_CHASSIS_PARTS`), JIT plant line-stop penalties, two-stage `state.scenario_set` `EXPECTED_COST`/`CVAR` optimization (`NETWORKX` optional fallback), DAG path peeling, and L1–L3 verification (incl. `L2:DUAL_SOLVER_AGREEMENT`, per-commodity demand conservation).
    * **Stage E**: Cytoscape.js graph/edge-flow serializer preserving `FAILED` / `ESCALATED` verification statuses.
    * **Benchmarks & CLI**: Statistical `SuiteS1Runner` (`src/asci/benchmarks/suite_s1.py`) and `scripts/run_suite_s1.py` auditing reproducibility, zero L1/L2 breaches, dual-solver gap, Tier-1/2 spillover, CVaR hedging, and bottleneck elimination across `v0_core` & `v1_corridor`.
-   * **FastAPI**: `create_app(data_dir, network_scale)` supporting `:memory:` / `ASCI_DATA_DIR` persistence and `ASCI_NETWORK_SCALE` (`v0_core` | `v1_corridor`) across 12 live endpoints.
+   * **FastAPI & Frontend (`frontend/`)**: `create_app(data_dir, network_scale)` supports `:memory:` / `ASCI_DATA_DIR` persistence and `ASCI_NETWORK_SCALE` (`v0_core` | `v1_corridor`) across live endpoints, paired with the React + TypeScript + Cytoscape.js Control Tower (`frontend/`) featuring `NodeDetailDrawer` node-click inspection, disruption mitigation/reopen actions, Stage C telemetry, commodity-differentiated forecasting curves, What-If sandbox, and Evidence/Outcomes panels.
 
-### Phase-by-Phase PRD Progress Breakdown
+### Phase-by-Phase Roadmap Progress (`TASKS.md`)
 
-| PRD Phase | Timeline | Status | Implemented vs. Missing |
-| :--- | :--- | :--- | :--- |
-| **1. Data Readiness & Walking Skeleton (G0/G1)** | W1–W2 | **Complete (100%)** | **Done**: Registry, frozen `PipelineState`, `Operator` protocol, Stage A–E loop, FastAPI app, Dockerfile, CI.<br>**Todo**: Keep CI green (`ruff` check in GitHub Actions). |
-| **2. Ingestion Adapters, Gazetteer & Vector Store** | W3–W4 | **Complete (100%)** | **Done**: GDACS/GDELT/IMD/PortWatch adapters, multi-entity/fuzzy/polygon gazetteer, `DeterministicExtractor`, `SemanticVectorStore` (9 SOP playbooks), `SQLiteEventStore` lifecycle.<br>**Todo**: Install optional `faiss-cpu`/`sentence-transformers`/`rapidfuzz`; schedule background `expire_stale_events()`. |
-| **3. Path Risk, Line-Stop KPI, Benchmarks & Verifiers L1–L3 (G2/G3)** | W5–W6 | **Partial (~85%)** | **Done (Gate G2 Complete)**: Full Stage B formulas + Tier-1 & Tier-2 `PROPAGATE`, **118-node / 364-edge `v1_corridor` OSMnx network**, **OR-Tools + SciPy HiGHS dual-solver**, multi-commodity & **CVaR/Expected-Cost** optimization, `L2:DUAL_SOLVER_AGREEMENT`, Hypothesis property fuzzing, statistical **Suite S1** runner & CLI (`src/asci/benchmarks/suite_s1.py`).<br>**Missing (Gate G3)**: L3 `LINE_STOP_SAFETY_THRESHOLD`/`PLAN_CHURN_LIMIT`, claim-level citation blocking, randomized S4 benchmark runner. |
-| **4. Time-Series, Propagation, Scenario Builder & Dashboard v1** | W7–W8 | **Partial (~50%)** | **Done**: `TimeSeriesStore`, PortWatch baselines/recovery curves, Tier-1 & **Tier-2 `PROPAGATE`**, `StageEDashboard` Cytoscape JSON serializer, `POST /decisions`, `ASCI_DATA_DIR` + `ASCI_NETWORK_SCALE`.<br>**Missing**: DuckDB backend, **`POST /whatif`**, **`POST /outcomes`**, **`GET /evidence/{id}`**, **React + TypeScript + Cytoscape.js frontend**. |
-| **5. Cost Profiling & Agent Baselines** | W9 | **Not Started (0%)** | **Exists**: `lambda_cost_budget` gates one rewrite check inside Stage C.<br>**Missing**: Multi-step iterative controller loop, `RETRIEVE_DECISIONS` wiring, `No-RAG` / `Fixed-RAG` / `LLM` baselines, `GRADE` cross-encoder/LLM, citation-enforced explainer. |
-| **6. Oracle Trajectories & Learned Controller (G4)** | W10–W11 | **Not Started (0%)** | **Exists**: `torch 2.5.1` installed locally.<br>**Missing**: Oracle trajectory labeling, PyTorch masked MLP policy, DAgger/masking verification. |
-| **7. Benchmarks, Ablations & S6 Backtests** | W12 | **Not Started (0%)** | **Exists**: `CIT_ANALOGUE_MICHAUNG_004` + seed recovery curves.<br>**Missing**: **Suite S6 Cyclone Michaung IMF PortWatch backtest** & regret/ECE/AUROC metrics. |
-| **8. Live Feeds, Trace Views & S3 Red-Team** | W13 | **Not Started (0%)** | **Exists**: Live HTTP adapter methods + injection tests.<br>**Missing**: Scheduled polling worker, UI trace timeline, **Suite S3 red-team audit**. |
-| **9. Code Freeze & Docker Repro (G5)** | W14 | **Not Started (0%)** | **Exists**: FastAPI `Dockerfile`.<br>**Missing**: Full solver/ML Docker image & one-command benchmark reproduction script. |
+| Phase | Status | Implemented vs. Remaining |
+| :--- | :--- | :--- |
+| **1–4. Core, Ingestion, Stage B/C/D/E & Graph Scaling (G0–G2)** | **Complete (100%)** | Registry (`v0_core` / `v1_corridor`), immutable `PipelineState`, GDACS/GDELT/IMD/PortWatch adapters, `SemanticVectorStore`, `TimeSeriesStore`, `DecisionTraceStore`, Tier-1 & Tier-2 `PROPAGATE`, OR-Tools + HiGHS dual LP, CVaR/Expected-Cost, `StageEDashboard`. |
+| **5. Verifier L1–L3 Hardening (Gate G3)** | **Complete (100%)** | `LINE_STOP_SAFETY_THRESHOLD`, `PLAN_CHURN_LIMIT`, claim-level citation support checks, and 20+ S4 fault-mutation tests (`test_gate_g3_fault_mutations.py`). |
+| **6. Agentic RAG & Learned Masked Policy (Gate G4)** | **Complete (100%)** | `src/asci/llm/` (`client.py`, `stage_a_llm.py`, `explainer.py`), iterative Stage C `agentic_rag` + `RETRIEVE_DECISIONS`, `src/asci/policy/` (`oracle.py`, `model.py` `MaskedMLPPolicy`, `train_mlp_controller.py`), `controller_mode` selector. |
+| **7. Closed Feedback Loops & Control Tower UI** | **Active (11 / 12)** | **Done**: `POST /outcomes` (L1), `GET/POST /decisions` (L2), `POST /whatif`, `GET /evidence/{id}`, `POST /events/{id}/mitigate` & `/reopen` (`MITIGATED` lifecycle), Loop L4 `index_validated_decision_playbook()`, React/TS Enterprise UI (`frontend/`) + `NodeDetailDrawer`.<br>**Remaining**: Trace deep-dive visualizer in `TraceView.tsx`. |
+| **8. Benchmark Suites (S1–S6) & Ablations** | **Partial (2 / 16)** | **Done**: Suite S1 (`suite_s1.py`) & Suite S4 (`test_gate_g3_fault_mutations.py`).<br>**Remaining**: Suites S2, S3, S5, S6 (Cyclone Michaung backtest) & 9 ablations. |
+| **9. Hardening, Live Ops & Release (Gate G5)** | **Partial (2 / 5)** | **Done**: `Dockerfile` & CI (`.github/workflows/ci.yml`).<br>**Remaining**: Live polling scheduler, DuckDB/FAISS opt-in integration, one-command Docker benchmark repro. |
 
 ---
 
@@ -167,9 +163,9 @@ All five pipeline stages and five stores share immutable canonical string identi
    * Never mock verification checks (`L1`–`L3`) to return `PASS`. Stage D enforces port-only origins, plant-only sinks, per-plant demand caps, closed-plant zero-passthrough bounds, aggregate edge/node flow sums across parallel allocations, exact hop balance, exact reconciled corridor shortfall (`expected_unmet`), and entity-matched evidence grounding.
    * When `verification_report.passed is False`, `StageDOptimiserAndVerifier` sets `PipelineStatus.FAILED` and `StageEDashboard` preserves `FAILED` / `ESCALATED` (never overwrite to `COMPLETED`).
    * Note on `v0_core` vs `v1_corridor`: `ICD_WHITEFIELD`/`PLANT_BIDADI`, `ICD_IRUGUR`/`PLANT_COIMBATORE`, and `PORT_KRISHNAPATNAM`/`PLANT_SRICITY` are single-point bottlenecks under `corridor_graph_v0.json` (kept intact as default for Gate G0/G1 compatibility), whereas `v1_corridor` (`corridor_graph_v1.json`) provides multi-homed road & intermodal rail redundancy clearing all three at `0.0 TEU` unmet demand under `85%` disruption.
-6. **Current Gate G1 Cadence Constraint**:
-   * `WalkingSkeletonPipeline` (`src/asci/stages/__init__.py`) executes Stages A -> E once sequentially. `tests/integration/test_walking_skeleton.py` currently asserts `len(operator_results) == 5`, `final_state.step_count == 5`, and `len(final_state.trace) == 5`.
-   * When refactoring Stage C into a multi-step iterative agent loop (`RETRIEVE_*` -> `GRADE` -> `REWRITE_QUERY` -> `SCENARIOS` -> `OPTIMIZE` -> `VERIFY` -> `STOP`), update both `WalkingSkeletonPipeline` and Gate G1 assertions intentionally together.
+6. **Gate G1 Cadence & Stage C Controller Modes**:
+   * `WalkingSkeletonPipeline` (`src/asci/stages/__init__.py`) executes Stages A -> E sequentially in default `rule` mode (`tests/integration/test_walking_skeleton.py` asserts `len(operator_results) == 5`, `final_state.step_count == 5`, `len(final_state.trace) == 5`).
+   * `PipelineConfig.controller_mode` (`"rule" | "agentic_rag" | "learned_mlp"`) enables multi-step iterative retrieval (`RETRIEVE_TEXT`, `RETRIEVE_TS`, `RETRIEVE_DECISIONS`, `GRADE`, `REWRITE_QUERY`) and PyTorch `MaskedMLPPolicy` execution while preserving deterministic `rule` mode for Gate G1 tests.
 
 ---
 
@@ -183,7 +179,9 @@ asci-core/
 ├── requirements.txt                     # Core runtime deps (pydantic, networkx, numpy, ortools, scipy, fastapi, uvicorn, httpx, pytest, hypothesis)
 ├── project_context.md                   # This agent context & handoff guide
 ├── scripts/
-│   └── run_suite_s1.py                  # Gate G2 Statistical Suite S1 CLI benchmark runner (--scale v0_core|v1_corridor|both)
+│   ├── run_demo.py                      # Local FastAPI + static UI launcher script
+│   ├── run_suite_s1.py                  # Gate G2 Statistical Suite S1 CLI benchmark runner (--scale v0_core|v1_corridor|both)
+│   └── verify_backend_frontend_connection.py # API <-> frontend integration smoke verifier
 ├── data/
 │   ├── feeds/                           # Replay fixtures: gdacs_alerts_sample.json, gdelt_news_sample.json,
 │   │                                    # imd_bulletins_sample.json, portwatch_daily_sample.csv
@@ -211,6 +209,14 @@ asci-core/
 │   │   ├── osmnx_builder.py             # CorridorOSMnxBuilder (118-node / 364-link generator & live OSMnx calibration hook)
 │   │   ├── timeseries_store.py          # Port baselines, daily observations, hazard recovery curves
 │   │   └── vector_store.py              # HashedDenseEncoder (`hashed-concept-bow`) + FAISS/NumPy filterable search
+│   ├── llm/
+│   │   ├── client.py                    # LLM client & availability / status probe
+│   │   ├── explainer.py                 # Grounded RAG executive briefing generator with [CIT_...] citation checks
+│   │   └── stage_a_llm.py               # Tool-isolated LLM extractor backend (ExtractedEventFields)
+│   ├── policy/
+│   │   ├── model.py                     # PyTorch MaskedMLPPolicy & action-mask enforcement
+│   │   ├── oracle.py                    # Oracle trajectory generator & regret-labeled dataset builder
+│   │   └── train_mlp_controller.py      # Masked MLP training & checkpoint loader
 │   ├── benchmarks/
 │   │   ├── __init__.py                  # Benchmark exports
 │   │   └── suite_s1.py                  # SuiteS1Runner, SuiteS1Report, SuiteS1CaseResult statistical evaluator
@@ -219,26 +225,34 @@ asci-core/
 │   │   ├── stage_a_events.py            # ExtractedEventFields, DeterministicExtractor, gazetteer+spatial grounding
 │   │   ├── stage_b_graph.py             # k-hop subgraph, full PathRisk formulas, scenario LineStopMetric
 │   │   ├── stage_b_propagate.py         # Tier-1 BFS hop-decay & Tier-2 BPR dynamic congestion simulators
-│   │   ├── stage_c_controller.py        # Mask checks, vector query/rewrite, TS windowing, 3 scenarios
+│   │   ├── stage_c_controller.py        # rule / agentic_rag / learned_mlp controller, TS windowing, 3 scenarios
 │   │   ├── stage_d_optimiser.py         # OR-Tools + HiGHS dual LP (multi-commodity, CVaR/Expected, L1-L3)
 │   │   └── stage_e_dashboard.py         # Cytoscape.js nodes/edges/flows + Verification/Status preservation
 │   ├── api/
 │   │   └── main.py                      # create_app(data_dir, network_scale) + ASCI_DATA_DIR / ASCI_NETWORK_SCALE env support
 │   └── utils/logging.py                 # Structured JSON logger
-└── tests/                               # 116 tests total (73 unit across 13 files + 43 integration across 3 files)
+├── frontend/                            # React + TypeScript + Vite + Cytoscape.js Enterprise Control Tower
+│   └── src/
+│       ├── api/client.ts                # Typed REST client for FastAPI endpoints
+│       ├── components/                  # CorridorMap, ForecastingView, RiskView, OptimizationView, WhatIf, Evidence, Outcomes, layout/NodeDetailDrawer.tsx
+│       └── pages/                       # Overview, Network, Risk, Optimization, Forecasting, Inventory, Suppliers, Analytics
+└── tests/                               # 139 tests total (96 unit across 16 files + 43 integration across 3 files)
     ├── conftest.py                      # Fixtures (isolated per-test TestClient(create_app()))
     ├── integration/
     │   ├── test_gate_g2_benchmarks.py   # 33 Gate G2 suites: 23-entity sweep, monotonicity, compound outages, 7 event taxonomies
     │   ├── test_gate_g2_suite_s1.py     # Suite S1 multi-scale benchmark gate, CLI report & v1_corridor FastAPI integration tests
     │   └── test_walking_skeleton.py     # 8 E2E, determinism, replay, multi-port, persistence tests
     └── unit/
+        ├── test_demo_next_steps_api.py  # 5 tests: /whatif, /outcomes, /evidence/{id}, /decisions, Loop L1/L2 APIs
         ├── test_event_lifecycle.py      # SQLite corroboration, retraction, expiry tests
         ├── test_gate_g0_g1_contracts.py # Gate G0/G1 seed totals, live->replay failover, budget ESCALATE, same-second API non-collision
-        ├── test_gate_g2_part1_solver.py # 6 Gate G2 Part 1 tests: OR-Tools/HiGHS dual parity, multi-commodity, CVaR, JIT line-stop, NX parity
+        ├── test_gate_g2_part1_solver.py # Gate G2 Part 1 tests: OR-Tools/HiGHS dual parity, multi-commodity, CVaR, JIT line-stop, NX parity
         ├── test_gate_g2_property_fuzz.py # Hypothesis property-based fuzz tests (determinism, bounds, 0.0% L1/L2 breach across v0 & v1)
         ├── test_gate_g3_fault_mutations.py # 12 Gate G3 L1-L3 fault-injection, closed-plant & Stage E status preservation tests
         ├── test_gazetteer.py            # Alias, fuzzy, spatial coordinate & polygon resolution tests
         ├── test_ingestion_adapters.py   # GDACS, GDELT/RSS, IMD, PortWatch & injection-isolation tests
+        ├── test_learned_policy.py       # 6 Gate G4 tests: MaskedMLPPolicy zero masking violations & >= 95% citation support
+        ├── test_llm_and_demo.py         # 11 tests: tool-isolated Stage A LLM, grounded explainer, & demo APIs
         ├── test_phase4_components.py    # TimeSeriesStore, DecisionTraceStore, Stage C budget/expiry, Cytoscape serialization tests
         ├── test_registry.py             # Canonical registry contract & UnknownEntityError tests
         ├── test_stage_b_graph.py        # Stage B bottleneck, betweenness, Tier-2 congestion & v1_corridor/OSMnx builder tests
@@ -268,11 +282,15 @@ asci-core/
 | `GET` | `/events/{event_id}` | **Implemented** | `404` if missing |
 | `POST` | `/events/{event_id}/plan` | **Implemented** | Runs `WalkingSkeletonPipeline` (supports `propagation_tier`, `risk_mode`, `solver_type`), persists plan + trace |
 | `GET` | `/plans/{plan_id}` | **Implemented** | Loads persisted `MitigationPlan` from SQLite |
-| `POST` | `/decisions` | **Implemented** | `201 Created`; validates `plan_id` exists (`404`), logs `APPROVE \| EDIT \| REJECT` to `human_decisions` |
+| `POST` | `/decisions` | **Implemented** | `201 Created`; validates `plan_id` (`404`), logs `APPROVE \| EDIT \| REJECT`, indexes Loop L4 playbook, and mitigates event on `APPROVE` |
+| `GET` | `/decisions` | **Implemented** | Returns persisted human decision memory audit log |
+| `POST` | `/events/{event_id}/mitigate` | **Implemented** | Applies mitigation plan, logs decision/L4 playbook, and transitions event to `MITIGATED` |
+| `POST` | `/events/{event_id}/reopen` | **Implemented** | Reopens a `MITIGATED` or `RETRACTED` disruption back to active `UPDATED` status |
 | `GET` | `/traces/{session_id}` | **Implemented** | Queries `DecisionTraceStore`, falls back to in-memory `state_cache` |
-| `GET` | `/evidence/{id}` | **Planned (PRD 10.2)** | Fetch single evidence item by `citation_id` |
-| `POST` | `/whatif` | **Planned (PRD 10.2)** | Interactive sensitivity sandbox over custom multipliers/durations |
-| `POST` | `/outcomes` | **Planned (PRD 10.2)** | Realized port throughput ingestion (Feedback Loop L1) |
+| `GET` | `/evidence/{id}` | **Implemented** | Fetch single evidence item by `citation_id` with provenance & recovery curves |
+| `POST` | `/whatif` | **Implemented** | Interactive sensitivity sandbox over custom capacity multipliers & durations |
+| `POST` | `/outcomes` | **Implemented** | Realized port throughput ingestion (Feedback Loop L1 recovery recalibration) |
+| `GET` | `/llm/status` | **Implemented** | Reports active LLM extractor/explainer availability |
 
 ---
 
@@ -306,7 +324,7 @@ To avoid merge conflicts across parallel branches, keep changes aligned with the
 ### Verification & Run Commands (from `asci-core/`)
 
 ```bash
-# Run full test suite (116 tests: 73 unit + 43 integration)
+# Run full test suite (139 tests: 96 unit + 43 integration)
 pytest tests/ -v --durations=10
 
 # Run Gate G2 Statistical Suite S1 across both v0_core & v1_corridor
@@ -314,7 +332,10 @@ PYTHONPATH=src python scripts/run_suite_s1.py --scale both
 
 # Lint check enforced in GitHub Actions CI (.github/workflows/ci.yml)
 # Ruff config: E, F, I, B, C4, UP (ignores E501, line-length=110, py311)
-ruff check src tests
+ruff check src tests scripts
+
+# Build React + TypeScript Control Tower frontend
+cd frontend && npm run build
 
 # Seed & graph integrity smoke check (matches CI)
 PYTHONPATH=src python -c "from asci.core.registry import get_canonical_registry; reg = get_canonical_registry(); print(f'Loaded {len(reg)} entities')"

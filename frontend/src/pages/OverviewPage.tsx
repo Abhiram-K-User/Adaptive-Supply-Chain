@@ -8,6 +8,7 @@ import {
   Clock,
   Cpu,
   Layers,
+  Loader2,
   MapPin,
   Play,
   Radio,
@@ -22,6 +23,7 @@ import { KpiCard } from "../components/common/KpiCard";
 import type {
   ActiveWorkspaceTab,
   CanonicalEntity,
+  DisruptionEvent,
   FeedsStatusResponse,
   NetworkEdgeSummary,
   PlanResponse,
@@ -30,23 +32,35 @@ import type {
 interface OverviewPageProps {
   entities: CanonicalEntity[];
   baseEdges: NetworkEdgeSummary[];
+  events?: DisruptionEvent[];
   planResponse: PlanResponse | null;
   feedsStatus: FeedsStatusResponse | null;
   statusBanner: { message: string; kind: "info" | "ok" | "err" };
   onOpenTab: (tab: ActiveWorkspaceTab) => void;
   onRunOptimization?: () => void;
+  onMitigateEvent?: (
+    eventId: string,
+    planId?: string | null,
+    sessionId?: string | null
+  ) => void;
+  onSelectNode?: (nodeId: string) => void;
   busy: boolean;
+  mitigatingEventId?: string | null;
 }
 
 export function OverviewPage({
   entities,
   baseEdges,
+  events = [],
   planResponse,
   feedsStatus,
   statusBanner,
   onOpenTab,
   onRunOptimization,
+  onMitigateEvent,
+  onSelectNode,
   busy,
+  mitigatingEventId = null,
 }: OverviewPageProps) {
   const [dateRange, setDateRange] = useState<"today" | "7d" | "30d">("7d");
   const [activeBottomTab, setActiveBottomTab] = useState<
@@ -81,53 +95,106 @@ export function OverviewPage({
     (a, b) => b.flow_teu - a.flow_teu
   );
 
-  const allChecks = [
-    ...(verif?.l1_checks ?? []),
-    ...(verif?.l2_checks ?? []),
-    ...(verif?.l3_checks ?? []),
-  ];
+  const totalAllocatedTeu = useMemo(
+    () => allocations.reduce((sum, a) => sum + a.flow_teu, 0),
+    [allocations]
+  );
+  const totalPlantDemandTeu = useMemo(
+    () =>
+      entities
+        .filter((e) => e.entity_type === "PLANT")
+        .reduce((sum, e) => sum + (e.daily_demand_teu ?? 0), 0),
+    [entities]
+  );
+  const unmetTeu = plan?.unmet_demand_teu ?? 0;
+  const demandBase = totalPlantDemandTeu > 0 ? totalPlantDemandTeu : Math.max(1, totalAllocatedTeu);
+  const conservationPct = Math.max(0, Math.min(100, ((demandBase - unmetTeu) / demandBase) * 100));
 
-  // Demand vs Inflow Trend driven by active dateRange selector
-  const trendData = useMemo(() => {
-    if (dateRange === "today") {
-      return [
-        { label: "00:00", seriesA: 11800, seriesB: 12100 },
-        { label: "04:00", seriesA: 12200, seriesB: 12400 },
-        { label: "08:00", seriesA: 12900, seriesB: 12700 },
-        { label: "12:00", seriesA: 12470, seriesB: 12500 },
-        { label: "16:00", seriesA: 13100, seriesB: 13050 },
-        { label: "20:00", seriesA: 12800, seriesB: 12900 },
-        { label: "23:59", seriesA: 13400, seriesB: 13350 },
-      ];
-    }
-    if (dateRange === "30d") {
-      return [
-        { label: "D-30", seriesA: 11200, seriesB: 11350 },
-        { label: "D-25", seriesA: 11650, seriesB: 11500 },
-        { label: "D-20", seriesA: 12100, seriesB: 12050 },
-        { label: "D-15", seriesA: 12400, seriesB: 11900 },
-        { label: "D-10", seriesA: 12850, seriesB: 12700 },
-        { label: "D-5", seriesA: 12600, seriesB: 12650 },
-        { label: "Today", seriesA: 12470, seriesB: 12500 },
-      ];
-    }
-    return [
-      { label: "Mon", seriesA: 12050, seriesB: 12100 },
-      { label: "Tue", seriesA: 12300, seriesB: 12250 },
-      { label: "Wed", seriesA: 12750, seriesB: 12500 },
-      { label: "Thu", seriesA: 12470, seriesB: 12470 },
-      { label: "Fri", seriesA: 12980, seriesB: 12900 },
-      { label: "Sat", seriesA: 12600, seriesB: 12750 },
-      { label: "Today", seriesA: 13120, seriesB: 13080 },
-    ];
-  }, [dateRange]);
-
+  const rangeDays = dateRange === "today" ? 1 : dateRange === "7d" ? 7 : 30;
   const dateRangeLabel =
     dateRange === "today"
       ? "Today (24h)"
       : dateRange === "30d"
       ? "30-Day Window"
       : "7-Day Window";
+
+  const activeEvents = events.filter((e) => e.status === "NEW" || e.status === "UPDATED");
+  const mitigatedEvents = events.filter((e) => e.status === "MITIGATED");
+
+  const windowEvents = useMemo(() => {
+    const cutoffMs = Date.now() - rangeDays * 86_400_000;
+    return events.filter((ev) => {
+      const ts = Date.parse(ev.timestamp);
+      return Number.isNaN(ts) || ts >= cutoffMs;
+    });
+  }, [events, rangeDays]);
+
+  const windowActiveEvents = windowEvents.filter(
+    (e) => e.status === "NEW" || e.status === "UPDATED"
+  );
+  const windowMitigatedEvents = windowEvents.filter((e) => e.status === "MITIGATED");
+
+  const plannedEvent = planResponse
+    ? events.find((e) => e.event_id === planResponse.event_id) ?? null
+    : null;
+  const canApplyPlanned =
+    Boolean(plannedEvent && plannedEvent.status !== "MITIGATED" && plan);
+
+  const gatewayPorts = entities.filter((e) => e.entity_type === "PORT");
+  const operationalPortRatio = useMemo(() => {
+    if (gatewayPorts.length === 0) return 100;
+    const planNodes = dash?.geospatial_network?.nodes ?? [];
+    const avgMult =
+      gatewayPorts.reduce((sum, p) => {
+        const isActiveDisrupted = activeEvents.some((ev) => ev.primary_entity_id === p.id);
+        const isMitigated = mitigatedEvents.some((ev) => ev.primary_entity_id === p.id);
+        if (!isActiveDisrupted && isMitigated) return sum + 1.0;
+        const matched = planNodes.find((n) => n.data.id === p.id);
+        return sum + (matched?.data.capacity_multiplier ?? 1.0);
+      }, 0) / gatewayPorts.length;
+    return Math.round(avgMult * 1000) / 10;
+  }, [gatewayPorts, dash?.geospatial_network?.nodes, activeEvents, mitigatedEvents]);
+
+  const allChecks = [
+    ...(verif?.l1_checks ?? []),
+    ...(verif?.l2_checks ?? []),
+    ...(verif?.l3_checks ?? []),
+  ];
+
+  // Demand vs Inflow Trend driven by active dateRange selector & live flow metrics
+  const dailyVolumeBase = Math.round(totalAllocatedTeu || totalPlantDemandTeu || 12470);
+  const trendData = useMemo(() => {
+    const delivered = Math.max(0, dailyVolumeBase - Math.round(unmetTeu));
+    if (dateRange === "today") {
+      const factors = [0.92, 0.96, 1.03, 0.99, 1.04, 1.01, 1.0];
+      const labels = ["00:00", "04:00", "08:00", "12:00", "16:00", "20:00", "Now"];
+      return labels.map((label, i) => ({
+        label,
+        seriesA: Math.round(dailyVolumeBase * factors[i]),
+        seriesB: Math.round(delivered * (factors[i] + (i % 2 === 0 ? 0.01 : -0.01))),
+      }));
+    }
+    if (dateRange === "30d") {
+      const factors = [0.89, 0.92, 0.96, 0.94, 1.01, 0.98, 1.0];
+      const labels = ["D-30", "D-25", "D-20", "D-15", "D-10", "D-5", "Today"];
+      return labels.map((label, i) => ({
+        label,
+        seriesA: Math.round(dailyVolumeBase * factors[i]),
+        seriesB: Math.round(delivered * (factors[i] - (i === 3 ? 0.04 : 0))),
+      }));
+    }
+    const factors = [0.96, 0.98, 1.02, 0.99, 1.03, 1.01, 1.0];
+    const labels = ["D-6", "D-5", "D-4", "D-3", "D-2", "D-1", "Today"];
+    return labels.map((label, i) => ({
+      label,
+      seriesA: Math.round(dailyVolumeBase * factors[i]),
+      seriesB: Math.round(delivered * (factors[i] + (i === 2 ? -0.02 : 0))),
+    }));
+  }, [dateRange, dailyVolumeBase, unmetTeu]);
+
+  const periodThroughput = Math.round(dailyVolumeBase * rangeDays);
+  const periodUnmet = unmetTeu * rangeDays;
+  const periodRailTeu = Math.round(periodThroughput * (railPct / 100));
 
   return (
     <div className="space-y-4">
@@ -243,60 +310,105 @@ export function OverviewPage({
           {statusBanner.kind === "err" && (
             <XCircle className="h-4 w-4 text-google-red shrink-0" />
           )}
-          {statusBanner.kind === "info" && (
-            <Radio className="h-4 w-4 text-google-blue shrink-0" />
-          )}
+          {statusBanner.kind === "info" &&
+            (busy ? (
+              <Loader2 className="h-4 w-4 text-google-blue animate-spin shrink-0" />
+            ) : (
+              <Radio className="h-4 w-4 text-google-blue shrink-0" />
+            ))}
           <span className="font-medium truncate">{statusBanner.message}</span>
         </div>
 
-        {planResponse && (
-          <span className="shrink-0 text-xs text-light-text-muted dark:text-dark-text-muted ml-2">
-            {planResponse.session_id} • {planResponse.status}
-          </span>
-        )}
+        <div className="flex items-center gap-2 shrink-0 ml-2">
+          {canApplyPlanned && onMitigateEvent && plannedEvent && plan && (
+            <button
+              type="button"
+              disabled={busy}
+              onClick={() =>
+                onMitigateEvent(plannedEvent.event_id, plan.plan_id, planResponse?.session_id ?? null)
+              }
+              className="inline-flex items-center gap-1 rounded-md bg-emerald-600 px-2.5 py-1 text-[11px] font-semibold text-white hover:bg-emerald-700 transition disabled:opacity-60"
+            >
+              {mitigatingEventId === plannedEvent.event_id ? (
+                <>
+                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                  <span>Recalculating routes...</span>
+                </>
+              ) : (
+                <>
+                  <ShieldCheck className="h-3.5 w-3.5" />
+                  <span>Apply &amp; Fix {plannedEvent.primary_entity_id}</span>
+                </>
+              )}
+            </button>
+          )}
+          {planResponse && (
+            <span className="text-xs text-light-text-muted dark:text-dark-text-muted">
+              {planResponse.session_id} • {planResponse.status}
+            </span>
+          )}
+        </div>
       </div>
 
       {/* 2. Structured Neutral KPI Cards */}
       <div className="grid grid-cols-2 gap-3.5 sm:grid-cols-4">
         <KpiCard
-          title="Corridor Active Throughput"
-          value="12,470"
-          unit="TEU/d"
-          comparison="+4.2% MoM"
+          title={
+            dateRange === "today"
+              ? "Today's Corridor Flow"
+              : `${rangeDays}-Day Corridor Volume`
+          }
+          value={periodThroughput.toLocaleString()}
+          unit={dateRange === "today" ? "TEU/d" : `TEU (${rangeDays}d)`}
+          comparison={
+            plan
+              ? `${allocations.length} Routes (${dailyVolumeBase.toLocaleString()}/d)`
+              : `${entities.filter((e) => e.entity_type === "PLANT").length} JIT Plants`
+          }
           status="info"
           trend="up"
-          subtitle="30 JIT Assembly Facilities"
-          sparklineData={[11200, 11500, 11900, 12100, 12470]}
+          subtitle={`${dateRangeLabel}${
+            plannedEvent ? ` · ${plannedEvent.primary_entity_id}` : ""
+          }`}
+          sparklineData={trendData.map((d) => d.seriesB)}
         />
 
         <KpiCard
           title="Demand Conservation"
-          value="100.0%"
-          comparison="0.0 Unmet TEU"
-          status="healthy"
-          trend="neutral"
-          subtitle="Dual-Solver Verified"
-          sparklineData={[98, 98.6, 99.2, 100]}
+          value={`${conservationPct.toFixed(1)}%`}
+          comparison={`${periodUnmet.toFixed(1)} Unmet TEU (${
+            dateRange === "today" ? "24h" : `${rangeDays}d`
+          })`}
+          status={unmetTeu <= 0.01 ? "healthy" : "critical"}
+          trend={unmetTeu <= 0.01 ? "up" : "down"}
+          subtitle={verif?.passed ? "Dual-Solver Verified" : "Awaiting Verification"}
+          sparklineData={[98, 98.6, 99.2, conservationPct]}
         />
 
         <KpiCard
-          title="Monsoon Rail Diversion"
+          title="Intermodal Rail Diversion"
           value={`${railPct}%`}
-          comparison="+18% Highway Bypass"
+          comparison={`Road: ${roadPct}%`}
           status="info"
           trend="up"
-          subtitle="NH48 Flood Risk Mitigated"
+          subtitle={`${periodRailTeu.toLocaleString()} Rail TEU in ${
+            dateRange === "today" ? "24h" : `${rangeDays}d`
+          }`}
           sparklineData={[38, 44, 50, railPct]}
         />
 
         <KpiCard
-          title="Gateway Ports SLA"
-          value="97.4%"
-          comparison="8 Ports Active"
-          status="healthy"
-          trend="up"
-          subtitle="Berth-to-dock transit SLA"
-          sparklineData={[94, 95.5, 96.8, 97.4]}
+          title={`Disruptions (${dateRange === "today" ? "Today" : `${rangeDays}d`})`}
+          value={`${windowActiveEvents.length} Active`}
+          comparison={`${windowMitigatedEvents.length} Mitigated · ${operationalPortRatio}% Port Cap`}
+          status={windowActiveEvents.length === 0 ? "healthy" : "warning"}
+          trend={windowActiveEvents.length === 0 ? "up" : "down"}
+          subtitle={`${windowEvents.length} incidents in ${dateRangeLabel}`}
+          sparklineData={[
+            Math.max(1, windowEvents.length),
+            windowActiveEvents.length + 1,
+            windowActiveEvents.length,
+          ]}
         />
       </div>
 
@@ -334,6 +446,8 @@ export function OverviewPage({
               baseEdges={baseEdges}
               planNodes={dash?.geospatial_network?.nodes ?? []}
               planEdges={dash?.geospatial_network?.edges ?? []}
+              events={events}
+              onSelectNode={onSelectNode}
             />
           </div>
         </div>
@@ -478,8 +592,12 @@ export function OverviewPage({
                         <th className="py-2 pr-3">Route Path</th>
                         <th className="py-2 pr-3">Commodity</th>
                         <th className="py-2 pr-3">Mode</th>
-                        <th className="py-2 pr-3 text-right">Flow (TEU)</th>
-                        <th className="py-2 text-right">Total Cost</th>
+                        <th className="py-2 pr-3 text-right">
+                          Flow ({dateRange === "today" ? "TEU/d" : `${rangeDays}d TEU`})
+                        </th>
+                        <th className="py-2 text-right">
+                          Cost ({dateRange === "today" ? "24h" : `${rangeDays}d`})
+                        </th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-light-border dark:divide-dark-border">
@@ -514,10 +632,12 @@ export function OverviewPage({
                               </span>
                             </td>
                             <td className="py-2.5 pr-3 text-right font-mono font-bold text-light-text-primary dark:text-dark-text-primary">
-                              {alloc.flow_teu.toFixed(1)}
+                              {(alloc.flow_teu * rangeDays).toLocaleString(undefined, {
+                                maximumFractionDigits: 1,
+                              })}
                             </td>
                             <td className="py-2.5 text-right font-mono text-light-text-secondary dark:text-dark-text-secondary">
-                              ${alloc.total_cost.toLocaleString()}
+                              ${Math.round(alloc.total_cost * rangeDays).toLocaleString()}
                             </td>
                           </tr>
                         );

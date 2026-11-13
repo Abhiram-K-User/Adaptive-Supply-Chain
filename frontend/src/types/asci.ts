@@ -9,7 +9,7 @@ export type DisruptionEventType =
   | "TRADE_POLICY"
   | "PLANT_OUTAGE";
 
-export type EventStatus = "NEW" | "UPDATED" | "RETRACTED" | "EXPIRED";
+export type EventStatus = "NEW" | "UPDATED" | "MITIGATED" | "RETRACTED" | "EXPIRED";
 
 export type RiskMode = "CVAR" | "EXPECTED_COST" | "DETERMINISTIC";
 
@@ -99,6 +99,8 @@ export interface DisruptionEvent {
   timestamp: string;
   corroboration_count: number;
   confidence: number;
+  applied_plan_id?: string | null;
+  mitigated_at?: string | null;
 }
 
 export interface IngestEventPayload {
@@ -346,6 +348,21 @@ export interface RecordDecisionResponse {
   session_id: string;
   decision: string;
   planner_id: string;
+  indexed_citation_id?: string | null;
+  event_status?: string | null;
+}
+
+export interface MitigateEventPayload {
+  plan_id?: string | null;
+  session_id?: string | null;
+  planner_id?: string;
+  comments?: string;
+}
+
+export interface MitigateEventResponse {
+  event: DisruptionEvent;
+  plan_id?: string | null;
+  decision_id?: number | null;
   indexed_citation_id?: string | null;
 }
 

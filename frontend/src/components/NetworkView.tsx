@@ -16,6 +16,7 @@ import { CorridorMap } from "./CorridorMap";
 import { KpiCard } from "./common/KpiCard";
 import type {
   CanonicalEntity,
+  DisruptionEvent,
   NetworkEdgeSummary,
   PlanResponse,
 } from "../types/asci";
@@ -24,14 +25,18 @@ interface NetworkViewProps {
   entities: CanonicalEntity[];
   baseEdges: NetworkEdgeSummary[];
   planResponse: PlanResponse | null;
+  events?: DisruptionEvent[];
   onSelectEntity?: (entity: CanonicalEntity) => void;
+  onSelectNode?: (nodeId: string) => void;
 }
 
 export function NetworkView({
   entities,
   baseEdges,
   planResponse,
+  events = [],
   onSelectEntity,
+  onSelectNode,
 }: NetworkViewProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedType, setSelectedType] = useState<string>("ALL");
@@ -170,6 +175,11 @@ export function NetworkView({
             baseEdges={baseEdges}
             planNodes={planNodes}
             planEdges={planEdges}
+            events={events}
+            onSelectNode={(id) => {
+              setSelectedNodeId(id);
+              onSelectNode?.(id);
+            }}
           />
         </div>
       </div>
