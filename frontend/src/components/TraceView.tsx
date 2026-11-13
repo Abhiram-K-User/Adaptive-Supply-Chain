@@ -118,6 +118,24 @@ export function TraceView({ planResponse }: TraceViewProps) {
             </div>
           </div>
         </div>
+
+        {traces.length > 0 && (
+          <div className="mt-3 flex flex-wrap items-center gap-1.5 rounded-xl border border-light-border bg-light-surface-subtle px-3 py-2 text-[11px] dark:border-dark-border dark:bg-dark-surface">
+            <span className="font-bold uppercase text-light-text-muted dark:text-dark-text-muted mr-1">
+              Operator Sequence:
+            </span>
+            {traces.map((t, idx) => (
+              <span key={`${t.step_index}-${idx}`} className="inline-flex items-center gap-1">
+                <span className="rounded bg-white px-1.5 py-0.5 font-mono text-[10px] font-semibold text-slate-700 border border-light-border dark:bg-dark-card dark:text-slate-200 dark:border-dark-border">
+                  {t.operator_type}
+                </span>
+                {idx < traces.length - 1 && (
+                  <span className="text-light-text-muted dark:text-dark-text-muted">&rarr;</span>
+                )}
+              </span>
+            ))}
+          </div>
+        )}
       </section>
 
       {/* Timeline Steps */}

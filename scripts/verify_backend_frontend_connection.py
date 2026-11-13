@@ -9,6 +9,7 @@ Verifies that:
 
 from __future__ import annotations
 
+import re
 import sys
 from pathlib import Path
 
@@ -20,8 +21,10 @@ if str(root_dir) not in sys.path:
 if str(src_dir) not in sys.path:
     sys.path.insert(0, str(src_dir))
 
-from starlette.testclient import TestClient
-from backend.app.main import app
+from starlette.testclient import TestClient  # noqa: E402
+
+from backend.app.main import app  # noqa: E402
+
 
 def run_checks():
     client = TestClient(app)
@@ -36,7 +39,6 @@ def run_checks():
     print(f"[OK] GET / -> 200 OK (Served React index.html, {len(res_root.text)} bytes)")
 
     # 2. Extract asset references and verify static serving
-    import re
     asset_matches = re.findall(r'/assets/[a-zA-Z0-9_\-\.]+', res_root.text)
     assert len(asset_matches) >= 2, f"Expected at least CSS and JS assets, found: {asset_matches}"
     for asset_path in asset_matches:
@@ -102,7 +104,7 @@ def run_checks():
         },
     )
     assert res_decision.status_code == 201
-    print(f"[OK] POST /decisions -> 201 Created (Recorded operator APPROVE into Decision Memory)")
+    print("[OK] POST /decisions -> 201 Created (Recorded operator APPROVE into Decision Memory)")
 
     # 9. Test Operator Traces
     res_traces = client.get(f"/traces/{session_id}")

@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import { TrendAreaChart } from "./charts/Charts";
 import { KpiCard } from "./common/KpiCard";
+import { OutcomesMonitoringPlaceholderView } from "./OutcomesMonitoringPlaceholderView";
 import type { CanonicalEntity, PlanResponse } from "../types/asci";
 
 interface ForecastingViewProps {
@@ -17,6 +18,7 @@ interface ForecastingViewProps {
 }
 
 export function ForecastingView({
+  entities,
   planResponse,
 }: ForecastingViewProps) {
   const [selectedCommodity, setSelectedCommodity] = useState<string>("ALL");
@@ -27,24 +29,30 @@ export function ForecastingView({
   const dash = planResponse?.dashboard ?? null;
   const lineStopForecast = dash?.line_stop_forecast ?? [];
 
-  // Generate 14-day historical vs predicted demand trend
+  // Generate historical vs predicted demand trend driven by selectedWindow
   const forecastTrendData = useMemo(() => {
-    const days = [
-      "D-6",
-      "D-5",
-      "D-4",
-      "D-3",
-      "D-2",
-      "D-1",
-      "Today",
-      "D+1",
-      "D+2",
-      "D+3",
-      "D+4",
-      "D+5",
-      "D+6",
-      "D+7",
-    ];
+    const days =
+      selectedWindow === "7d"
+        ? ["D-3", "D-2", "D-1", "Today", "D+1", "D+2", "D+3"]
+        : selectedWindow === "30d"
+        ? ["D-15", "D-12", "D-9", "D-6", "D-3", "Today", "D+3", "D+6", "D+9", "D+12", "D+15"]
+        : [
+            "D-6",
+            "D-5",
+            "D-4",
+            "D-3",
+            "D-2",
+            "D-1",
+            "Today",
+            "D+1",
+            "D+2",
+            "D+3",
+            "D+4",
+            "D+5",
+            "D+6",
+            "D+7",
+          ];
+    const todayIdx = days.indexOf("Today");
 
     const baseDemand = 12470;
     const multiplier =
@@ -58,7 +66,7 @@ export function ForecastingView({
 
     return days.map((day, idx) => {
       const historical =
-        idx <= 6
+        idx <= todayIdx
           ? Math.round(
               baseDemand *
                 multiplier *
@@ -73,7 +81,7 @@ export function ForecastingView({
       const predicted = Math.round(
         baseDemand *
           multiplier *
-          (0.98 + (idx > 6 ? (idx - 6) * 0.015 : 0) + Math.cos(idx * 0.5) * 0.03)
+          (0.98 + (idx > todayIdx ? (idx - todayIdx) * 0.015 : 0) + Math.cos(idx * 0.5) * 0.03)
       );
 
       return {
@@ -82,7 +90,7 @@ export function ForecastingView({
         seriesB: historical,
       };
     });
-  }, [selectedCommodity]);
+  }, [selectedCommodity, selectedWindow]);
 
   return (
     <div className="space-y-4">
@@ -391,6 +399,9 @@ export function ForecastingView({
           </div>
         </div>
       </div>
+
+      {/* 4. Loop L1 Realized Outcomes & Recovery Calibration */}
+      <OutcomesMonitoringPlaceholderView entities={entities} />
     </div>
   );
 }

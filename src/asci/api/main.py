@@ -114,6 +114,9 @@ class GeneratePlanRequest(BaseModel):
     propagation_tier: Literal[1, 2] = Field(default=2)
     enable_llm: bool = Field(default=False)
     llm_provider: Literal["auto", "groq", "gemini", "openai", "ollama", "deterministic"] | None = None
+    controller_mode: Literal["rule_router", "learned_mlp", "always_full", "fixed_rag", "no_rag"] = Field(
+        default="rule_router"
+    )
 
 
 class PlanResponse(BaseModel):
@@ -144,6 +147,7 @@ class RecordDecisionResponse(BaseModel):
     session_id: str
     decision: str
     planner_id: str
+    indexed_citation_id: str | None = None
 
 
 class WhatIfRequest(BaseModel):
@@ -221,7 +225,10 @@ def create_app(
     stage_a = StageAEventPerception(registry=registry)
     stage_b = StageBCorridorRisk(graph_store=graph_store, registry=registry)
     stage_c = StageCController(
-        vector_store=vector_store, timeseries_store=timeseries_store, registry=registry
+        vector_store=vector_store,
+        timeseries_store=timeseries_store,
+        registry=registry,
+        decision_store=decision_store,
     )
     stage_d = StageDOptimiserAndVerifier(registry=registry, graph_store=graph_store)
     briefing_gen = PlanBriefingGenerator(llm_client=active_llm_client, registry=registry)
@@ -534,6 +541,7 @@ def create_app(
             network_scale=resolved_scale,  # type: ignore[arg-type]
             enable_llm=req.enable_llm,
             llm_provider=req.llm_provider,
+            controller_mode=req.controller_mode,
         )
         rng = random.Random(cfg.random_seed)
 
@@ -600,12 +608,33 @@ def create_app(
             comments=req.comments,
             modifications=req.modifications,
         )
+
+        indexed_citation_id: str | None = None
+        if req.decision in ("APPROVE", "EDIT"):
+            plan_meta = decision_store.get_plan_metadata(req.plan_id)
+            linked_event = (
+                event_store.get_event(plan_meta["event_id"])
+                if plan_meta and plan_meta.get("event_id")
+                else None
+            )
+            if linked_event is not None:
+                indexed_doc = vector_store.index_validated_decision_playbook(
+                    event=linked_event,
+                    plan=plan,
+                    decision=req.decision,
+                    planner_id=req.planner_id,
+                    comments=req.comments,
+                    modifications=req.modifications,
+                )
+                indexed_citation_id = indexed_doc.citation_id
+
         return RecordDecisionResponse(
             decision_id=dec_id,
             plan_id=req.plan_id,
             session_id=req.session_id,
             decision=req.decision,
             planner_id=req.planner_id,
+            indexed_citation_id=indexed_citation_id,
         )
 
     @api.get("/traces/{session_id}", tags=["Planning"])

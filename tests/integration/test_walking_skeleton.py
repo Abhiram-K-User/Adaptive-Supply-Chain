@@ -47,9 +47,10 @@ def test_walking_skeleton_end_to_end(
     for res in operator_results:
         assert res.success is True, f"Operator {res.operator_type} failed: {res.message}"
 
-    # 2. Verify state status transitioned through to COMPLETED
+    # 2. Verify state status transitioned through to COMPLETED with multi-step Agentic-RAG trace
     assert final_state.status == PipelineStatus.COMPLETED
-    assert final_state.step_count == 5
+    assert final_state.step_count == len(final_state.trace)
+    assert final_state.step_count >= 9
     assert final_state.compute_cost > 0.0
 
     # 3. Verify Stage B graph context
@@ -77,10 +78,12 @@ def test_walking_skeleton_end_to_end(
     assert "edges" in final_state.dashboard_payload.geospatial_network
     assert len(final_state.dashboard_payload.line_stop_forecast) > 0
 
-    # 7. Verify chronological trace logging
-    assert len(final_state.trace) == 5
+    # 7. Verify chronological multi-step Agentic-RAG trace logging
+    assert len(final_state.trace) >= 9
     step_indices = [t.step_index for t in final_state.trace]
-    assert step_indices == [1, 2, 3, 4, 5]
+    assert step_indices == list(range(1, len(final_state.trace) + 1))
+    traced_ops = {t.operator_type.value for t in final_state.trace}
+    assert {"RETRIEVE_TEXT", "GRADE", "RETRIEVE_TS", "RETRIEVE_DECISIONS", "SCENARIOS"}.issubset(traced_ops)
 
 
 def test_walking_skeleton_determinism(
@@ -386,6 +389,6 @@ def test_api_sqlite_file_persistence_across_restarts(tmp_path):
     c2 = TestClient(create_app(data_dir=tmp_path))
     assert c2.get(f"/events/{evt['event_id']}").status_code == 200
     assert c2.get(f"/plans/{plan_id}").status_code == 200
-    assert len(c2.get(f"/traces/{session_id}").json()) == 5
+    assert len(c2.get(f"/traces/{session_id}").json()) >= 9
 
 

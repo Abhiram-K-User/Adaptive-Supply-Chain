@@ -18,7 +18,13 @@ from typing import Any, Protocol
 import numpy as np
 
 from asci.core.registry import CanonicalEntityRegistry, get_canonical_registry
-from asci.core.state import DisruptionEventType, EvidenceItem, TrustTier
+from asci.core.state import (
+    DisruptionEvent,
+    DisruptionEventType,
+    EvidenceItem,
+    MitigationPlan,
+    TrustTier,
+)
 
 try:
     import faiss  # type: ignore
@@ -199,6 +205,19 @@ class SemanticVectorStore:
         safe_doc = doc.model_copy(update=updates) if updates else doc
         vec = self.encoder.encode([self._document_text(safe_doc)])
 
+        existing_idx = next(
+            (i for i, existing in enumerate(self._documents) if existing.citation_id == safe_doc.citation_id),
+            None,
+        )
+        if existing_idx is not None:
+            self._documents[existing_idx] = safe_doc
+            self._vectors[existing_idx] = vec[0]
+            if self._faiss_index is not None:
+                self._faiss_index.reset()
+                if self._vectors.shape[0] > 0:
+                    self._faiss_index.add(self._vectors)
+            return
+
         self._documents.append(safe_doc)
         if self._vectors.shape[0] == 0:
             self._vectors = vec
@@ -207,6 +226,64 @@ class SemanticVectorStore:
 
         if self._faiss_index is not None:
             self._faiss_index.add(vec)
+
+    def index_validated_decision_playbook(
+        self,
+        *,
+        event: DisruptionEvent,
+        plan: MitigationPlan,
+        decision: str,
+        planner_id: str,
+        comments: str = "",
+        modifications: dict[str, Any] | None = None,
+    ) -> EvidenceItem:
+        """
+        Loop L4: Index a human-approved or edited mitigation plan into SemanticVectorStore
+        as a reusable analogue playbook citation (`CIT_L4_DECISION_...`).
+        """
+        norm_decision = decision.strip().upper()
+        suffix = plan.plan_id.split("_")[-1][:8].upper()
+        citation_id = f"CIT_L4_DECISION_{suffix}"
+
+        grounded_entities = [
+            eid
+            for eid in dict.fromkeys([event.primary_entity_id, *event.affected_entity_ids])
+            if self.registry.validate_id(eid)
+        ]
+        primary_ent = self.registry.get(event.primary_entity_id)
+        rail_pct = round(float(plan.mode_split.get("INTERMODAL_RAIL", 0.0)) * 100.0, 1)
+        top_ports = sorted(
+            {a.origin_id for a in plan.allocations[:5] if self.registry.validate_id(a.origin_id)}
+        )
+        mod_note = f" Planner overrides: {json.dumps(modifications)}." if modifications else ""
+        comment_note = f" Notes: {comments.strip()}." if comments.strip() else ""
+
+        snippet = (
+            f"Human-validated Loop L4 analogue playbook ({norm_decision} by {planner_id}) for "
+            f"{event.event_type.value} at {primary_ent.name} ({event.primary_entity_id}): "
+            f"routed freight across {', '.join(top_ports) or event.primary_entity_id} with "
+            f"{rail_pct}% intermodal rail mode share, objective cost ${plan.objective_cost:,.0f}, "
+            f"and {plan.unmet_demand_teu:.1f} TEU unmet demand.{comment_note}{mod_note}"
+        )
+
+        item = EvidenceItem(
+            citation_id=citation_id,
+            source=f"ASCI Loop L4 Verified Decision Memory ({norm_decision})",
+            trust_tier=TrustTier.TIER_A if norm_decision == "APPROVE" else TrustTier.TIER_B,
+            entity_ids=grounded_entities,
+            region=primary_ent.region,
+            hazard_types=[event.event_type],
+            snippet=snippet,
+            publication_date=event.timestamp.strftime("%Y-%m-%d"),
+            supported_claims=[
+                f"{event.primary_entity_id} {event.event_type.value} validated at {rail_pct}% rail mode share.",
+                f"Unmet demand stabilized at {plan.unmet_demand_teu:.1f} TEU under {plan.risk_mode}.",
+            ],
+            relevance_score=0.92,
+            untrusted_quoted=True,
+        )
+        self.add_document(item)
+        return item
 
     def add_documents(self, docs: list[EvidenceItem]) -> None:
         """Batch-index multiple evidence documents."""

@@ -120,6 +120,23 @@ class DecisionTraceStore:
                 return None
             return MitigationPlan.model_validate_json(row["plan_json"])
 
+    def get_plan_metadata(self, plan_id: str) -> dict[str, Any] | None:
+        """Load plan together with its linked event_id, session_id, and status."""
+        with self._get_connection() as conn:
+            row = conn.execute(
+                "SELECT plan_id, session_id, event_id, status, plan_json FROM plans WHERE plan_id = ?",
+                (plan_id,),
+            ).fetchone()
+            if not row:
+                return None
+            return {
+                "plan_id": row["plan_id"],
+                "session_id": row["session_id"],
+                "event_id": row["event_id"],
+                "status": row["status"],
+                "plan": MitigationPlan.model_validate_json(row["plan_json"]),
+            }
+
     def record_trace(self, session_id: str, trace_items: list[OperatorTraceItem]) -> None:
         """Persist execution trace items to SQLite and optional JSONL file."""
         with self._get_connection() as conn:
@@ -212,6 +229,78 @@ class DecisionTraceStore:
                     (limit,),
                 ).fetchall()
             return [dict(r) for r in rows]
+
+    def query_precedent_decisions(
+        self,
+        event_id: str | None = None,
+        entity_id: str | None = None,
+        limit: int = 5,
+    ) -> list[dict[str, Any]]:
+        """
+        Retrieve approved/edited planner decisions matching an event or canonical entity (Loop L2).
+        """
+        with self._get_connection() as conn:
+            rows = conn.execute(
+                """
+                SELECT
+                    hd.decision_id,
+                    hd.plan_id,
+                    hd.session_id,
+                    hd.decision,
+                    hd.planner_id,
+                    hd.comments,
+                    hd.modifications_json,
+                    hd.timestamp,
+                    p.event_id AS linked_event_id,
+                    p.plan_json AS linked_plan_json
+                FROM human_decisions hd
+                LEFT JOIN plans p ON p.plan_id = hd.plan_id
+                WHERE hd.decision IN ('APPROVE', 'EDIT')
+                ORDER BY hd.decision_id DESC
+                LIMIT ?
+                """,
+                (max(limit * 4, 20),),
+            ).fetchall()
+
+        matched: list[dict[str, Any]] = []
+        for row in rows:
+            item = dict(row)
+            try:
+                mods = json.loads(item.get("modifications_json") or "{}")
+            except (TypeError, json.JSONDecodeError):
+                mods = {}
+            linked_event = item.get("linked_event_id")
+            plan_blob = str(item.get("linked_plan_json") or "")
+            comments = str(item.get("comments") or "")
+            mods_text = str(item.get("modifications_json") or "")
+
+            event_match = bool(event_id and linked_event == event_id)
+            entity_match = bool(
+                entity_id
+                and (
+                    entity_id in plan_blob
+                    or entity_id in comments
+                    or entity_id in mods_text
+                )
+            )
+            if (event_id is None and entity_id is None) or event_match or entity_match:
+                matched.append(
+                    {
+                        "decision_id": item["decision_id"],
+                        "plan_id": item["plan_id"],
+                        "session_id": item["session_id"],
+                        "event_id": linked_event,
+                        "decision": item["decision"],
+                        "planner_id": item["planner_id"],
+                        "comments": comments,
+                        "modifications": mods if isinstance(mods, dict) else {},
+                        "timestamp": item["timestamp"],
+                        "exact_event_match": event_match,
+                    }
+                )
+                if len(matched) >= limit:
+                    break
+        return matched
 
     def get_traces_for_session(self, session_id: str) -> list[dict[str, Any]]:
         """Retrieve chronological execution trace for a session."""

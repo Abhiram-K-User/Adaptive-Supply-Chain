@@ -20,6 +20,7 @@ from asci.stages.stage_b_propagate import (
 from asci.stages.stage_c_controller import StageCController
 from asci.stages.stage_d_optimiser import StageDOptimiserAndVerifier
 from asci.stages.stage_e_dashboard import StageEDashboard
+from asci.uskl.decision_store import DecisionTraceStore
 from asci.uskl.graph_store import CorridorGraphStore
 from asci.uskl.timeseries_store import TimeSeriesStore
 from asci.uskl.vector_store import SemanticVectorStore
@@ -67,6 +68,7 @@ class WalkingSkeletonPipeline:
         )
         vector_store = SemanticVectorStore(registry=registry)
         ts_store = TimeSeriesStore(registry=registry)
+        decision_store = DecisionTraceStore()
         prop_op: Tier1PropagationSimulator | Tier2DynamicCongestionSimulator = (
             Tier2DynamicCongestionSimulator(graph_store=graph_store, registry=registry)
             if cfg.propagation_tier >= 2
@@ -79,6 +81,7 @@ class WalkingSkeletonPipeline:
                 vector_store=vector_store,
                 timeseries_store=ts_store,
                 registry=registry,
+                decision_store=decision_store,
             ),
             stage_d=StageDOptimiserAndVerifier(registry=registry, graph_store=graph_store),
             stage_e=StageEDashboard(registry=registry, graph_store=graph_store),

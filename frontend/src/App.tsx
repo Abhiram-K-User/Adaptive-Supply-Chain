@@ -65,6 +65,7 @@ export function App() {
     riskMode: "CVAR",
     propagationTier: 2,
     solverType: "OR_TOOLS",
+    controllerMode: "learned_mlp",
     kHop: 2,
     lambdaBudget: 0.05,
     enableLlm: true,
@@ -108,12 +109,13 @@ export function App() {
           risk_mode: cfg.riskMode,
           propagation_tier: cfg.propagationTier,
           solver_type: cfg.solverType,
+          controller_mode: cfg.controllerMode,
           enable_llm: cfg.enableLlm,
           llm_provider: cfg.llmProvider,
         });
         setPlanResponse(res);
         setStatusBanner({
-          message: `Completed ${res.session_id} (${res.status}) · Verifier: ${
+          message: `Completed ${res.session_id} (${res.status}) · Policy: ${cfg.controllerMode} · Verifier: ${
             res.verification?.overall_verdict ?? "N/A"
           } · Unmet TEU: ${res.plan?.unmet_demand_teu.toFixed(1) ?? "N/A"}`,
           kind: res.verification?.passed ? "ok" : "err",
@@ -279,7 +281,11 @@ export function App() {
         modifications: modifications ?? {},
       });
       setStatusBanner({
-        message: `Decision #${res.decision_id} (${res.decision}) saved to Decision Memory for ${res.plan_id}.`,
+        message:
+          `Decision #${res.decision_id} (${res.decision}) saved to Decision Memory for ${res.plan_id}` +
+          (res.indexed_citation_id
+            ? ` · Indexed Loop L4 Playbook [${res.indexed_citation_id}]`
+            : "."),
         kind: "ok",
       });
     } catch (err) {
@@ -376,7 +382,12 @@ export function App() {
               entities={entities}
               baseEdges={baseEdges}
               planResponse={planResponse}
-              onSelectEntity={() => {}}
+              onSelectEntity={(ent) =>
+                setStatusBanner({
+                  message: `Selected ${ent.name} (${ent.id} · ${ent.entity_type} · ${ent.region})`,
+                  kind: "info",
+                })
+              }
             />
           )}
 
@@ -418,6 +429,10 @@ export function App() {
           {normalizedTab === "optimization" && (
             <OptimizationView
               entities={entities}
+              activeEvent={
+                events.find((e) => e.event_id === selectedEventId) ??
+                pickTopActiveEvent(events)
+              }
               planResponse={planResponse}
               controls={controls}
               onChangeControls={updateControls}

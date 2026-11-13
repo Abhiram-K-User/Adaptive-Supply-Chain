@@ -13,20 +13,20 @@
 ## Executive Progress Summary
 
 ```
-Overall Progress: [=======================>.......] ~73% Complete
-Gates Passed:     Gate G0 [PASSED] | Gate G1 [PASSED] | Gate G2 [PASSED] | Gate G3 [PASSED]
-Gates Remaining:  Gate G4 [IN PROGRESS] | Gate G5 [PENDING FINAL AUDIT]
+Overall Progress: [========================>......] ~77% Complete
+Gates Passed:     Gate G0 [PASSED] | Gate G1 [PASSED] | Gate G2 [PASSED] | Gate G3 [PASSED] | Gate G4 [PASSED]
+Gates Remaining:  Gate G5 [PENDING FINAL AUDIT]
 ```
 
 | Metric / Dimension | Total | Completed (`[x]`) | In Progress / Next (`[ ]`) |
 | :--- | :---: | :---: | :---: |
-| **Phases (1–9)** | 9 | 5 Complete, 2 Active | 2 Long-Term |
-| **All Engineering Tasks** | 65 | 42 | 23 |
-| **M1: Agent Core & RAG Lead** | 15 | 8 | 7 |
+| **Phases (1–9)** | 9 | 6 Complete, 1 Active | 2 Long-Term |
+| **All Engineering Tasks** | 65 | 46 | 19 |
+| **M1: Agent Core & RAG Lead** | 15 | 11 | 4 |
 | **M2: Graph & Optimization Lead** | 14 | 10 | 4 |
 | **M3: Data & Backbone Lead** | 12 | 10 | 2 |
 | **M4: Frontend & Visualization Lead** | 11 | 9 | 2 |
-| **M5: QA, Evaluation & Delivery Lead**| 13 | 5 | 8 |
+| **M5: QA, Evaluation & Delivery Lead**| 13 | 6 | 7 |
 
 ---
 
@@ -118,11 +118,11 @@ The implementation and verification workload is divided across 5 core engineerin
 - [x] **`[M1]` Cross-Encoder Evidence Grading**: Implement `GRADE` operator scoring retrieved vector passages and computing evidence sufficiency ($0.0$ to $1.0$).
 - [x] **`[M1]` Canonical Query Reformulation**: Implement `REWRITE_QUERY` operator expanding failed queries with canonical regional aliases and playbook keywords (enforcing max 2 rewrites).
 - [x] **`[M1]` Grounded RAG Explanation Generator**: Build `src/asci/llm/explainer.py` producing executive briefings citing specific `[CIT_...]` evidence IDs with isolated prompt quoting.
-- [ ] **`[M1]` Dynamic Multi-Step Loop & Decision Memory Retrieval (Task 2B)**: *[NEXT]* Implement `RETRIEVE_DECISIONS` operator querying prior human `APPROVE`/`EDIT` choices from `DecisionTraceStore` and conditioning scenario generation on past precedents (PDF Appendix B loop).
-- [ ] **`[M1]` Oracle Trajectory Generator & Dataset**: Build trajectory simulation harness collecting 1,000+ expert (oracle) state-operator-verdict sequences with regret labels across diverse $\lambda$ settings.
-- [ ] **`[M1]` Learned Masked MLP Controller Policy (Gate G4)**: Train a PyTorch neural policy $\pi_\theta(a \mid S_t)$ predicting optimal operator selection under budget $\lambda$:
+- [x] **`[M1]` Dynamic Multi-Step Loop & Decision Memory Retrieval (Task 2B)**: Implement `RETRIEVE_DECISIONS` operator querying prior human `APPROVE`/`EDIT` choices from `DecisionTraceStore` and conditioning scenario generation on past precedents (PDF Appendix B loop).
+- [x] **`[M1]` Oracle Trajectory Generator & Dataset**: Build `src/asci/policy/oracle.py` trajectory simulation harness collecting 1,000+ expert (oracle) state-operator-verdict sequences with regret labels across diverse $\lambda$ settings.
+- [x] **`[M1]` Learned Masked MLP Controller Policy (Gate G4)**: Train PyTorch `MaskedMLPPolicy` in `src/asci/policy/model.py` and `src/asci/policy/train_mlp_controller.py` predicting optimal operator selection under budget $\lambda$:
   $$\min_\theta \mathcal{L}_{\text{policy}} = -\sum \log \pi_\theta(a^* \mid S_t) + \beta \mathcal{R}_{\text{regret}}$$
-- [ ] **`[M5]` Gate G4 Controller & Citation Audit**: Build validation suite verifying learned policy produces zero masking violations and $\ge 95\%$ citation support across test scenarios.
+- [x] **`[M5]` Gate G4 Controller & Citation Audit**: Build `tests/unit/test_learned_policy.py` verifying learned policy produces zero masking violations and $\ge 95\%$ citation support across test scenarios.
 
 ---
 

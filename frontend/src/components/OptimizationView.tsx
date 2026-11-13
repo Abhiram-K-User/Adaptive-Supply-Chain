@@ -19,9 +19,12 @@ import {
 import { asciApi } from "../api/client";
 import { DonutChart } from "./charts/Charts";
 import { KpiCard } from "./common/KpiCard";
+import { WhatIfPlaceholderView } from "./WhatIfPlaceholderView";
 import type {
   CanonicalEntity,
   DecisionRecord,
+  DisruptionEvent,
+  MitigationPlan,
   PlanResponse,
   RiskMode,
   SolverType,
@@ -30,6 +33,7 @@ import type { PlannerControlsState } from "./EventWorkbench";
 
 interface OptimizationViewProps {
   entities: CanonicalEntity[];
+  activeEvent?: DisruptionEvent | null;
   planResponse: PlanResponse | null;
   controls: PlannerControlsState;
   onChangeControls: (patch: Partial<PlannerControlsState>) => void;
@@ -45,6 +49,7 @@ interface OptimizationViewProps {
 
 export function OptimizationView({
   entities,
+  activeEvent,
   planResponse,
   controls,
   onChangeControls,
@@ -54,12 +59,39 @@ export function OptimizationView({
   onChangePlannerComments,
   busy,
 }: OptimizationViewProps) {
-  const [activeTab, setActiveTab] = useState<"allocations" | "verification" | "edit">(
+  const [activeTab, setActiveTab] = useState<"allocations" | "verification" | "edit" | "whatif">(
     "allocations"
   );
   const [editModJson, setEditModJson] = useState('{"manual_rail_floor_pct": 65}');
   const [decisions, setDecisions] = useState<DecisionRecord[]>([]);
   const [showCvarCompare, setShowCvarCompare] = useState(false);
+  const [detBaselinePlan, setDetBaselinePlan] = useState<MitigationPlan | null>(null);
+  const [detLoading, setDetLoading] = useState(false);
+
+  const handleToggleCvarCompare = async () => {
+    const next = !showCvarCompare;
+    setShowCvarCompare(next);
+    const targetEventId = activeEvent?.event_id ?? planResponse?.event_id;
+    if (next && targetEventId) {
+      setDetLoading(true);
+      try {
+        const res = await asciApi.generatePlan(targetEventId, {
+          lambda_cost_budget: controls.lambdaBudget,
+          k_hop_neighborhood: controls.kHop,
+          risk_mode: "DETERMINISTIC",
+          propagation_tier: controls.propagationTier,
+          solver_type: controls.solverType,
+          controller_mode: controls.controllerMode,
+          enable_llm: false,
+        });
+        setDetBaselinePlan(res.plan ?? null);
+      } catch {
+        setDetBaselinePlan(null);
+      } finally {
+        setDetLoading(false);
+      }
+    }
+  };
 
   const loadDecisions = () => {
     asciApi
@@ -239,6 +271,32 @@ export function OptimizationView({
               </select>
             </div>
 
+            {/* Stage C Agentic-RAG Controller Policy (Gate G4) */}
+            <div>
+              <label className="block text-[11px] font-semibold text-light-text-secondary dark:text-dark-text-secondary mb-1">
+                Stage C Agentic-RAG Controller Policy
+              </label>
+              <select
+                value={controls.controllerMode}
+                onChange={(e) =>
+                  onChangeControls({
+                    controllerMode: e.target.value as PlannerControlsState["controllerMode"],
+                  })
+                }
+                className="w-full rounded-lg border border-light-border bg-light-surface-subtle p-2 text-xs text-light-text-primary focus:outline-none dark:border-dark-border dark:bg-dark-surface dark:text-dark-text-primary"
+              >
+                <option value="learned_mlp">
+                  Learned Masked MLP Policy (Gate G4 PyTorch)
+                </option>
+                <option value="rule_router">
+                  Rule Router (Gate G1 Heuristic Default)
+                </option>
+                <option value="always_full">Always Full RAG (Baseline)</option>
+                <option value="fixed_rag">Fixed RAG (Single Pass Baseline)</option>
+                <option value="no_rag">No RAG (Skip Retrieval Baseline)</option>
+              </select>
+            </div>
+
             {/* Budget Constraint Lambda Slider */}
             <div>
               <div className="flex items-center justify-between text-[11px] mb-1">
@@ -365,37 +423,77 @@ export function OptimizationView({
             <div className="mt-3">
               <button
                 type="button"
-                onClick={() => setShowCvarCompare(!showCvarCompare)}
+                onClick={() => void handleToggleCvarCompare()}
                 className="inline-flex items-center gap-1.5 rounded-lg border border-google-blue/40 bg-blue-50/50 dark:bg-blue-950/30 px-2.5 py-1 text-[11px] font-semibold text-google-blue hover:bg-blue-100/50 dark:hover:bg-blue-950/50 transition"
               >
                 <Scale className="h-3.5 w-3.5" />
-                <span>{showCvarCompare ? "Hide CVaR vs Deterministic Breakdown" : "Compare vs Deterministic Baseline (Task 2A)"}</span>
+                <span>
+                  {detLoading
+                    ? "Solving Deterministic Baseline..."
+                    : showCvarCompare
+                    ? "Hide CVaR vs Deterministic Breakdown"
+                    : "Compare vs Deterministic Baseline (Task 2A)"}
+                </span>
               </button>
 
               {showCvarCompare && (
                 <div className="mt-2.5 rounded-xl border border-light-border dark:border-dark-border bg-light-secondary/40 dark:bg-dark-elevated/40 p-3 text-xs space-y-2">
                   <div className="flex items-center justify-between font-bold text-light-text-primary dark:text-dark-text-primary text-[11px]">
                     <span>Risk-Hedging Benchmark Comparison</span>
-                    <span className="font-mono text-[10px] text-google-blue">CVaR &alpha;=0.90 vs Deterministic</span>
+                    <span className="font-mono text-[10px] text-google-blue">
+                      {detBaselinePlan ? "Live Dual Solve Comparison" : "CVaR α=0.90 vs Deterministic"}
+                    </span>
                   </div>
                   <div className="grid grid-cols-2 gap-2 text-[11px]">
                     <div className="rounded border border-light-border dark:border-dark-border p-2 bg-light-surface dark:bg-dark-surface space-y-1">
                       <div className="font-bold text-light-text-muted dark:text-dark-text-muted text-[10px] uppercase">Deterministic Routing</div>
-                      <div className="flex justify-between"><span className="text-light-text-secondary dark:text-dark-text-secondary">Expected Cost:</span><span className="font-mono font-bold">$348,200</span></div>
-                      <div className="flex justify-between"><span className="text-light-text-secondary dark:text-dark-text-secondary">Worst-Case Tail:</span><span className="font-mono text-google-red font-bold">$1,420,000</span></div>
-                      <div className="flex justify-between"><span className="text-light-text-secondary dark:text-dark-text-secondary">Rail Allocation:</span><span className="font-mono">34.0%</span></div>
-                      <div className="flex justify-between"><span className="text-light-text-secondary dark:text-dark-text-secondary">Line-Stop Vulnerability:</span><span className="font-mono text-google-red font-bold">High (3.2d)</span></div>
+                      <div className="flex justify-between">
+                        <span className="text-light-text-secondary dark:text-dark-text-secondary">Expected Cost:</span>
+                        <span className="font-mono font-bold">
+                          ${(detBaselinePlan?.objective_cost ?? 348200).toLocaleString(undefined, { maximumFractionDigits: 0 })}
+                        </span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-light-text-secondary dark:text-dark-text-secondary">Unmet Demand:</span>
+                        <span className="font-mono font-bold">
+                          {(detBaselinePlan?.unmet_demand_teu ?? 0).toFixed(1)} TEU
+                        </span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-light-text-secondary dark:text-dark-text-secondary">Rail Allocation:</span>
+                        <span className="font-mono">
+                          {detBaselinePlan
+                            ? `${Math.round((detBaselinePlan.mode_split?.INTERMODAL_RAIL ?? 0) * 100)}%`
+                            : "34.0%"}
+                        </span>
+                      </div>
+                      <div className="flex justify-between"><span className="text-light-text-secondary dark:text-dark-text-secondary">Line-Stop Vulnerability:</span><span className="font-mono text-google-red font-bold">Unhedged Tail</span></div>
                     </div>
                     <div className="rounded border border-google-blue/40 p-2 bg-blue-50/20 dark:bg-blue-950/20 space-y-1">
-                      <div className="font-bold text-google-blue text-[10px] uppercase">CVaR Hedged Routing</div>
-                      <div className="flex justify-between"><span className="text-light-text-secondary dark:text-dark-text-secondary">Expected Cost:</span><span className="font-mono font-bold">${plan?.objective_cost.toLocaleString() ?? "392,450"}</span></div>
-                      <div className="flex justify-between"><span className="text-light-text-secondary dark:text-dark-text-secondary">Worst-Case Tail:</span><span className="font-mono text-google-green font-bold">$412,000</span></div>
-                      <div className="flex justify-between"><span className="text-light-text-secondary dark:text-dark-text-secondary">Rail Allocation:</span><span className="font-mono text-google-blue font-bold">{railPct}% (+24% hedge)</span></div>
-                      <div className="flex justify-between"><span className="text-light-text-secondary dark:text-dark-text-secondary">Line-Stop Vulnerability:</span><span className="font-mono text-google-green font-bold">Zero (100% Cleared)</span></div>
+                      <div className="font-bold text-google-blue text-[10px] uppercase">Active ({plan?.risk_mode ?? "CVAR"}) Routing</div>
+                      <div className="flex justify-between">
+                        <span className="text-light-text-secondary dark:text-dark-text-secondary">Objective Cost:</span>
+                        <span className="font-mono font-bold">
+                          ${(plan?.objective_cost ?? 392450).toLocaleString(undefined, { maximumFractionDigits: 0 })}
+                        </span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-light-text-secondary dark:text-dark-text-secondary">CVaR Tail Cost:</span>
+                        <span className="font-mono text-google-green font-bold">
+                          ${(plan?.cvar_cost ?? plan?.objective_cost ?? 412000).toLocaleString(undefined, { maximumFractionDigits: 0 })}
+                        </span>
+                      </div>
+                      <div className="flex justify-between"><span className="text-light-text-secondary dark:text-dark-text-secondary">Rail Allocation:</span><span className="font-mono text-google-blue font-bold">{railPct}%</span></div>
+                      <div className="flex justify-between">
+                        <span className="text-light-text-secondary dark:text-dark-text-secondary">Unmet Demand:</span>
+                        <span className="font-mono text-google-green font-bold">
+                          {(plan?.unmet_demand_teu ?? 0).toFixed(1)} TEU
+                        </span>
+                      </div>
                     </div>
                   </div>
                   <p className="text-[10px] text-light-text-muted dark:text-dark-text-muted italic">
-                    Why CVaR: A +12% nominal cost premium completely eliminates the $18.4M line-stop tail catastrophe during coastal storm surges.
+                    Why CVaR: Two-stage stochastic hedging proactively shifts freight toward multi-homed rail gateways before coastal bottlenecks trigger assembly line stops.
                   </p>
                 </div>
               )}
@@ -462,6 +560,17 @@ export function OptimizationView({
               }`}
             >
               Decision Memory Approval
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveTab("whatif")}
+              className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition ${
+                activeTab === "whatif"
+                  ? "bg-white text-light-text-primary shadow-xs border border-light-border dark:bg-dark-card dark:text-dark-text-primary dark:border-dark-border"
+                  : "text-light-text-muted hover:text-light-text-primary dark:text-dark-text-muted dark:hover:text-dark-text-primary"
+              }`}
+            >
+              What-If Sandbox (POST /whatif)
             </button>
           </div>
 
@@ -702,6 +811,14 @@ export function OptimizationView({
                 )}
               </div>
             </div>
+          )}
+
+          {activeTab === "whatif" && (
+            <WhatIfPlaceholderView
+              entities={entities}
+              activeEvent={activeEvent ?? null}
+              activePlan={planResponse}
+            />
           )}
         </div>
       </div>

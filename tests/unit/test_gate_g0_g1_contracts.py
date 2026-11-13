@@ -186,6 +186,7 @@ def test_gate_g1_api_validation_dual_plan_noncollision_and_jsonl_traces(tmp_path
     trace_file = tmp_path / "traces.jsonl"
     assert trace_file.exists()
     lines = [json.loads(line) for line in trace_file.read_text(encoding="utf-8").splitlines() if line.strip()]
-    assert len(lines) == 10  # 5 steps x 2 sessions
+    assert len(lines) == p1["step_count"] + p2["step_count"]
+    assert len(lines) >= 18  # >= 9 multi-step Agentic-RAG steps x 2 sessions
     assert {row["session_id"] for row in lines} == {p1["session_id"], p2["session_id"]}
 

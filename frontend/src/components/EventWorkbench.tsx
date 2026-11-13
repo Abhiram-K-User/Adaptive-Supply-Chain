@@ -1,6 +1,7 @@
 import { AlertTriangle, Send, ShieldAlert } from "lucide-react";
 import { SCENARIO_PRESETS, type ScenarioPreset } from "../data/presets";
 import type {
+  ControllerMode,
   DisruptionEvent,
   LLMProvider,
   RiskMode,
@@ -16,6 +17,7 @@ export interface PlannerControlsState {
   riskMode: RiskMode;
   propagationTier: 1 | 2;
   solverType: SolverType;
+  controllerMode: ControllerMode;
   kHop: number;
   lambdaBudget: number;
   enableLlm: boolean;
@@ -213,6 +215,25 @@ export function EventWorkbench({
                 <option value="deterministic">Deterministic</option>
               </select>
             </div>
+          </div>
+
+          <div>
+            <label className="mb-1 block text-[11px] font-semibold text-slate-400">
+              Stage C Controller Policy (Agentic-RAG)
+            </label>
+            <select
+              value={controls.controllerMode}
+              onChange={(e) =>
+                onChangeControls({ controllerMode: e.target.value as ControllerMode })
+              }
+              className="w-full rounded-lg border border-line bg-[#090f1d] px-2 py-1.5 text-xs text-slate-100 focus:border-sky-400 focus:outline-none"
+            >
+              <option value="learned_mlp">Learned Masked MLP (Gate G4)</option>
+              <option value="rule_router">Rule Router (Gate G1 Default)</option>
+              <option value="always_full">Always Full RAG (Baseline)</option>
+              <option value="fixed_rag">Fixed RAG (Single Pass)</option>
+              <option value="no_rag">No RAG (Direct Scenarios)</option>
+            </select>
           </div>
 
           <label className="flex cursor-pointer items-center gap-2 rounded-lg border border-line/70 bg-[#0a1122] px-2.5 py-2 text-xs text-slate-200">

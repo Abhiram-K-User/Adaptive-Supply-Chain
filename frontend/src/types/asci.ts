@@ -15,6 +15,13 @@ export type RiskMode = "CVAR" | "EXPECTED_COST" | "DETERMINISTIC";
 
 export type SolverType = "OR_TOOLS" | "NETWORKX";
 
+export type ControllerMode =
+  | "rule_router"
+  | "learned_mlp"
+  | "always_full"
+  | "fixed_rag"
+  | "no_rag";
+
 export type LLMProvider =
   | "auto"
   | "groq"
@@ -162,6 +169,7 @@ export interface GeneratePlanPayload {
   risk_mode: RiskMode;
   cvar_alpha?: number;
   solver_type?: SolverType;
+  controller_mode?: ControllerMode;
   propagation_tier: 1 | 2;
   enable_llm: boolean;
   llm_provider?: LLMProvider | null;
@@ -338,6 +346,7 @@ export interface RecordDecisionResponse {
   session_id: string;
   decision: string;
   planner_id: string;
+  indexed_citation_id?: string | null;
 }
 
 export interface DecisionRecord {

@@ -87,16 +87,47 @@ export function OverviewPage({
     ...(verif?.l3_checks ?? []),
   ];
 
-  // 7-day Demand vs Inflow Trend with dual glowing curves
-  const trendData = [
-    { label: "00:00", seriesA: 11800, seriesB: 12100 },
-    { label: "04:00", seriesA: 12200, seriesB: 12400 },
-    { label: "08:00", seriesA: 12900, seriesB: 12700 },
-    { label: "12:00", seriesA: 12470, seriesB: 12500 },
-    { label: "16:00", seriesA: 13100, seriesB: 13050 },
-    { label: "20:00", seriesA: 12800, seriesB: 12900 },
-    { label: "23:59", seriesA: 13400, seriesB: 13350 },
-  ];
+  // Demand vs Inflow Trend driven by active dateRange selector
+  const trendData = useMemo(() => {
+    if (dateRange === "today") {
+      return [
+        { label: "00:00", seriesA: 11800, seriesB: 12100 },
+        { label: "04:00", seriesA: 12200, seriesB: 12400 },
+        { label: "08:00", seriesA: 12900, seriesB: 12700 },
+        { label: "12:00", seriesA: 12470, seriesB: 12500 },
+        { label: "16:00", seriesA: 13100, seriesB: 13050 },
+        { label: "20:00", seriesA: 12800, seriesB: 12900 },
+        { label: "23:59", seriesA: 13400, seriesB: 13350 },
+      ];
+    }
+    if (dateRange === "30d") {
+      return [
+        { label: "D-30", seriesA: 11200, seriesB: 11350 },
+        { label: "D-25", seriesA: 11650, seriesB: 11500 },
+        { label: "D-20", seriesA: 12100, seriesB: 12050 },
+        { label: "D-15", seriesA: 12400, seriesB: 11900 },
+        { label: "D-10", seriesA: 12850, seriesB: 12700 },
+        { label: "D-5", seriesA: 12600, seriesB: 12650 },
+        { label: "Today", seriesA: 12470, seriesB: 12500 },
+      ];
+    }
+    return [
+      { label: "Mon", seriesA: 12050, seriesB: 12100 },
+      { label: "Tue", seriesA: 12300, seriesB: 12250 },
+      { label: "Wed", seriesA: 12750, seriesB: 12500 },
+      { label: "Thu", seriesA: 12470, seriesB: 12470 },
+      { label: "Fri", seriesA: 12980, seriesB: 12900 },
+      { label: "Sat", seriesA: 12600, seriesB: 12750 },
+      { label: "Today", seriesA: 13120, seriesB: 13080 },
+    ];
+  }, [dateRange]);
+
+  const dateRangeLabel =
+    dateRange === "today"
+      ? "Today (24h)"
+      : dateRange === "30d"
+      ? "30-Day Window"
+      : "7-Day Window";
 
   return (
     <div className="space-y-4">
@@ -342,7 +373,7 @@ export function OverviewPage({
         <div className="flex items-center justify-between border-b border-light-border pb-3 dark:border-dark-border">
           <div>
             <h3 className="text-xs font-bold uppercase tracking-wider text-light-text-primary dark:text-dark-text-primary">
-              24-Hour Corridor Demand vs Delivered Inflow Trajectory
+              {dateRangeLabel} Corridor Demand vs Delivered Inflow Trajectory
             </h3>
             <p className="text-[11px] text-light-text-muted dark:text-dark-text-muted">
               Real-time intake schedule compared against JIT manufacturing buffer draw
