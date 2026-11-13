@@ -104,7 +104,7 @@ The implementation and verification workload is divided across 5 core engineerin
 - [x] **`[M2]` Layer 1 (L1) Ingestion & Grounding Verifier**: Implement schema compliance, canonical ID verification, and minimum source corroboration checks.
 - [x] **`[M2]` Layer 2 (L2) Mathematical Solvency Verifier**: Implement strict flow conservation, edge capacity bounds, and closed-link zero-flow validation.
 - [x] **`[M2]` Layer 3 (L3) Citation Support Verifier**: Enforce ground-truth citation backing for all recommended mitigation actions.
-- [ ] **`[M2]` Layer 3 (L3) Line-Stop Margin & Plan Churn Guard**: *[NEXT]* Add strict threshold check flagging plans where plant buffer drops below 1.5 days despite available network capacity, and restrict flow churn relative to active operations:
+- [x] **`[M2]` Layer 3 (L3) Line-Stop Margin & Plan Churn Guard**: Add strict threshold check flagging plans where plant buffer drops below 1.5 days despite available network capacity, and restrict flow churn relative to active operations:
   $$\sum |x_{ij}^{\text{new}} - x_{ij}^{\text{active}}| \le \Delta_{\text{max}}$$
 - [x] **`[M5]` Gate G3 Plan Fault Mutation Suite (Suite S4)**: Build `tests/unit/test_gate_g3_fault_mutations.py` validating $\ge 99\%$ catch rate across 20+ injected capacity, conservation, and schema faults.
 

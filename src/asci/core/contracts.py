@@ -76,6 +76,21 @@ class PipelineConfig(BaseModel):
     evidence_trust_threshold: float = Field(default=0.5, ge=0.0, le=1.0)
     k_hop_neighborhood: int = Field(default=2, ge=1, le=5)
     max_unmet_demand_ratio: float = Field(default=0.05, ge=0.0, le=1.0)
+    line_stop_margin_days: float = Field(
+        default=1.5,
+        ge=0.0,
+        description="L3 flag when a plant time-to-line-stop falls below this buffer",
+    )
+    max_plan_churn_ratio: float = Field(
+        default=2.0,
+        ge=0.0,
+        description="L3 plan-churn cap as a multiple of active edge flow when no absolute cap is set",
+    )
+    max_plan_churn_teu: float | None = Field(
+        default=None,
+        ge=0.0,
+        description="Absolute L3 cap on sum |x_new - x_active|. Overrides max_plan_churn_ratio when set",
+    )
     seed_registry_path: Path | None = None
     seed_graph_path: Path | None = None
 

@@ -23,6 +23,7 @@ from asci.core.state import (
 from asci.stages.stage_b_graph import StageBCorridorRisk
 from asci.stages.stage_d_optimiser import StageDOptimiserAndVerifier
 from asci.stages.stage_e_dashboard import StageEDashboard
+from asci.uskl.decision_store import DecisionTraceStore
 from asci.uskl.graph_store import CorridorGraphStore
 
 
@@ -235,4 +236,68 @@ def test_l2_catches_demand_conservation_fraud_and_stage_e_preserves_failed_statu
     assert out_cat.candidate_plan.unmet_demand_teu >= 5000.0
     assert out_cat.verification_report is not None
     assert "L3:UNMET_DEMAND_BOUND" in out_cat.verification_report.failed_checks
+
+
+def test_l3_flags_starved_plant_with_spare_capacity_and_plan_churn(
+    registry: CanonicalEntityRegistry,
+    graph_store: CorridorGraphStore,
+    pipeline_config: PipelineConfig,
+):
+    """L3 fails a plan that leaves a sub-1.5d plant short while a path still has residual TEU, and a plan that swings too far from the approved baseline."""
+    optimiser = StageDOptimiserAndVerifier(registry=registry, graph_store=graph_store)
+    analyzed = _prepare_analyzed_state(
+        "PORT_KAMARAJAR", DisruptionEventType.HAZARD_PORT, 0.4, registry, graph_store, pipeline_config
+    )
+    solved, solved_result = optimiser.run(analyzed, pipeline_config, random.Random(42))
+    assert solved_result.success is True
+    assert solved.candidate_plan is not None
+    assert solved.graph_context is not None
+    l3_names = {check.check_name for check in solved.verification_report.l3_checks}  # type: ignore[union-attr]
+    assert "LINE_STOP_SAFETY_THRESHOLD" in l3_names
+    assert "PLAN_CHURN_LIMIT" in l3_names
+
+    plan = solved.candidate_plan
+    dropped = [a for a in plan.allocations if a.destination_id == "PLANT_ORAGADAM"]
+    kept = [a for a in plan.allocations if a.destination_id != "PLANT_ORAGADAM"]
+    dropped_teu = sum(a.flow_teu for a in dropped)
+    assert dropped_teu > 1.0
+    starved_plan = plan.model_copy(
+        update={
+            "plan_id": "PLAN_STARVE_ORAGADAM",
+            "allocations": kept,
+            "unmet_demand_teu": round(plan.unmet_demand_teu + dropped_teu, 4),
+        }
+    )
+    metrics = []
+    for metric in solved.graph_context.line_stop_metrics:
+        if metric.plant_id == "PLANT_ORAGADAM":
+            metrics.append(metric.model_copy(update={"time_to_line_stop_days": 0.4}))
+        else:
+            metrics.append(metric.model_copy(update={"time_to_line_stop_days": 6.0}))
+    starved_state = solved.transition(
+        {
+            "candidate_plan": starved_plan,
+            "graph_context": solved.graph_context.model_copy(update={"line_stop_metrics": metrics}),
+            "status": PipelineStatus.ANALYZED,
+        }
+    )
+    out_starve, _ = optimiser.run(starved_state, pipeline_config, random.Random(42))
+    assert out_starve.verification_report is not None
+    assert "L3:LINE_STOP_SAFETY_THRESHOLD" in out_starve.verification_report.failed_checks
+
+    store = DecisionTraceStore()
+    assert solved.event is not None
+    store.save_plan(plan, solved.session_id, solved.event.event_id, "VERIFIED", solved.verification_report)
+    store.record_human_decision(plan.plan_id, solved.session_id, "APPROVE", "planner")
+    churning = StageDOptimiserAndVerifier(
+        registry=registry, graph_store=graph_store, decision_store=store
+    )
+    tight = pipeline_config.model_copy(update={"max_plan_churn_teu": 1.0})
+    out_churn, _ = churning.run(
+        analyzed.transition({"candidate_plan": starved_plan}),
+        tight,
+        random.Random(42),
+    )
+    assert out_churn.verification_report is not None
+    assert "L3:PLAN_CHURN_LIMIT" in out_churn.verification_report.failed_checks
 

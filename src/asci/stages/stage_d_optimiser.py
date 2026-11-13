@@ -34,6 +34,7 @@ from asci.core.state import (
     VerificationReport,
     VerificationVerdict,
 )
+from asci.uskl.decision_store import DecisionTraceStore
 from asci.uskl.graph_store import CorridorGraphStore
 
 _FLOW_SCALE = 10  # Legacy NetworkX 0.1 TEU integer precision
@@ -116,9 +117,11 @@ class StageDOptimiserAndVerifier:
         self,
         registry: CanonicalEntityRegistry | None = None,
         graph_store: CorridorGraphStore | None = None,
+        decision_store: DecisionTraceStore | None = None,
     ) -> None:
         self.registry = registry or get_canonical_registry()
         self.graph_store = graph_store or CorridorGraphStore.load_from_json(registry=self.registry)
+        self.decision_store = decision_store
 
     def _build_lp_instance(self, state: PipelineState, cfg: PipelineConfig) -> _CorridorLPInstance:
         """Build canonical deterministic optimization snapshot shared by OR-Tools and HiGHS."""
@@ -1178,6 +1181,33 @@ class StageDOptimiserAndVerifier:
             summary=summary,
         )
 
+    def _path_spare_teu(
+        self,
+        path: list[str],
+        edge_flows: dict[tuple[str, str], float],
+        node_multipliers: dict[str, float],
+        edge_multipliers: dict[str, float],
+    ) -> float:
+        """Residual TEU/day on a path after the plan's edge flows. Zero if any hop is closed."""
+        spare = float("inf")
+        for u, v in zip(path, path[1:], strict=False):
+            if node_multipliers.get(u, 1.0) <= 0.0 or node_multipliers.get(v, 1.0) <= 0.0:
+                return 0.0
+            active_edges = self.graph_store.get_active_edges(u, v)
+            if not active_edges:
+                return 0.0
+            nominal = sum(float(attrs.get("capacity_teu_per_day", 0.0)) for _, attrs in active_edges)
+            effective = nominal * edge_multipliers.get(f"{u}->{v}", 1.0)
+            spare = min(spare, max(0.0, effective - edge_flows.get((u, v), 0.0)))
+        return 0.0 if math.isinf(spare) else spare
+
+    def _edge_flows_of(self, plan: MitigationPlan) -> dict[tuple[str, str], float]:
+        flows: dict[tuple[str, str], float] = defaultdict(float)
+        for allocation in plan.allocations:
+            for u, v in zip(allocation.path, allocation.path[1:], strict=False):
+                flows[(u, v)] += allocation.flow_teu
+        return flows
+
     def run(
         self,
         state: PipelineState,
@@ -1631,6 +1661,123 @@ class StageDOptimiserAndVerifier:
                     metrics={"citation_count": len(state.evidence_set)},
                 )
             )
+
+        # A plant under the buffer is a failure only when the plan left its demand short
+        # and some residual path could still have carried that shortfall. Stage B's TTLS
+        # is a delay forecast; unavoidable shortages must not fail an optimal plan.
+        starved: list[str] = []
+        for metric in graph_ctx.line_stop_metrics:
+            if metric.time_to_line_stop_days >= cfg.line_stop_margin_days:
+                continue
+            plant = self.registry.get(metric.plant_id)
+            demand = float(plant.daily_demand_teu or 500.0)
+            shortfall = demand - dest_inflows.get(metric.plant_id, 0.0)
+            if shortfall <= 0.5:
+                continue
+            candidate_paths = [
+                pm.path for pm in graph_ctx.path_metrics if pm.destination_id == metric.plant_id
+            ]
+            if not candidate_paths:
+                for port_id in sorted(port_ids):
+                    candidate_paths.extend(
+                        self.graph_store.find_ranked_paths(port_id, metric.plant_id, max_paths=2, cutoff=6)
+                    )
+            spare = max(
+                (
+                    self._path_spare_teu(
+                        path,
+                        edge_flows,
+                        graph_ctx.node_capacity_multipliers,
+                        graph_ctx.edge_capacity_multipliers,
+                    )
+                    for path in candidate_paths
+                ),
+                default=0.0,
+            )
+            if spare + 1e-4 >= shortfall:
+                starved.append(
+                    f"{metric.plant_id} TTLS {metric.time_to_line_stop_days}d "
+                    f"short {round(shortfall, 1)} TEU with {round(spare, 1)} TEU residual"
+                )
+        if not starved:
+            l3_checks.append(
+                VerificationCheck(
+                    layer="L3",
+                    check_name="LINE_STOP_SAFETY_THRESHOLD",
+                    verdict=VerificationVerdict.PASS,
+                    details=(
+                        f"No plant below {cfg.line_stop_margin_days}d buffer was left short "
+                        "while a residual corridor path could still carry that demand."
+                    ),
+                    metrics={"margin_days": cfg.line_stop_margin_days, "starved_plants": 0},
+                )
+            )
+        else:
+            l3_checks.append(
+                VerificationCheck(
+                    layer="L3",
+                    check_name="LINE_STOP_SAFETY_THRESHOLD",
+                    verdict=VerificationVerdict.FAIL,
+                    details="; ".join(starved[:3]),
+                    metrics={"margin_days": cfg.line_stop_margin_days, "starved_plants": len(starved)},
+                )
+            )
+            failed_checks.append("L3:LINE_STOP_SAFETY_THRESHOLD")
+
+        active_plan: MitigationPlan | None = None
+        if self.decision_store is not None:
+            active_plan = self.decision_store.latest_active_plan(event.event_id)
+        if active_plan is not None and active_plan.plan_id == candidate_plan.plan_id:
+            active_plan = None
+        if active_plan is None:
+            l3_checks.append(
+                VerificationCheck(
+                    layer="L3",
+                    check_name="PLAN_CHURN_LIMIT",
+                    verdict=VerificationVerdict.PASS,
+                    details="No approved or edited plan is active for this event.",
+                    metrics={"churn_teu": 0.0},
+                )
+            )
+        else:
+            active_flows = self._edge_flows_of(active_plan)
+            new_flows = self._edge_flows_of(candidate_plan)
+            churn = sum(
+                abs(new_flows.get(edge, 0.0) - active_flows.get(edge, 0.0))
+                for edge in set(active_flows) | set(new_flows)
+            )
+            active_volume = sum(active_flows.values())
+            if cfg.max_plan_churn_teu is not None:
+                delta_max = cfg.max_plan_churn_teu
+            else:
+                delta_max = cfg.max_plan_churn_ratio * active_volume
+            if churn <= delta_max + 1e-4:
+                l3_checks.append(
+                    VerificationCheck(
+                        layer="L3",
+                        check_name="PLAN_CHURN_LIMIT",
+                        verdict=VerificationVerdict.PASS,
+                        details=(
+                            f"Edge-flow churn {round(churn, 1)} TEU is within "
+                            f"Δ_max {round(delta_max, 1)} TEU of the active plan."
+                        ),
+                        metrics={"churn_teu": round(churn, 2), "delta_max_teu": round(delta_max, 2)},
+                    )
+                )
+            else:
+                l3_checks.append(
+                    VerificationCheck(
+                        layer="L3",
+                        check_name="PLAN_CHURN_LIMIT",
+                        verdict=VerificationVerdict.FAIL,
+                        details=(
+                            f"Edge-flow churn {round(churn, 1)} TEU exceeds "
+                            f"Δ_max {round(delta_max, 1)} TEU against active plan {active_plan.plan_id}."
+                        ),
+                        metrics={"churn_teu": round(churn, 2), "delta_max_teu": round(delta_max, 2)},
+                    )
+                )
+                failed_checks.append("L3:PLAN_CHURN_LIMIT")
 
         overall_pass = len(failed_checks) == 0
         overall_verdict = VerificationVerdict.PASS if overall_pass else VerificationVerdict.FAIL
