@@ -7,8 +7,9 @@ when vessel calls drop significantly below calibrated port baselines.
 from __future__ import annotations
 
 import csv
+import math
 import os
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from typing import Any
 
@@ -25,14 +26,18 @@ PORTWATCH_ARCGIS_URL = (
 )
 _PORTWATCH_NAME_TO_ID: dict[str, str] = {
     "chennai": "PORT_CHENNAI",
+    "chennai (madras)": "PORT_CHENNAI",
     "ennore": "PORT_KAMARAJAR",
     "kamarajar": "PORT_KAMARAJAR",
+    "kamarajar port": "PORT_KAMARAJAR",
     "kattupalli": "PORT_KATTUPALLI",
     "krishnapatnam": "PORT_KRISHNAPATNAM",
+    "krishnapatnam port": "PORT_KRISHNAPATNAM",
     "tuticorin": "PORT_VOC",
     "cochin": "PORT_COCHIN",
     "kochi": "PORT_COCHIN",
-    "mangalore": "PORT_NMPT",
+    "kochi (chochin)": "PORT_COCHIN",
+    "new mangalore": "PORT_NEW_MANGALORE",
 }
 
 
@@ -94,9 +99,11 @@ class PortWatchAnomalyDetector:
         resp = httpx.get(
             self.api_url,
             params={
-                "where": "portname IN ('Chennai','Ennore','Tuticorin','Cochin','Krishnapatnam')",
-                "outFields": "portname,date,portcalls,import_cargo,export_cargo",
-                "resultRecordCount": "35",
+                "where": "portid IN ('port235','port534','port1331','port583','port599','port811') "
+                f"AND date >= timestamp '{(datetime.now(UTC) - timedelta(days=45)).strftime('%Y-%m-%d')} 00:00:00'",
+                "outFields": "portname,date,portcalls",
+                "orderByFields": "date DESC,portname ASC",
+                "resultRecordCount": "1000",
                 "f": "json",
             },
             headers={"User-Agent": "ASCI-Control-Tower/2.0"},
@@ -104,12 +111,18 @@ class PortWatchAnomalyDetector:
         )
         resp.raise_for_status()
         payload: dict[str, Any] = resp.json()
+        if not isinstance(payload, dict) or not isinstance(payload.get("features"), list):
+            raise ValueError("PortWatch response must contain a feature list")
         if "error" in payload:
             raise ValueError(f"PortWatch API error: {payload['error']}")
+        if payload.get("exceededTransferLimit"):
+            raise ValueError("PortWatch response truncated; narrow the date window")
 
         observations: list[PortObservation] = []
         for feat in payload.get("features", []):
             attrs = feat.get("attributes", {}) if isinstance(feat, dict) else {}
+            if not isinstance(attrs, dict):
+                continue
             pname = str(attrs.get("portname") or "").strip().lower()
             entity_id = _PORTWATCH_NAME_TO_ID.get(pname)
             if not entity_id or not self.registry.validate_id(entity_id):
@@ -126,21 +139,23 @@ class PortWatchAnomalyDetector:
                 continue
 
             calls = float(attrs.get("portcalls") or 0.0)
-            teu_approx = float(attrs.get("import_cargo") or 0.0) + float(
-                attrs.get("export_cargo") or 0.0
-            )
+            if not math.isfinite(calls) or calls < 0:
+                raise ValueError("PortWatch returned invalid vessel calls")
+            # PortWatch cargo fields are metric tonnes, not TEU. Do not convert
+            # or present them as measured container throughput. The TEU field is
+            # explicitly unavailable here, rather than a false zero throughput.
             observations.append(
                 PortObservation(
                     entity_id=entity_id,
                     obs_date=obs_date,
                     vessel_calls=calls,
-                    teu_volume=max(0.0, teu_approx),
-                    source="IMF_PORTWATCH_LIVE",
+                    teu_volume=None,
+                    source="IMF_PORTWATCH_LIVE_VESSEL_CALLS_ONLY",
                 )
             )
         return observations
 
-    def fetch(self, use_fallback: bool = True) -> list[RawSignal]:
+    def fetch(self, use_fallback: bool = True, *, allow_fallback: bool = True) -> list[RawSignal]:
         """Ingest live or fallback PortWatch observations and emit anomaly signals."""
         observations: list[PortObservation] = []
         self.last_error = None
@@ -157,6 +172,11 @@ class PortWatchAnomalyDetector:
                 observations = []
 
         if not observations:
+            if not use_fallback and not allow_fallback:
+                self.last_fetch_mode = "unavailable"
+                self.last_observation_count = 0
+                self.last_fetched_at = datetime.now(UTC).isoformat()
+                return []
             self.last_fetch_mode = "fallback"
             observations = self.load_csv_observations()
 
@@ -187,7 +207,7 @@ class PortWatchAnomalyDetector:
         body = (
             f"IMF PortWatch AIS monitoring flagged an abrupt arrival contraction at {entity.name} "
             f"({anomaly.entity_id}) on {anomaly.obs_date}: observed {anomaly.observed_calls} vessel calls "
-            f"({anomaly.observed_teu} TEU) compared to rolling baseline {anomaly.baseline_calls} calls "
+            f"compared to rolling baseline {anomaly.baseline_calls} calls "
             f"(z-score {anomaly.z_score})."
         )
 

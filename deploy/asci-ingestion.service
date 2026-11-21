@@ -1,0 +1,21 @@
+[Unit]
+Description=ASCI GDACS and PortWatch ingestion worker
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=asci
+WorkingDirectory=/opt/asci
+EnvironmentFile=-/etc/asci/ingestion.env
+ExecStart=/opt/asci/.venv/bin/python scripts/run_ingestion_daemon.py --data-dir /var/lib/asci --scale v1_corridor --interval 60
+Restart=on-failure
+RestartSec=10
+TimeoutStopSec=45
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/lib/asci
+
+[Install]
+WantedBy=multi-user.target

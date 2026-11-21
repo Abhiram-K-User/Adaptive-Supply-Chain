@@ -9,6 +9,8 @@ from __future__ import annotations
 
 import json
 import sqlite3
+import threading
+from contextlib import contextmanager
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from typing import Any
@@ -29,10 +31,28 @@ class SQLiteEventStore:
         self.registry = registry or get_canonical_registry()
         self._conn = sqlite3.connect(self.db_path, check_same_thread=False)
         self._conn.row_factory = sqlite3.Row
+        self._lock = threading.RLock()
+        self._transaction_depth = 0
         self._init_db()
 
-    def _get_connection(self) -> sqlite3.Connection:
-        return self._conn
+    @contextmanager
+    def _get_connection(self):
+        """Serialize shared callers and commit only at the outer transaction boundary."""
+        with self._lock:
+            outer = self._transaction_depth == 0
+            self._transaction_depth += 1
+            try:
+                if outer:
+                    self._conn.execute("BEGIN IMMEDIATE")
+                yield self._conn
+                if outer:
+                    self._conn.commit()
+            except BaseException:
+                if outer:
+                    self._conn.rollback()
+                raise
+            finally:
+                self._transaction_depth -= 1
 
     def _init_db(self) -> None:
         with self._get_connection() as conn:
@@ -80,7 +100,6 @@ class SQLiteEventStore:
                 conn.execute(
                     "ALTER TABLE disruption_events ADD COLUMN mitigated_at TEXT DEFAULT NULL"
                 )
-            conn.commit()
 
     def _validate_event_entities(self, event: DisruptionEvent) -> None:
         if not self.registry.validate_id(event.primary_entity_id):
@@ -127,9 +146,15 @@ class SQLiteEventStore:
                     event.mitigated_at.isoformat() if event.mitigated_at else None,
                 ),
             )
-            conn.commit()
 
     def upsert_with_corroboration(
+        self, event: DisruptionEvent, force_activate: bool = False
+    ) -> DisruptionEvent:
+        """Atomically merge a bulletin with the current event across threads/processes."""
+        with self._get_connection():
+            return self._merge_with_corroboration(event, force_activate)
+
+    def _merge_with_corroboration(
         self, event: DisruptionEvent, force_activate: bool = False
     ) -> DisruptionEvent:
         """
@@ -220,7 +245,6 @@ class SQLiteEventStore:
                 "UPDATE disruption_events SET status = ? WHERE event_id = ?",
                 (status.value, event_id),
             )
-            conn.commit()
             return cur.rowcount > 0
 
     def retract_event(self, event_id: str) -> bool:
@@ -241,7 +265,6 @@ class SQLiteEventStore:
                 """,
                 (EventStatus.MITIGATED.value, plan_id, now_iso, event_id),
             )
-            conn.commit()
             if cur.rowcount == 0:
                 return None
         return self.get_event(event_id)
@@ -257,7 +280,6 @@ class SQLiteEventStore:
                 """,
                 (EventStatus.UPDATED.value, event_id),
             )
-            conn.commit()
             if cur.rowcount == 0:
                 return None
         return self.get_event(event_id)

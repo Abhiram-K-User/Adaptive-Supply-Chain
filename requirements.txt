@@ -3,7 +3,8 @@ pydantic>=2.7.0,<3.0.0
 networkx>=3.2.0,<4.0.0
 numpy>=1.26.0,<3.0.0
 ortools>=9.10.0
-scipy>=1.13.0
+scipy>=1.15.3
+torch>=2.12.1
 
 # API & Serving
 fastapi>=0.110.0

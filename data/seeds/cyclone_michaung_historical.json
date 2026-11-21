@@ -1,0 +1,1010 @@
+{
+  "source": "IMF PortWatch daily AIS estimates",
+  "source_url": "https://services9.arcgis.com/weJ1QsnbMYJlCHdG/arcgis/rest/services/Daily_Ports_Data/FeatureServer/0/query?where=portid%20IN%20%28%27port235%27%2C%27port534%27%29%20AND%20date%20%3E%3D%20DATE%20%272023-11-01%27%20AND%20date%20%3C%3D%20DATE%20%272023-12-15%27&outFields=portid%2Cportname%2Cdate%2Cportcalls%2Cportcalls_container%2Cimport_container%2Cexport_container&f=json&resultRecordCount=2000&orderByFields=date%2Cportid",
+  "retrieved_at": "2026-11-21T05:42:06.255708+00:00",
+  "raw_response_sha256": "d87f6917931e5faf914f1946557550f496fd7909711f27c1503945af23ae648f",
+  "observations_sha256": "38efd99c0515393d46ad6936e7726912a2b4bf44d0fbeb3aaed1e3d6509ec8ba",
+  "entity_mapping": {
+    "port235": "PORT_CHENNAI",
+    "port534": "PORT_KAMARAJAR"
+  },
+  "event_source_url": "https://internal.imd.gov.in/press_release/20231204_pr_2671.pdf",
+  "forecast_origin": "2023-12-03",
+  "units": {
+    "portcalls": "vessel calls/day",
+    "import_container": "metric tonnes/day",
+    "export_container": "metric tonnes/day"
+  },
+  "features": [
+    {
+      "attributes": {
+        "portid": "port235",
+        "portname": "Chennai (Madras)",
+        "date": "2023-11-01",
+        "portcalls": 6,
+        "portcalls_container": 3,
+        "import_container": 377,
+        "export_container": 9380
+      }
+    },
+    {
+      "attributes": {
+        "portid": "port534",
+        "portname": "Kamarajar Port",
+        "date": "2023-11-01",
+        "portcalls": 3,
+        "portcalls_container": 1,
+        "import_container": 0,
+        "export_container": 0
+      }
+    },
+    {
+      "attributes": {
+        "portid": "port235",
+        "portname": "Chennai (Madras)",
+        "date": "2023-11-02",
+        "portcalls": 5,
+        "portcalls_container": 2,
+        "import_container": 38968,
+        "export_container": 730
+      }
+    },
+    {
+      "attributes": {
+        "portid": "port534",
+        "portname": "Kamarajar Port",
+        "date": "2023-11-02",
+        "portcalls": 0,
+        "portcalls_container": 0,
+        "import_container": 0,
+        "export_container": 0
+      }
+    },
+    {
+      "attributes": {
+        "portid": "port235",
+        "portname": "Chennai (Madras)",
+        "date": "2023-11-03",
+        "portcalls": 7,
+        "portcalls_container": 3,
+        "import_container": 31455,
+        "export_container": 0
+      }
+    },
+    {
+      "attributes": {
+        "portid": "port534",
+        "portname": "Kamarajar Port",
+        "date": "2023-11-03",
+        "portcalls": 1,
+        "portcalls_container": 0,
+        "import_container": 0,
+        "export_container": 0
+      }
+    },
+    {
+      "attributes": {
+        "portid": "port235",
+        "portname": "Chennai (Madras)",
+        "date": "2023-11-04",
+        "portcalls": 2,
+        "portcalls_container": 0,
+        "import_container": 0,
+        "export_container": 0
+      }
+    },
+    {
+      "attributes": {
+        "portid": "port534",
+        "portname": "Kamarajar Port",
+        "date": "2023-11-04",
+        "portcalls": 2,
+        "portcalls_container": 1,
+        "import_container": 5143,
+        "export_container": 0
+      }
+    },
+    {
+      "attributes": {
+        "portid": "port235",
+        "portname": "Chennai (Madras)",
+        "date": "2023-11-05",
+        "portcalls": 6,
+        "portcalls_container": 1,
+        "import_container": 0,
+        "export_container": 2841
+      }
+    },
+    {
+      "attributes": {
+        "portid": "port534",
+        "portname": "Kamarajar Port",
+        "date": "2023-11-05",
+        "portcalls": 3,
+        "portcalls_container": 0,
+        "import_container": 0,
+        "export_container": 0
+      }
+    },
+    {
+      "attributes": {
+        "portid": "port235",
+        "portname": "Chennai (Madras)",
+        "date": "2023-11-06",
+        "portcalls": 4,
+        "portcalls_container": 1,
+        "import_container": 10939,
+        "export_container": 0
+      }
+    },
+    {
+      "attributes": {
+        "portid": "port534",
+        "portname": "Kamarajar Port",
+        "date": "2023-11-06",
+        "portcalls": 1,
+        "portcalls_container": 1,
+        "import_container": 0,
+        "export_container": 7865
+      }
+    },
+    {
+      "attributes": {
+        "portid": "port235",
+        "portname": "Chennai (Madras)",
+        "date": "2023-11-07",
+        "portcalls": 0,
+        "portcalls_container": 0,
+        "import_container": 0,
+        "export_container": 0
+      }
+    },
+    {
+      "attributes": {
+        "portid": "port534",
+        "portname": "Kamarajar Port",
+        "date": "2023-11-07",
+        "portcalls": 2,
+        "portcalls_container": 0,
+        "import_container": 0,
+        "export_container": 0
+      }
+    },
+    {
+      "attributes": {
+        "portid": "port235",
+        "portname": "Chennai (Madras)",
+        "date": "2023-11-08",
+        "portcalls": 6,
+        "portcalls_container": 3,
+        "import_container": 32125,
+        "export_container": 1834
+      }
+    },
+    {
+      "attributes": {
+        "portid": "port534",
+        "portname": "Kamarajar Port",
+        "date": "2023-11-08",
+        "portcalls": 1,
+        "portcalls_container": 0,
+        "import_container": 0,
+        "export_container": 0
+      }
+    },
+    {
+      "attributes": {
+        "portid": "port235",
+        "portname": "Chennai (Madras)",
+        "date": "2023-11-09",
+        "portcalls": 0,
+        "portcalls_container": 0,
+        "import_container": 0,
+        "export_container": 0
+      }
+    },
+    {
+      "attributes": {
+        "portid": "port534",
+        "portname": "Kamarajar Port",
+        "date": "2023-11-09",
+        "portcalls": 1,
+        "portcalls_container": 1,
+        "import_container": 0,
+        "export_container": 7158
+      }
+    },
+    {
+      "attributes": {
+        "portid": "port235",
+        "portname": "Chennai (Madras)",
+        "date": "2023-11-10",
+        "portcalls": 4,
+        "portcalls_container": 2,
+        "import_container": 25728,
+        "export_container": 0
+      }
+    },
+    {
+      "attributes": {
+        "portid": "port534",
+        "portname": "Kamarajar Port",
+        "date": "2023-11-10",
+        "portcalls": 3,
+        "portcalls_container": 1,
+        "import_container": 0,
+        "export_container": 5639
+      }
+    },
+    {
+      "attributes": {
+        "portid": "port235",
+        "portname": "Chennai (Madras)",
+        "date": "2023-11-11",
+        "portcalls": 3,
+        "portcalls_container": 0,
+        "import_container": 0,
+        "export_container": 0
+      }
+    },
+    {
+      "attributes": {
+        "portid": "port534",
+        "portname": "Kamarajar Port",
+        "date": "2023-11-11",
+        "portcalls": 1,
+        "portcalls_container": 1,
+        "import_container": 3617,
+        "export_container": 0
+      }
+    },
+    {
+      "attributes": {
+        "portid": "port235",
+        "portname": "Chennai (Madras)",
+        "date": "2023-11-12",
+        "portcalls": 5,
+        "portcalls_container": 1,
+        "import_container": 502,
+        "export_container": 0
+      }
+    },
+    {
+      "attributes": {
+        "portid": "port534",
+        "portname": "Kamarajar Port",
+        "date": "2023-11-12",
+        "portcalls": 3,
+        "portcalls_container": 1,
+        "import_container": 16018,
+        "export_container": 0
+      }
+    },
+    {
+      "attributes": {
+        "portid": "port235",
+        "portname": "Chennai (Madras)",
+        "date": "2023-11-13",
+        "portcalls": 5,
+        "portcalls_container": 3,
+        "import_container": 21645,
+        "export_container": 1691
+      }
+    },
+    {
+      "attributes": {
+        "portid": "port534",
+        "portname": "Kamarajar Port",
+        "date": "2023-11-13",
+        "portcalls": 2,
+        "portcalls_container": 1,
+        "import_container": 0,
+        "export_container": 1069
+      }
+    },
+    {
+      "attributes": {
+        "portid": "port235",
+        "portname": "Chennai (Madras)",
+        "date": "2023-11-14",
+        "portcalls": 7,
+        "portcalls_container": 1,
+        "import_container": 991,
+        "export_container": 0
+      }
+    },
+    {
+      "attributes": {
+        "portid": "port534",
+        "portname": "Kamarajar Port",
+        "date": "2023-11-14",
+        "portcalls": 5,
+        "portcalls_container": 0,
+        "import_container": 0,
+        "export_container": 0
+      }
+    },
+    {
+      "attributes": {
+        "portid": "port235",
+        "portname": "Chennai (Madras)",
+        "date": "2023-11-15",
+        "portcalls": 5,
+        "portcalls_container": 1,
+        "import_container": 17516,
+        "export_container": 0
+      }
+    },
+    {
+      "attributes": {
+        "portid": "port534",
+        "portname": "Kamarajar Port",
+        "date": "2023-11-15",
+        "portcalls": 1,
+        "portcalls_container": 1,
+        "import_container": 0,
+        "export_container": 4715
+      }
+    },
+    {
+      "attributes": {
+        "portid": "port235",
+        "portname": "Chennai (Madras)",
+        "date": "2023-11-16",
+        "portcalls": 5,
+        "portcalls_container": 2,
+        "import_container": 25893,
+        "export_container": 1017
+      }
+    },
+    {
+      "attributes": {
+        "portid": "port534",
+        "portname": "Kamarajar Port",
+        "date": "2023-11-16",
+        "portcalls": 2,
+        "portcalls_container": 1,
+        "import_container": 10352,
+        "export_container": 0
+      }
+    },
+    {
+      "attributes": {
+        "portid": "port235",
+        "portname": "Chennai (Madras)",
+        "date": "2023-11-17",
+        "portcalls": 6,
+        "portcalls_container": 3,
+        "import_container": 29202,
+        "export_container": 730
+      }
+    },
+    {
+      "attributes": {
+        "portid": "port534",
+        "portname": "Kamarajar Port",
+        "date": "2023-11-17",
+        "portcalls": 3,
+        "portcalls_container": 0,
+        "import_container": 0,
+        "export_container": 0
+      }
+    },
+    {
+      "attributes": {
+        "portid": "port235",
+        "portname": "Chennai (Madras)",
+        "date": "2023-11-18",
+        "portcalls": 7,
+        "portcalls_container": 2,
+        "import_container": 16345,
+        "export_container": 1458
+      }
+    },
+    {
+      "attributes": {
+        "portid": "port534",
+        "portname": "Kamarajar Port",
+        "date": "2023-11-18",
+        "portcalls": 2,
+        "portcalls_container": 1,
+        "import_container": 3107,
+        "export_container": 0
+      }
+    },
+    {
+      "attributes": {
+        "portid": "port235",
+        "portname": "Chennai (Madras)",
+        "date": "2023-11-19",
+        "portcalls": 6,
+        "portcalls_container": 4,
+        "import_container": 24451,
+        "export_container": 730
+      }
+    },
+    {
+      "attributes": {
+        "portid": "port534",
+        "portname": "Kamarajar Port",
+        "date": "2023-11-19",
+        "portcalls": 1,
+        "portcalls_container": 0,
+        "import_container": 0,
+        "export_container": 0
+      }
+    },
+    {
+      "attributes": {
+        "portid": "port235",
+        "portname": "Chennai (Madras)",
+        "date": "2023-11-20",
+        "portcalls": 5,
+        "portcalls_container": 0,
+        "import_container": 0,
+        "export_container": 0
+      }
+    },
+    {
+      "attributes": {
+        "portid": "port534",
+        "portname": "Kamarajar Port",
+        "date": "2023-11-20",
+        "portcalls": 2,
+        "portcalls_container": 0,
+        "import_container": 0,
+        "export_container": 0
+      }
+    },
+    {
+      "attributes": {
+        "portid": "port235",
+        "portname": "Chennai (Madras)",
+        "date": "2023-11-21",
+        "portcalls": 5,
+        "portcalls_container": 0,
+        "import_container": 0,
+        "export_container": 0
+      }
+    },
+    {
+      "attributes": {
+        "portid": "port534",
+        "portname": "Kamarajar Port",
+        "date": "2023-11-21",
+        "portcalls": 3,
+        "portcalls_container": 1,
+        "import_container": 17436,
+        "export_container": 0
+      }
+    },
+    {
+      "attributes": {
+        "portid": "port235",
+        "portname": "Chennai (Madras)",
+        "date": "2023-11-22",
+        "portcalls": 6,
+        "portcalls_container": 2,
+        "import_container": 28011,
+        "export_container": 0
+      }
+    },
+    {
+      "attributes": {
+        "portid": "port534",
+        "portname": "Kamarajar Port",
+        "date": "2023-11-22",
+        "portcalls": 2,
+        "portcalls_container": 1,
+        "import_container": 4224,
+        "export_container": 3585
+      }
+    },
+    {
+      "attributes": {
+        "portid": "port235",
+        "portname": "Chennai (Madras)",
+        "date": "2023-11-23",
+        "portcalls": 4,
+        "portcalls_container": 2,
+        "import_container": 12424,
+        "export_container": 6254
+      }
+    },
+    {
+      "attributes": {
+        "portid": "port534",
+        "portname": "Kamarajar Port",
+        "date": "2023-11-23",
+        "portcalls": 4,
+        "portcalls_container": 0,
+        "import_container": 0,
+        "export_container": 0
+      }
+    },
+    {
+      "attributes": {
+        "portid": "port235",
+        "portname": "Chennai (Madras)",
+        "date": "2023-11-24",
+        "portcalls": 3,
+        "portcalls_container": 2,
+        "import_container": 27838,
+        "export_container": 0
+      }
+    },
+    {
+      "attributes": {
+        "portid": "port534",
+        "portname": "Kamarajar Port",
+        "date": "2023-11-24",
+        "portcalls": 2,
+        "portcalls_container": 1,
+        "import_container": 11406,
+        "export_container": 0
+      }
+    },
+    {
+      "attributes": {
+        "portid": "port235",
+        "portname": "Chennai (Madras)",
+        "date": "2023-11-25",
+        "portcalls": 2,
+        "portcalls_container": 0,
+        "import_container": 0,
+        "export_container": 0
+      }
+    },
+    {
+      "attributes": {
+        "portid": "port534",
+        "portname": "Kamarajar Port",
+        "date": "2023-11-25",
+        "portcalls": 2,
+        "portcalls_container": 1,
+        "import_container": 0,
+        "export_container": 7778
+      }
+    },
+    {
+      "attributes": {
+        "portid": "port235",
+        "portname": "Chennai (Madras)",
+        "date": "2023-11-26",
+        "portcalls": 5,
+        "portcalls_container": 2,
+        "import_container": 25406,
+        "export_container": 0
+      }
+    },
+    {
+      "attributes": {
+        "portid": "port534",
+        "portname": "Kamarajar Port",
+        "date": "2023-11-26",
+        "portcalls": 2,
+        "portcalls_container": 0,
+        "import_container": 0,
+        "export_container": 0
+      }
+    },
+    {
+      "attributes": {
+        "portid": "port235",
+        "portname": "Chennai (Madras)",
+        "date": "2023-11-27",
+        "portcalls": 3,
+        "portcalls_container": 2,
+        "import_container": 25,
+        "export_container": 15408
+      }
+    },
+    {
+      "attributes": {
+        "portid": "port534",
+        "portname": "Kamarajar Port",
+        "date": "2023-11-27",
+        "portcalls": 2,
+        "portcalls_container": 1,
+        "import_container": 0,
+        "export_container": 11671
+      }
+    },
+    {
+      "attributes": {
+        "portid": "port235",
+        "portname": "Chennai (Madras)",
+        "date": "2023-11-28",
+        "portcalls": 7,
+        "portcalls_container": 2,
+        "import_container": 28792,
+        "export_container": 0
+      }
+    },
+    {
+      "attributes": {
+        "portid": "port534",
+        "portname": "Kamarajar Port",
+        "date": "2023-11-28",
+        "portcalls": 2,
+        "portcalls_container": 0,
+        "import_container": 0,
+        "export_container": 0
+      }
+    },
+    {
+      "attributes": {
+        "portid": "port235",
+        "portname": "Chennai (Madras)",
+        "date": "2023-11-29",
+        "portcalls": 4,
+        "portcalls_container": 3,
+        "import_container": 22807,
+        "export_container": 1215
+      }
+    },
+    {
+      "attributes": {
+        "portid": "port534",
+        "portname": "Kamarajar Port",
+        "date": "2023-11-29",
+        "portcalls": 0,
+        "portcalls_container": 0,
+        "import_container": 0,
+        "export_container": 0
+      }
+    },
+    {
+      "attributes": {
+        "portid": "port235",
+        "portname": "Chennai (Madras)",
+        "date": "2023-11-30",
+        "portcalls": 3,
+        "portcalls_container": 1,
+        "import_container": 30107,
+        "export_container": 0
+      }
+    },
+    {
+      "attributes": {
+        "portid": "port534",
+        "portname": "Kamarajar Port",
+        "date": "2023-11-30",
+        "portcalls": 1,
+        "portcalls_container": 1,
+        "import_container": 4224,
+        "export_container": 3585
+      }
+    },
+    {
+      "attributes": {
+        "portid": "port235",
+        "portname": "Chennai (Madras)",
+        "date": "2023-12-01",
+        "portcalls": 4,
+        "portcalls_container": 1,
+        "import_container": 11712,
+        "export_container": 0
+      }
+    },
+    {
+      "attributes": {
+        "portid": "port534",
+        "portname": "Kamarajar Port",
+        "date": "2023-12-01",
+        "portcalls": 3,
+        "portcalls_container": 0,
+        "import_container": 0,
+        "export_container": 0
+      }
+    },
+    {
+      "attributes": {
+        "portid": "port235",
+        "portname": "Chennai (Madras)",
+        "date": "2023-12-02",
+        "portcalls": 4,
+        "portcalls_container": 1,
+        "import_container": 2008,
+        "export_container": 0
+      }
+    },
+    {
+      "attributes": {
+        "portid": "port534",
+        "portname": "Kamarajar Port",
+        "date": "2023-12-02",
+        "portcalls": 4,
+        "portcalls_container": 1,
+        "import_container": 4224,
+        "export_container": 3585
+      }
+    },
+    {
+      "attributes": {
+        "portid": "port235",
+        "portname": "Chennai (Madras)",
+        "date": "2023-12-03",
+        "portcalls": 2,
+        "portcalls_container": 1,
+        "import_container": 10228,
+        "export_container": 0
+      }
+    },
+    {
+      "attributes": {
+        "portid": "port534",
+        "portname": "Kamarajar Port",
+        "date": "2023-12-03",
+        "portcalls": 0,
+        "portcalls_container": 0,
+        "import_container": 0,
+        "export_container": 0
+      }
+    },
+    {
+      "attributes": {
+        "portid": "port235",
+        "portname": "Chennai (Madras)",
+        "date": "2023-12-04",
+        "portcalls": 0,
+        "portcalls_container": 0,
+        "import_container": 0,
+        "export_container": 0
+      }
+    },
+    {
+      "attributes": {
+        "portid": "port534",
+        "portname": "Kamarajar Port",
+        "date": "2023-12-04",
+        "portcalls": 0,
+        "portcalls_container": 0,
+        "import_container": 0,
+        "export_container": 0
+      }
+    },
+    {
+      "attributes": {
+        "portid": "port235",
+        "portname": "Chennai (Madras)",
+        "date": "2023-12-05",
+        "portcalls": 0,
+        "portcalls_container": 0,
+        "import_container": 0,
+        "export_container": 0
+      }
+    },
+    {
+      "attributes": {
+        "portid": "port534",
+        "portname": "Kamarajar Port",
+        "date": "2023-12-05",
+        "portcalls": 0,
+        "portcalls_container": 0,
+        "import_container": 0,
+        "export_container": 0
+      }
+    },
+    {
+      "attributes": {
+        "portid": "port235",
+        "portname": "Chennai (Madras)",
+        "date": "2023-12-06",
+        "portcalls": 1,
+        "portcalls_container": 0,
+        "import_container": 0,
+        "export_container": 0
+      }
+    },
+    {
+      "attributes": {
+        "portid": "port534",
+        "portname": "Kamarajar Port",
+        "date": "2023-12-06",
+        "portcalls": 2,
+        "portcalls_container": 0,
+        "import_container": 0,
+        "export_container": 0
+      }
+    },
+    {
+      "attributes": {
+        "portid": "port235",
+        "portname": "Chennai (Madras)",
+        "date": "2023-12-07",
+        "portcalls": 2,
+        "portcalls_container": 0,
+        "import_container": 0,
+        "export_container": 0
+      }
+    },
+    {
+      "attributes": {
+        "portid": "port534",
+        "portname": "Kamarajar Port",
+        "date": "2023-12-07",
+        "portcalls": 1,
+        "portcalls_container": 0,
+        "import_container": 0,
+        "export_container": 0
+      }
+    },
+    {
+      "attributes": {
+        "portid": "port235",
+        "portname": "Chennai (Madras)",
+        "date": "2023-12-08",
+        "portcalls": 5,
+        "portcalls_container": 1,
+        "import_container": 4263,
+        "export_container": 0
+      }
+    },
+    {
+      "attributes": {
+        "portid": "port534",
+        "portname": "Kamarajar Port",
+        "date": "2023-12-08",
+        "portcalls": 1,
+        "portcalls_container": 0,
+        "import_container": 0,
+        "export_container": 0
+      }
+    },
+    {
+      "attributes": {
+        "portid": "port235",
+        "portname": "Chennai (Madras)",
+        "date": "2023-12-09",
+        "portcalls": 3,
+        "portcalls_container": 1,
+        "import_container": 3468,
+        "export_container": 0
+      }
+    },
+    {
+      "attributes": {
+        "portid": "port534",
+        "portname": "Kamarajar Port",
+        "date": "2023-12-09",
+        "portcalls": 4,
+        "portcalls_container": 2,
+        "import_container": 11406,
+        "export_container": 4778
+      }
+    },
+    {
+      "attributes": {
+        "portid": "port235",
+        "portname": "Chennai (Madras)",
+        "date": "2023-12-10",
+        "portcalls": 5,
+        "portcalls_container": 4,
+        "import_container": 13111,
+        "export_container": 1747
+      }
+    },
+    {
+      "attributes": {
+        "portid": "port534",
+        "portname": "Kamarajar Port",
+        "date": "2023-12-10",
+        "portcalls": 3,
+        "portcalls_container": 0,
+        "import_container": 0,
+        "export_container": 0
+      }
+    },
+    {
+      "attributes": {
+        "portid": "port235",
+        "portname": "Chennai (Madras)",
+        "date": "2023-12-11",
+        "portcalls": 4,
+        "portcalls_container": 2,
+        "import_container": 37671,
+        "export_container": 0
+      }
+    },
+    {
+      "attributes": {
+        "portid": "port534",
+        "portname": "Kamarajar Port",
+        "date": "2023-12-11",
+        "portcalls": 3,
+        "portcalls_container": 2,
+        "import_container": 9361,
+        "export_container": 3585
+      }
+    },
+    {
+      "attributes": {
+        "portid": "port235",
+        "portname": "Chennai (Madras)",
+        "date": "2023-12-12",
+        "portcalls": 4,
+        "portcalls_container": 1,
+        "import_container": 1005,
+        "export_container": 0
+      }
+    },
+    {
+      "attributes": {
+        "portid": "port534",
+        "portname": "Kamarajar Port",
+        "date": "2023-12-12",
+        "portcalls": 1,
+        "portcalls_container": 0,
+        "import_container": 0,
+        "export_container": 0
+      }
+    },
+    {
+      "attributes": {
+        "portid": "port235",
+        "portname": "Chennai (Madras)",
+        "date": "2023-12-13",
+        "portcalls": 7,
+        "portcalls_container": 5,
+        "import_container": 76269,
+        "export_container": 0
+      }
+    },
+    {
+      "attributes": {
+        "portid": "port534",
+        "portname": "Kamarajar Port",
+        "date": "2023-12-13",
+        "portcalls": 2,
+        "portcalls_container": 0,
+        "import_container": 0,
+        "export_container": 0
+      }
+    },
+    {
+      "attributes": {
+        "portid": "port235",
+        "portname": "Chennai (Madras)",
+        "date": "2023-12-14",
+        "portcalls": 2,
+        "portcalls_container": 2,
+        "import_container": 17534,
+        "export_container": 0
+      }
+    },
+    {
+      "attributes": {
+        "portid": "port534",
+        "portname": "Kamarajar Port",
+        "date": "2023-12-14",
+        "portcalls": 1,
+        "portcalls_container": 0,
+        "import_container": 0,
+        "export_container": 0
+      }
+    },
+    {
+      "attributes": {
+        "portid": "port235",
+        "portname": "Chennai (Madras)",
+        "date": "2023-12-15",
+        "portcalls": 6,
+        "portcalls_container": 4,
+        "import_container": 55462,
+        "export_container": 730
+      }
+    },
+    {
+      "attributes": {
+        "portid": "port534",
+        "portname": "Kamarajar Port",
+        "date": "2023-12-15",
+        "portcalls": 3,
+        "portcalls_container": 1,
+        "import_container": 4224,
+        "export_container": 3585
+      }
+    }
+  ]
+}

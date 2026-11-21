@@ -66,6 +66,9 @@ async function requestJson<T>(path: string, init?: RequestInit): Promise<T> {
 }
 
 export const asciApi = {
+  getPhase8Evaluation: () => requestJson<Phase8Evaluation>("/evaluations/phase8"),
+  getAblationReport: (study: number, scale: string) =>
+    requestJson<Record<string, unknown>>(`/evaluations/phase8/${study}/${encodeURIComponent(scale)}`),
   getHealth: () => requestJson<HealthResponse>("/health"),
 
   getLlmStatus: (provider?: string) =>
@@ -177,4 +180,23 @@ export const asciApi = {
       body: JSON.stringify(payload),
     }),
 };
+
+export interface EvaluationStudy {
+  study: number;
+  network_scale: string;
+  completed: boolean;
+  targets: Record<string, boolean>;
+  summary: Record<string, Record<string, unknown>>;
+  adaptive_metrics?: Record<string, {compute_savings: number | null; auroc: number | null; ece: number; targets: Record<string, boolean>}> | null;
+  limitations: string[];
+  report_sha256: string;
+}
+
+export interface Phase8Evaluation {
+  phase: number;
+  completed: boolean;
+  network_scales: string[];
+  selected_studies: number[];
+  studies: EvaluationStudy[];
+}
 

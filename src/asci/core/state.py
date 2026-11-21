@@ -286,6 +286,7 @@ class OperatorTraceItem(BaseModel):
     duration_ms: float = Field(ge=0.0)
     cost: float = Field(ge=0.0)
     seed: int
+    metrics: dict[str, Any] = Field(default_factory=dict)
     timestamp: datetime = Field(default_factory=lambda: datetime.now(UTC))
 
 

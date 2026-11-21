@@ -8,8 +8,10 @@ from __future__ import annotations
 
 import json
 import sqlite3
+from contextlib import contextmanager
 from datetime import UTC, datetime
 from pathlib import Path
+from threading import RLock
 from typing import Any
 
 from asci.core.state import MitigationPlan, OperatorTraceItem, VerificationReport
@@ -26,6 +28,7 @@ class DecisionTraceStore:
         jsonl_trace_path: str | Path | None = None,
     ) -> None:
         self.db_path = str(db_path)
+        self._lock = RLock()
         self.jsonl_trace_path = Path(jsonl_trace_path) if jsonl_trace_path else None
         if self.db_path != ":memory:":
             Path(self.db_path).parent.mkdir(parents=True, exist_ok=True)
@@ -33,8 +36,12 @@ class DecisionTraceStore:
         self._conn.row_factory = sqlite3.Row
         self._init_db()
 
-    def _get_connection(self) -> sqlite3.Connection:
-        return self._conn
+    @contextmanager
+    def _get_connection(self):
+        # A shared SQLite connection needs transaction-level serialization when
+        # concurrent planning requests stream traces and read human decisions.
+        with self._lock, self._conn:
+            yield self._conn
 
     def _init_db(self) -> None:
         with self._get_connection() as conn:
@@ -79,6 +86,9 @@ class DecisionTraceStore:
                 )
                 """
             )
+            columns = {r["name"] for r in conn.execute("PRAGMA table_info(operator_traces)")}
+            if "payload_json" not in columns:
+                conn.execute("ALTER TABLE operator_traces ADD COLUMN payload_json TEXT")
             conn.commit()
 
     def save_plan(
@@ -144,8 +154,8 @@ class DecisionTraceStore:
                 conn.execute(
                     """
                     INSERT INTO operator_traces (
-                        session_id, step_index, operator_type, duration_ms, cost, seed, timestamp
-                    ) VALUES (?, ?, ?, ?, ?, ?, ?)
+                        session_id, step_index, operator_type, duration_ms, cost, seed, timestamp, payload_json
+                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
                     """,
                     (
                         session_id,
@@ -155,6 +165,7 @@ class DecisionTraceStore:
                         item.cost,
                         item.seed,
                         item.timestamp.isoformat(),
+                        item.model_dump_json(),
                     ),
                 )
             conn.commit()
@@ -327,4 +338,12 @@ class DecisionTraceStore:
                 "SELECT * FROM operator_traces WHERE session_id = ? ORDER BY step_index ASC",
                 (session_id,),
             ).fetchall()
-            return [dict(r) for r in rows]
+            return [
+                {"session_id": r["session_id"], **json.loads(r["payload_json"])}
+                if r["payload_json"] else {
+                    **{k: v for k, v in dict(r).items() if k != "payload_json"},
+                    "input_summary": "Unavailable in legacy trace", "output_summary": "Unavailable in legacy trace",
+                    "metrics": {},
+                }
+                for r in rows
+            ]

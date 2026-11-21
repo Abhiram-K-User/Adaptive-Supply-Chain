@@ -13,20 +13,24 @@
 ## Executive Progress Summary
 
 ```
-Overall Progress: [========================>......] ~77% Complete
+Overall Progress: [========================.] 96% Complete (72/75 checklist tasks)
 Gates Passed:     Gate G0 [PASSED] | Gate G1 [PASSED] | Gate G2 [PASSED] | Gate G3 [PASSED] | Gate G4 [PASSED]
 Gates Remaining:  Gate G5 [PENDING FINAL AUDIT]
 ```
 
 | Metric / Dimension | Total | Completed (`[x]`) | In Progress / Next (`[ ]`) |
 | :--- | :---: | :---: | :---: |
-| **Phases (1–9)** | 9 | 6 Complete, 1 Active | 2 Long-Term |
-| **All Engineering Tasks** | 65 | 47 | 18 |
-| **M1: Agent Core & RAG Lead** | 15 | 11 | 4 |
-| **M2: Graph & Optimization Lead** | 14 | 10 | 4 |
-| **M3: Data & Backbone Lead** | 12 | 11 | 1 |
-| **M4: Frontend & Visualization Lead** | 11 | 9 | 2 |
-| **M5: QA, Evaluation & Delivery Lead**| 13 | 6 | 7 |
+| **Phases (1–9)** | 9 | 8 Complete | 1 Remaining |
+| **All Engineering Tasks** | 75 | 72 | 3 |
+| **M1: Agent Core & RAG Lead** | 17 | 17 | 0 |
+| **M2: Graph & Optimization Lead** | 16 | 16 | 0 |
+| **M3: Data & Backbone Lead** | 20 | 20 | 0 |
+| **M4: Frontend & Visualization Lead** | 9 | 8 | 1 |
+| **M5: QA, Evaluation & Delivery Lead**| 26 | 23 | 3 |
+
+Owner counts include shared tasks and therefore overlap. Counts above are recalculated from the actual checklist, correcting the previous stale 65-task summary.
+
+**Phase 8 complete and handed off — 21 November 2026:** Suites S1–S6, all nine ablations on both scales, the standing ingestion worker and measured-results UI are implemented and verified. Final regression: **197 passed**. Exhaustive S1: **255 cases**, 100% reproducibility, zero L1/L2 breaches and full-corridor P95 **369.07 ms**. S2: **140/140 snapshots passed**. All **18 ablation reports** passed integrity checks, and control/risk replay reproduced the original real-provider collection. Chromium verified both scales, target outcomes, JSON downloads, dark/light selected-tab contrast and zero JavaScript page errors. SciPy's upstream HiGHS performance regression was resolved by requiring **SciPy >=1.15.3**, retaining the original two-second S1 test limit. An initial Windows native diagnostic did not recur in five concurrent episode/restart cycles (15 episodes) or the clean final regression rerun; evidence is retained in `local_data/review`. Research target misses remain explicitly reported. The application is running at **http://127.0.0.1:5173/**; our implementation scope ends here; the team owns the three remaining Phase 9 tasks.
 
 ---
 
@@ -140,7 +144,7 @@ The implementation and verification workload is divided across 5 core engineerin
 - [x] **`[M4]` Loop L2 Decision Audit Log UI**: Build `frontend/src/components/OptimizationView.tsx` embedding human approval actions and the live decision memory audit log table.
 - [x] **`[M4]` Risk Hedging Comparison Card**: Build expandable *Deterministic vs. CVaR* card in `OptimizationView.tsx` demonstrating tail-risk protection.
 - [x] **`[M1 & M3]` Loop L4: Validated Event Playbook Ingestion**: Implemented `index_validated_decision_playbook()` in `SemanticVectorStore` wired to `POST /decisions` (`APPROVE`/`EDIT`) and `POST /events/{id}/mitigate` (plus `POST /events/{id}/reopen`, `MITIGATED` event lifecycle, and `NodeDetailDrawer.tsx` node-click inspection).
-- [ ] **`[M4]` Operator Trace Deep-Dive Visualizer**: *[NEXT]* Enhance `TraceView.tsx` to visualize step-by-step cost vs. information gain trade-offs and query rewrites in real time.
+- [x] **`[M4]` Operator Trace Deep-Dive Visualizer**: Added cumulative operator cost chart, measured evidence-sufficiency points, step inspection, query/rewrite details and live trace refresh in `TraceView.tsx`. Backend persists full trace telemetry incrementally, including across restarts. Verified by `tests/unit/test_trace_telemetry.py`, production frontend build and Chromium interaction checks (chart, query/grade inspection, refresh toggle). Sufficiency is labelled as coverage rather than probability of correctness.
 
 ---
 
@@ -148,23 +152,25 @@ The implementation and verification workload is divided across 5 core engineerin
 *Focus: Empirical verification of thesis targets (40% compute reduction, 15% CVaR regret reduction, 99% fault catch, 95% citation grounding) across PDF Section 11.*
 
 - [x] **`[M5]` Suite S1: Single-Event Core Benchmark**: Build `src/asci/benchmarks/suite_s1.py` and `scripts/run_suite_s1.py` running statistical tests across all 23 anchor entities and both graph scales (`v0_core`, `v1_corridor`).
-- [ ] **`[M5]` Suite S2: Cascading Multi-Day Event Timelines**: *[NEXT]* Build `src/asci/benchmarks/suite_s2.py` simulating multi-day compound disruptions with sequential event updates, escalations, and weather retractions.
-- [ ] **`[M5]` Suite S3: Adversarial Robustness & Red-Team Audit**: *[NEXT]* Build `src/asci/benchmarks/suite_s3.py` injecting false news bulletins, prompt injection payloads, and corrupt vector chunks to verify $0\%$ graph state contamination.
+- [x] **`[M5]` Suite S2: Cascading Multi-Day Event Timelines**: Completed `src/asci/benchmarks/suite_s2.py` and `scripts/run_suite_s2.py`: seeded diverse cases or validated JSON inputs, daily remaining-duration planning, bounded independent joint scenarios, complete trace/cost accounting, lifecycle/revision/expiry checks, full numerical fingerprints, and atomic JSON reports with nonzero failure exits. Verified `--days 7 --cases 10 --scale both`: **140/140 snapshots passed**, 100% reproducibility and zero L1/L2 breaches. **15 focused tests passed**, including both-scale eight-day recovery, joint probabilities, invalid input, custom cases, failure exits and report integrity. Per-event congestion/TTLS composition and physical shortage handling are explicitly documented; no interacting-queue simulation is claimed.
+- [x] **`[M5]` Suite S3: Adversarial Robustness & Red-Team Audit**: Implemented `src/asci/benchmarks/suite_s3.py`; paired article injections, forged entity IDs, poisoned/stale vector chunks and corrupt metadata all caught in the bounded corpus, with zero canonical graph mutation. Verified by `tests/integration/test_suite_s3_adversarial.py`. Plausible false-news truth detection still requires external corroboration; this audit does not claim otherwise.
 - [x] **`[M5]` Suite S4: Plan Fault Mutation Harness**: Build and verify `tests/unit/test_gate_g3_fault_mutations.py` across 20+ edge capacity, flow conservation, and destination delivery mutations.
-- [ ] **`[M5]` Suite S5: Live Demonstration Episodes**: Build replayable end-to-end streaming scenario test harness verifying multi-event concurrent processing.
-- [ ] **`[M5 & M3]` Suite S6: Historical Backtest (Cyclone Michaung)**: *[NEXT]* Build `src/asci/benchmarks/suite_s6.py` replaying documented December 2023 Cyclone Michaung data against real historical IMF PortWatch AIS volume drops.
-- [ ] **`[M2 & M5]` Ablation Study 1 (Graph Analysis)**: Evaluate *No graph* vs. *$k$-hop exposure graph* on affected-path recall and exposure error.
-- [ ] **`[M1 & M5]` Ablation Study 2 (Retrieval Value)**: Evaluate *No-RAG* vs. *Fixed-RAG* vs. *Agentic-RAG* on regret-at-equal-cost frontier ($\le 1.5\times$ cost target).
-- [ ] **`[M1 & M5]` Ablation Study 3 (Retrieval Modalities)**: Evaluate *Text-only* vs. *Graph-aware* vs. *Graph + Time-Series* on Recall@5 and context precision.
-- [ ] **`[M1 & M5]` Ablation Study 4 (Explanation Grounding)**: Evaluate explanation claims *With* vs. *Without* citation checks targeting $\ge 95\%$ support rate.
-- [ ] **`[M1 & M5]` Ablation Study 5 (Sufficiency Gate Calibration)**: Evaluate *Gate* vs. *Fixed number of retrievals* on steps-to-answer and calibration error.
-- [ ] **`[M1 & M5]` Ablation Study 6 (Adaptive Control Compute Savings)**: Evaluate *Always-full* vs. *Rule router* vs. *LLM planner* vs. *Learned MLP controller* targeting $\ge 40\%$ compute cost savings, $\text{AUROC} \ge 0.80$, and $\text{ECE} \le 0.08$.
-- [ ] **`[M2 & M5]` Ablation Study 7 (Propagation Engines)**: Evaluate *Hop-decay* vs. *Dynamic load simulator* (vs. GNN surrogate) on Recall@10, error, and runtime.
-- [ ] **`[M2 & M5]` Ablation Study 8 (Scenario Planning & CVaR)**: Evaluate *Single-state deterministic* vs. *Scenario-aware CVaR* on tail regret, unmet demand, and line-stops (targeting $\ge 15\%$ tail regret reduction).
-- [ ] **`[M3 & M5]` Ablation Study 9 (Real-Event PortWatch Alignment)**: Evaluate qualitative agreement, lead time, and rank correlation of predicted port impact vs. observed PortWatch AIS series.
-- [ ] **`[M3]` Autonomous Background Ingestion Daemon**: Implement standing OS-level daemon / background service for polling GDACS and PortWatch feeds with webhook alerts.
+- [x] **`[M5]` Suite S5: Live Demonstration Episodes**: Implemented `src/asci/benchmarks/suite_s5.py`; concurrent Michaung, Kamarajar strike and Ranipet flood API episodes, incremental trace persistence, citation inspection, approval, What-If, outcomes, mitigation/reopening and persistence after restart. Verified by `tests/integration/test_suite_s5_episodes.py` and `tests/unit/test_trace_telemetry.py`. Fixed the shared decision-store SQLite transaction race exposed by concurrent planning.
+- [x] **`[M5 & M3]` Suite S6: Historical Backtest (Cyclone Michaung)**: Implemented configurable offline replay, validated provenance/checksum and date coverage, frozen pre-event baseline and forecast assumptions, CLI and atomic reports. Both graph scales passed 26 forecast observations each; four focused tests passed, including future-observation leakage checks. Mean absolute normalized activity error: 0.3729. Vessel activity is a proxy, and the seed recovery prior has no independent training provenance; this is retrospective alignment, not a validated ex-ante forecast. Report: `local_data/review/suite_s6_report.json`.
+- [x] **`[M2 & M5]` Ablation Study 1 (Graph Analysis)**: Evaluated no-graph and two-hop exposure analysis on paired seeded cases at both scales; independent bottleneck arithmetic scores affected-path recall and exposure loss against the declared five-hop dynamic reference. Both-scale tests and measured reports verified; the reference is simulated traffic, not observed ground truth.
+- [x] **`[M1 & M5]` Ablation Study 2 (Retrieval Value)**: Evaluated real no-RAG, fixed-RAG and agentic rollouts on both scales, with held-out regret against independently verified hindsight optima, measured Pareto frontiers and matched-allowance comparisons. Full paired replay verified. Agentic/no-RAG operator cost ratio was **5.333**, so the **1.5x cost target was not met**; no interpolated matches or passing outcomes are invented.
+- [x] **`[M1 & M5]` Ablation Study 3 (Retrieval Modalities)**: Evaluated text-only, graph-aware and graph plus time-series retrieval on independently labelled planted analogues. Both-scale runs verified Recall@5 of 0.50 / 0.625 / 1.00 respectively, with raw IDs, context precision and bootstrap intervals retained. This is controlled synthetic retrieval, not independently human-labelled production relevance.
+- [x] **`[M1 & M5]` Ablation Study 4 (Explanation Grounding)**: Evaluated current citation-ID checks against no checks on supported claims and independent mutations. Invalid citation IDs are removed, but unsupported prose survives even with valid IDs. The 95% claim-support target is NOT met in this bounded stress corpus (25% support); this evaluation does not mistake citation validity for entailment or estimate live-model prevalence.
+- [x] **`[M1 & M5]` Ablation Study 5 (Sufficiency Gate Calibration)**: Evaluated independent, executed gated and fixed-retrieval episodes, counting retrieval, recovery lookup, rewrite and grading steps. Reports compare top-ranked analogue correctness with the raw sufficiency heuristic through ECE; the score is not presented as a calibrated probability. Both-scale integration tests and reports verified.
+- [x] **`[M1 & M5]` Ablation Study 6 (Adaptive Control Compute Savings)**: Evaluated always-full, rule, genuine cached LLM planner and learned MLP rollouts on both scales, with independent held-out deeper-analysis benefit labels, event-clustered bootstrap intervals, policy hashes and original planner latency/call provenance. Learned operator cost savings were **54.68% / 54.39%** at comparable mean regret (core/full). AUROC **0.6465 / 0.5657** and ECE **0.7031 / 0.7302** miss their **0.80 / 0.08** targets. Operator units exclude planner inference overhead and are not total compute or API-dollar savings. Full replay and integration tests passed.
+- [x] **`[M2 & M5]` Ablation Study 7 (Propagation Engines)**: Evaluated hop-decay and dynamic BPR propagation at both scales; verified top-10 delayed-node recall and delay error, with capacity attenuation retained as a secondary metric, against a declared expanded simulator reference. The optional GNN was not built. Raw cases, confidence intervals and the recall-gain target outcome are retained; no empirical traffic accuracy is claimed.
+- [x] **`[M2 & M5]` Ablation Study 8 (Scenario Planning & CVaR)**: Evaluated deterministic and CVaR plans on separate held-out scenarios, recording regret, unmet demand, soft scenario spill and line-stop slack under the deployed LP cost model. Both-scale replay verified **71.36% / 51.68%** P95 regret reductions (core/full), exceeding the 15% target, with slightly lower mean modelled cost. Soft spill is explicitly distinguished from physical dispatch recourse.
+- [x] **`[M3 & M5]` Ablation Study 9 (Real-Event PortWatch Alignment)**: Evaluated genuine cached Michaung PortWatch vessel-call series at both scales: normalized activity MAE, disruption-direction agreement, Spearman correlation and assumed-origin lead time. Source/checksum metadata and the limitations of a retrospective seed prior are retained. Verified alongside S6 (52 scored port-days across both scales).
+- [x] **`[M3]` Autonomous Background Ingestion Daemon**: Implemented a standing OS worker with strict live GDACS/PortWatch polling, canonical validation, expiry, content-revision deduplication, atomic event/outbox transactions, process exclusion and durable webhook retries retaining the original destination. Nullable TEU migration preserves measured observations and their separate provenance when vessel-only updates arrive, and distinguishes unavailable throughput from zero; recovery feedback survives restart. **Eighteen focused worker cases passed**, including invalid-batch atomicity, local HTTP retries and API integration; both live feeds and repeated background polls verified. Transient feed failures are reported without inserting replay data. Linux service and opt-in Windows startup-task templates supplied; Windows registration preview verified. No permanent startup task or external webhook endpoint was installed.
 
 ---
+
+**Interpretation of Phase 8 results:** A completed ablation means its comparison was implemented and verified, not that the hypothesis or target was confirmed. Failed research targets remain explicitly false in the reports. Existing Gate G4 validates citation IDs and masking; it does not establish claim entailment, which Study 4 measures separately.
 
 ### Phase 9: System Hardening, Docker Reproducibility & Thesis Demo (Week 14 / Gate G5)
 *Focus: Production build containerization, one-command reproducibility harness, and final Gate G5 thesis demonstration (PDF Sec. 8 walkthrough).*
@@ -179,7 +185,7 @@ The implementation and verification workload is divided across 5 core engineerin
 
 ## 3. Sprint Focus: Immediate Next Tasks
 
-These are the immediate engineering tasks required to push the project from the current live prototype state to Gate G4 and Gate G5 completion:
+The dependency tasks below are retained as verification references. **Phase 8 is complete and handed off to the team.** The team owns Phase 9's master Docker runner/figures, full UI rehearsal/freeze and final Gate G5 audit. No additional Phase 9 task was undertaken in this scope. See the handoff notes in `docs/SETUP.md`, section 6.7.
 
 ```mermaid
 flowchart TD
@@ -206,6 +212,7 @@ flowchart TD
 * **Location**: `src/asci/benchmarks/suite_s2.py`, `scripts/run_suite_s2.py`
 * **Objective**: Implement multi-day timeline runner evaluating compound events with severity escalations, route reopenings, and weather bulletin updates.
 * **Verification**: `python scripts/run_suite_s2.py --days 7 --cases 10`
+* **Status**: Complete. Both-scale run (`--scale both`) passed all 140 snapshots; see section 6.3 of `docs/SETUP.md` for configuration and interpretation.
 
 ### 4. `[M5 & M1]` Suite S3 — Adversarial Robustness & Prompt Injection Audit
 * **Location**: `src/asci/benchmarks/suite_s3.py`, `tests/integration/test_suite_s3_adversarial.py`
@@ -233,11 +240,11 @@ flowchart TD
 
 | Lead | Role & Scope | Completed Tasks | Remaining Tasks | Active Sprint Focus |
 | :--- | :--- | :---: | :---: | :--- |
-| **`[M1]`** | **Agent Core & RAG Lead**<br>Stage C controller, baseline planners, grading, query rewrites, explainer, learned policy | 8 | 7 | **Task 2B**: Multi-Step Controller & Loop L2 memory lookup (`RETRIEVE_DECISIONS`); Gate G4 learned policy; Ablations 2–6 |
-| **`[M2]`** | **Graph & Optimization Lead**<br>Stage B network graph, TTLS, propagation tiers, Stage D OR-Tools + HiGHS, verifiers | 10 | 4 | **Task 2C**: L3 Line-Stop margin check & plan churn limit in `stage_d_optimiser.py`; Ablations 1, 7, 8 |
-| **`[M3]`** | **Data & Backbone Lead**<br>Stage A adapters, PortWatch detector, Entity Registry, USKL stores, FastAPI core | 10 | 2 | Loop L4 vector indexing of resolved events; standing ingestion daemon; Ablation 9 |
-| **`[M4]`** | **Frontend & Visualization Lead**<br>React dashboard, Cytoscape graph, Leaflet map, What-If sandbox, Evidence view, Trace UI | 9 | 2 | Step-by-step trace inspection panel; real-time operator cost-tradeoff visualizer |
-| **`[M5]`** | **QA, Evaluation & Delivery Lead**<br>Testing suites S1–S6, fault mutation harness, red-team audit, Docker, Gate G0–G5 sign-off | 5 | 8 | **Suite S2**, **Suite S3**, **Suite S6**, master Gate G5 runner `run_all_benchmarks.py`, and 9 ablation studies |
+| **`[M1]`** | **Agent Core & RAG Lead**<br>Stage C controller, baseline planners, grading, query rewrites, explainer, learned policy | 17 | 0 | Phase 8 verified; handed off |
+| **`[M2]`** | **Graph & Optimization Lead**<br>Stage B network graph, TTLS, propagation tiers, Stage D OR-Tools + HiGHS, verifiers | 16 | 0 | Phase 8 verified; handed off |
+| **`[M3]`** | **Data & Backbone Lead**<br>Stage A adapters, PortWatch detector, Entity Registry, USKL stores, FastAPI core | 20 | 0 | Phase 8 data and ingestion work verified |
+| **`[M4]`** | **Frontend & Visualization Lead**<br>React dashboard, Cytoscape graph, Leaflet map, What-If sandbox, Evidence view, Trace UI | 8 | 1 | End-to-end demo rehearsal and freeze |
+| **`[M5]`** | **QA, Evaluation & Delivery Lead**<br>Testing suites S1–S6, fault mutation harness, red-team audit, Docker, Gate G0–G5 sign-off | 23 | 3 | Phase 8 verified; Phase 9 assigned to the team |
 
 ---
 
@@ -249,5 +256,5 @@ flowchart TD
 | **G1** | **Walking Skeleton** (W2) | End-to-end 5-stage pipeline runs in CI with zero unhandled errors | ✅ **PASSED** | `tests/integration/test_walking_skeleton.py` |
 | **G2** | **Graph & Solvers** (W6) | Stage B & D reproducible under fixed seeds; zero constraint breaches | ✅ **PASSED** | `tests/integration/test_gate_g2_benchmarks.py` |
 | **G3** | **Fault Catch Rate** (W6) | L1–L3 verifiers catch $\ge 99\%$ of injected synthetic plan faults | ✅ **PASSED** | `tests/unit/test_gate_g3_fault_mutations.py` (100% caught) |
-| **G4** | **Learned Policy** (W11) | Masked policy emits valid operators; $\ge 95\%$ citation support | 🔄 **IN PROGRESS** | Task 2B active; MLP training dataset formulation |
+| **G4** | **Learned Policy** (W11) | Masked policy emits valid operators; $\ge 95\%$ citation support | ✅ **PASSED — existing ID/masking audit** | All six `test_learned_policy.py` cases passed. This audit validates citation IDs, not entailment; Phase 8 Study 4's semantic support target is **not met**. |
 | **G5** | **Reproducibility** (W14) | Full benchmark suite & demo run from a single command in Docker | ⏳ **PENDING** | Multi-stage Docker ready; master runner script pending |

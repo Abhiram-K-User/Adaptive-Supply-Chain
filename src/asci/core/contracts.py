@@ -76,7 +76,7 @@ class PipelineConfig(BaseModel):
     evidence_trust_threshold: float = Field(default=0.5, ge=0.0, le=1.0)
     k_hop_neighborhood: int = Field(default=2, ge=1, le=5)
     max_unmet_demand_ratio: float = Field(default=0.05, ge=0.0, le=1.0)
-    controller_mode: Literal["rule_router", "learned_mlp", "always_full", "fixed_rag", "no_rag"] = Field(
+    controller_mode: Literal["rule_router", "learned_mlp", "always_full", "fixed_rag", "no_rag", "llm_planner"] = Field(
         default="rule_router",
         description="Stage C Agentic-RAG controller policy mode (Gate G1 rule_router or Gate G4 learned_mlp)",
     )
@@ -84,6 +84,8 @@ class PipelineConfig(BaseModel):
         default=None,
         description="Optional saved PyTorch checkpoint path for MaskedMLPPolicy when controller_mode='learned_mlp'",
     )
+    llm_planner_cache_dir: Path = Path("local_data/llm_planner_cache")
+    llm_planner_allow_live: bool = False
     line_stop_margin_days: float = Field(
         default=1.5,
         ge=0.0,

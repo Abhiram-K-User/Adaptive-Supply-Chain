@@ -7,10 +7,13 @@ from asci.benchmarks.suite_s1 import (
     SuiteS1Report,
     SuiteS1Runner,
 )
+from asci.benchmarks.suite_s2 import SuiteS2Case, SuiteS2Runner
 
 __all__ = [
     "SuiteS1CaseResult",
     "SuiteS1Report",
     "SuiteS1Runner",
+    "SuiteS2Case",
+    "SuiteS2Runner",
 ]
 

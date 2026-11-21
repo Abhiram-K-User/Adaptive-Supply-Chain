@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { GitCommitHorizontal, RefreshCw } from "lucide-react";
 import { asciApi } from "../api/client";
 import type { OperatorTraceEntry, PlanResponse } from "../types/asci";
@@ -14,11 +14,50 @@ export function TraceView({ planResponse }: TraceViewProps) {
   );
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [loadedSessionId, setLoadedSessionId] = useState("");
+  const [selectedStep, setSelectedStep] = useState<number | null>(null);
+  const [autoRefresh, setAutoRefresh] = useState(true);
 
   const activeSessionId = planResponse?.session_id ?? "";
+  const sessionId = loadedSessionId || activeSessionId;
   const traces = fetchedTraces ?? planResponse?.dashboard?.trace_timeline ?? [];
+  useEffect(() => {
+    setLoadedSessionId("");
+    setFetchedTraces(null);
+    setSelectedStep(null);
+  }, [activeSessionId]);
+
+  useEffect(() => {
+    if (!sessionId || !autoRefresh) return;
+    let cancelled = false;
+    let timer: ReturnType<typeof setTimeout>;
+    const poll = async () => {
+      try {
+        const items = await asciApi.getSessionTraces(sessionId);
+        if (!cancelled) {
+          setFetchedTraces(items);
+          setError(null);
+        }
+      } catch (err) {
+        if (!cancelled) setError(err instanceof Error ? err.message : String(err));
+      } finally {
+        if (!cancelled) timer = setTimeout(poll, 1000);
+      }
+    };
+    void poll();
+    return () => { cancelled = true; clearTimeout(timer); };
+  }, [sessionId, autoRefresh]);
+
   const totalDurationMs = traces.reduce((acc, item) => acc + item.duration_ms, 0);
   const totalCost = traces.reduce((acc, item) => acc + item.cost, 0);
+  const inspected = traces.find(t => t.step_index === selectedStep) ?? traces[traces.length - 1];
+  let cumulative = 0;
+  const points = traces.map((item, index) => {
+    cumulative += item.cost;
+    return { x: 30 + index * 640 / Math.max(1, traces.length - 1),
+      costY: 170 - 140 * cumulative / Math.max(totalCost, 0.000001),
+      gainY: item.metrics?.sufficiency_after === undefined ? null : 170 - 140 * item.metrics.sufficiency_after };
+  });
 
   const handleFetchTrace = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -28,6 +67,8 @@ export function TraceView({ planResponse }: TraceViewProps) {
     setError(null);
     try {
       const items = await asciApi.getSessionTraces(sid);
+      setLoadedSessionId(sid);
+      setSelectedStep(null);
       setFetchedTraces(items);
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err));
@@ -46,7 +87,7 @@ export function TraceView({ planResponse }: TraceViewProps) {
               Chronological Operator Execution Trace
             </h2>
             <p className="mt-0.5 text-xs text-light-text-secondary dark:text-dark-text-secondary">
-              Live pipeline execution audit log backed by <code className="font-mono text-teal-600 dark:text-accent-cyan">GET /traces/&#123;session_id&#125;</code> and DecisionTraceStore
+              Inspect operator costs, evidence grading, and query rewrites as a session runs.
             </p>
           </div>
 
@@ -69,7 +110,7 @@ export function TraceView({ planResponse }: TraceViewProps) {
             {fetchedTraces !== null && (
               <button
                 type="button"
-                onClick={() => setFetchedTraces(null)}
+                onClick={() => { setLoadedSessionId(""); setFetchedTraces(null); setLookupSessionId(""); }}
                 className="rounded-lg px-2 py-1 text-xs text-light-text-muted hover:text-light-text-primary dark:text-dark-text-muted dark:hover:text-dark-text-primary"
               >
                 Use Current Plan
@@ -90,7 +131,7 @@ export function TraceView({ planResponse }: TraceViewProps) {
               Session ID
             </div>
             <div className="mt-0.5 font-mono text-xs font-bold text-light-text-primary dark:text-dark-text-primary truncate">
-              {activeSessionId || lookupSessionId || "—"}
+              {sessionId || "—"}
             </div>
           </div>
           <div className="rounded-xl border border-light-border bg-light-surface-subtle px-3 py-2 dark:border-dark-border dark:bg-dark-surface">
@@ -137,6 +178,42 @@ export function TraceView({ planResponse }: TraceViewProps) {
           </div>
         )}
       </section>
+
+      {traces.length > 0 && <section className="rounded-2xl border border-light-border bg-white p-4 dark:border-dark-border dark:bg-dark-card">
+        <div className="flex items-center justify-between gap-3">
+          <h3 className="text-sm font-bold">Cost and evidence sufficiency by step</h3>
+          <label className="flex items-center gap-2 text-xs"><input type="checkbox" checked={autoRefresh}
+            onChange={e => setAutoRefresh(e.target.checked)} />Live refresh</label>
+        </div>
+        <p className="mt-1 text-xs text-light-text-secondary dark:text-dark-text-secondary">
+          Blue: cumulative compute cost (0–${totalCost.toFixed(4)}). Green: graded evidence sufficiency (0–1).
+          Sufficiency measures coverage; it is not a probability of correctness. Select a step to inspect it.
+        </p>
+        <svg viewBox="0 0 710 200" role="img" aria-label="Cumulative operator cost and measured evidence sufficiency" className="mt-3 w-full max-h-56">
+          <path d="M30 20 V170 H685" fill="none" stroke="currentColor" opacity="0.25" />
+          <polyline points={points.map(p => `${p.x},${p.costY}`).join(" ")} fill="none" stroke="#4285F4" strokeWidth="2" />
+          {points.map((p, idx) => <g key={idx}>
+            <circle cx={p.x} cy={p.costY} r="5" fill="#4285F4" />
+            {p.gainY !== null && <circle cx={p.x} cy={p.gainY} r="5" fill="#34A853"><title>Sufficiency {traces[idx].metrics?.sufficiency_after}</title></circle>}
+            <text x={p.x} y="190" textAnchor="middle" fill="currentColor" fontSize="11">{traces[idx].step_index}</text>
+          </g>)}
+        </svg>
+        <label className="text-xs">Inspect step
+          <select className="ml-2 rounded border border-light-border bg-light-surface-subtle p-1 dark:bg-dark-surface dark:border-dark-border"
+            value={inspected?.step_index ?? ""} onChange={e => setSelectedStep(Number(e.target.value))}>
+            {traces.map(t => <option key={t.step_index} value={t.step_index}>#{t.step_index} {t.operator_type}</option>)}
+          </select>
+        </label>
+        {inspected && <div className="mt-3 rounded-xl border border-light-border p-3 text-xs dark:border-dark-border" aria-live="polite">
+          <strong>#{inspected.step_index} {inspected.operator_type}</strong>
+          <p className="mt-1">{inspected.output_summary}</p>
+          {inspected.metrics?.sufficiency_after !== undefined && <p className="mt-2">
+            Sufficiency: {inspected.metrics.sufficiency_after.toFixed(3)} · Change: {((inspected.metrics.sufficiency_after - (inspected.metrics.sufficiency_before ?? 0))).toFixed(3)} · Step cost: ${inspected.cost.toFixed(4)}
+          </p>}
+          {(inspected.metrics?.query || inspected.metrics?.query_before) && <p className="mt-2 break-words"><strong>Query:</strong> {inspected.metrics.query_before ?? inspected.metrics.query}</p>}
+          {inspected.metrics?.query_after && <p className="mt-2 break-words"><strong>Rewritten query:</strong> {inspected.metrics.query_after}</p>}
+        </div>}
+      </section>}
 
       {/* Timeline Steps */}
       <section className="space-y-3">

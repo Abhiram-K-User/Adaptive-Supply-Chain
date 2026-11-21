@@ -17,6 +17,7 @@ from __future__ import annotations
 import math
 import random
 import time
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from typing import Any
@@ -67,6 +68,7 @@ class _StageCEpisodeContext:
     operator_sequence: list[str] = field(default_factory=list)
     total_cost: float = 0.0
     mask_violations: int = 0
+    planner_records: list[dict[str, Any]] = field(default_factory=list)
 
 
 class StageCController:
@@ -204,6 +206,7 @@ class StageCController:
                     f"({event.event_type.value}, as_of={ctx.as_of_date})"
                 ),
                 output_summary=f"Retrieved {len(ctx.retrieved_docs)} direct Tier-A/B evidence chunks",
+                metrics={"query": ctx.active_query, "evidence_count": len(ctx.retrieved_docs)},
                 duration_ms=round((time.perf_counter() - t_step) * 1000.0, 2),
                 cost=cost,
                 seed=cfg.random_seed,
@@ -219,6 +222,7 @@ class StageCController:
         history: ControllerHistory,
     ) -> tuple[PipelineState, bool]:
         t_step = time.perf_counter()
+        previous_sufficiency = ctx.sufficiency
         sufficiency, best_rel = self._grade_evidence(ctx.retrieved_docs, ctx.event)
         ctx.sufficiency = sufficiency
         ctx.best_rel = best_rel
@@ -246,6 +250,8 @@ class StageCController:
                     f"Sufficiency={sufficiency:.3f}; trigger_rewrite={will_rewrite} "
                     f"(lambda={cfg.lambda_cost_budget})"
                 ),
+                metrics={"sufficiency_before": previous_sufficiency, "sufficiency_after": sufficiency,
+                         "evidence_count": len(ctx.retrieved_docs), "trigger_rewrite": will_rewrite},
                 duration_ms=round((time.perf_counter() - t_step) * 1000.0, 2),
                 cost=cost,
                 seed=cfg.random_seed,
@@ -264,6 +270,7 @@ class StageCController:
         t_step = time.perf_counter()
         event = ctx.event
         ctx.query_rewritten = True
+        previous_query, previous_sufficiency = ctx.active_query, ctx.sufficiency
         broadened_query = (
             f"{ctx.primary_entity_region} {event.event_type.value} corridor diversion playbook"
         )
@@ -311,6 +318,9 @@ class StageCController:
                 step_index=state.step_count + 1,
                 operator_type=OperatorType.REWRITE_QUERY,
                 input_summary=f"Rewrite sparse query -> '{broadened_query}'",
+                metrics={"query_before": previous_query, "query_after": broadened_query,
+                         "sufficiency_before": previous_sufficiency, "sufficiency_after": ctx.sufficiency,
+                         "evidence_count": len(ctx.retrieved_docs)},
                 output_summary=(
                     f"Expanded evidence set to {len(ctx.retrieved_docs)} chunks "
                     f"(sufficiency={ctx.sufficiency:.3f})"
@@ -528,6 +538,7 @@ class StageCController:
         state: PipelineState,
         cfg: PipelineConfig,
         rng: random.Random,
+        on_step: Callable[[PipelineState], None] | None = None,
     ) -> tuple[PipelineState, OperatorResult]:
         """
         Execute multi-step Stage C controller loop with immutable state transitions.
@@ -569,12 +580,24 @@ class StageCController:
         )
         history = ControllerHistory()
 
-        if cfg.controller_mode == "learned_mlp":
-            policy = self._resolve_policy(cfg)
+        def execute(op: OperatorType) -> tuple[PipelineState, bool]:
+            updated, rewrite = self._execute_operator(op, state, cfg, ctx, history)
+            if on_step is not None:
+                on_step(updated)
+            return updated, rewrite
+
+        if cfg.controller_mode in ("learned_mlp", "llm_planner"):
+            if cfg.controller_mode == "llm_planner":
+                from asci.policy.llm_planner import LLMPlannerPolicy
+                policy = LLMPlannerPolicy(cfg.llm_planner_cache_dir, allow_live=cfg.llm_planner_allow_live)
+            else:
+                policy = self._resolve_policy(cfg)
             while True:
                 features = extract_controller_features(state, cfg, history)
                 mask = compute_action_mask(state, cfg, history)
                 chosen_op, action_probs = policy.predict_action(features, mask, deterministic=True)
+                if cfg.controller_mode == "llm_planner":
+                    ctx.planner_records = list(policy.records)
 
                 chosen_idx = ACTION_TO_IDX[chosen_op]
                 if not mask[chosen_idx]:
@@ -592,12 +615,12 @@ class StageCController:
                         "CONTROLLER_ESCALATED",
                     )
 
-                state, _ = self._execute_operator(chosen_op, state, cfg, ctx, history)
+                state, _ = execute(chosen_op)
                 if chosen_op == OperatorType.SCENARIOS:
                     break
 
         elif cfg.controller_mode == "no_rag":
-            state = self._step_scenarios(state, cfg, ctx, history)
+            state, _ = execute(OperatorType.SCENARIOS)
 
         elif cfg.controller_mode == "fixed_rag":
             for op in (
@@ -606,7 +629,7 @@ class StageCController:
                 OperatorType.RETRIEVE_DECISIONS,
                 OperatorType.SCENARIOS,
             ):
-                state, _ = self._execute_operator(op, state, cfg, ctx, history)
+                state, _ = execute(op)
 
         elif cfg.controller_mode == "always_full":
             full_plan = (
@@ -622,19 +645,18 @@ class StageCController:
             for op in full_plan:
                 if history.steps_taken >= cfg.max_steps:
                     break
-                state, _ = self._execute_operator(op, state, cfg, ctx, history)
+                state, _ = execute(op)
             if not history.scenarios_generated:
-                state = self._step_scenarios(state, cfg, ctx, history)
+                state, _ = execute(OperatorType.SCENARIOS)
 
         else:
             # Default Gate G1 rule_router behavior (strictly preserves Gate G1 invariants & cost)
-            state = self._step_retrieve_text(state, cfg, ctx, history)
-            state, will_rewrite = self._step_grade(state, cfg, ctx, history)
+            state, _ = execute(OperatorType.RETRIEVE_TEXT)
+            state, will_rewrite = execute(OperatorType.GRADE)
             if will_rewrite:
-                state = self._step_rewrite_query(state, cfg, ctx, history)
-            state = self._step_retrieve_ts(state, cfg, ctx, history)
-            state = self._step_retrieve_decisions(state, cfg, ctx, history)
-            state = self._step_scenarios(state, cfg, ctx, history)
+                state, _ = execute(OperatorType.REWRITE_QUERY)
+            for op in (OperatorType.RETRIEVE_TS, OperatorType.RETRIEVE_DECISIONS, OperatorType.SCENARIOS):
+                state, _ = execute(op)
 
         total_duration_ms = (time.perf_counter() - stage_t0) * 1000.0
         result = OperatorResult(
@@ -658,6 +680,7 @@ class StageCController:
                 "decision_precedents_count": len(ctx.precedents),
                 "as_of_date": as_of_date,
                 "encoder_backend": self.vector_store.encoder_backend,
+                "planner_records": ctx.planner_records,
             },
         )
         return state, result

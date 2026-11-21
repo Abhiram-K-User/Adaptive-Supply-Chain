@@ -209,6 +209,11 @@ class StageEDashboard:
             },
             trace_item=trace_item,
         )
+        new_state = new_state.model_copy(update={
+            "dashboard_payload": dashboard_payload.model_copy(update={
+                "trace_timeline": [item.model_dump(mode="json") for item in new_state.trace],
+            }),
+        })
 
         result = OperatorResult(
             operator_type=OperatorType.STOP,

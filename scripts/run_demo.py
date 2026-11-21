@@ -77,7 +77,10 @@ def main() -> int:
 
         use_live = live_enabled and not args.replay_only
         endpoint = "/ingest/live" if use_live else "/ingest/replay?use_fallback=true"
-        with TestClient(app) as client:
+        # Preload through the API without entering the app lifespan: Uvicorn
+        # owns that lifespan and must retain these stores until server shutdown.
+        client = TestClient(app)
+        try:
             resp = client.post(endpoint)
             if resp.status_code == 200:
                 payload = resp.json()
@@ -85,6 +88,8 @@ def main() -> int:
                     f"[ASCI Demo] Preloaded ({payload.get('mode', 'replay')}) "
                     f"{payload['signals_collected']} signals -> {payload['events_persisted']} corridor events."
                 )
+        finally:
+            client.close()
 
     url = f"http://{args.host}:{args.port}/"
     print(f"[ASCI Demo] Corridor Scale : {args.scale}")

@@ -108,7 +108,11 @@ export function App() {
         kind: "info",
       });
       try {
+        const sessionId = `SESS_${crypto.randomUUID().replace(/-/g, "")}`;
+        setPlanResponse({ session_id: sessionId, event_id: eventId, status: "PERCEIVED",
+          plan: null, verification: null, dashboard: null, compute_cost: 0, step_count: 0 });
         const res = await asciApi.generatePlan(eventId, {
+          session_id: sessionId,
           lambda_cost_budget: cfg.lambdaBudget,
           k_hop_neighborhood: cfg.kHop,
           risk_mode: cfg.riskMode,

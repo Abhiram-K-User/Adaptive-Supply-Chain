@@ -22,8 +22,9 @@ class PortObservation:
     entity_id: str
     obs_date: str
     vessel_calls: float
-    teu_volume: float
+    teu_volume: float | None
     source: str = "IMF_PORTWATCH"
+    teu_source: str | None = None
 
 
 @dataclass(frozen=True)
@@ -34,8 +35,8 @@ class PortAnomaly:
     obs_date: str
     observed_calls: float
     baseline_calls: float
-    observed_teu: float
-    baseline_teu: float
+    observed_teu: float | None
+    baseline_teu: float | None
     z_score: float
     drop_ratio: float
 
@@ -63,6 +64,7 @@ class TimeSeriesStore:
 
     def _init_db(self) -> None:
         with self._get_connection() as conn:
+            conn.execute("BEGIN IMMEDIATE")
             conn.execute(
                 """
                 CREATE TABLE IF NOT EXISTS port_baselines (
@@ -91,12 +93,25 @@ class TimeSeriesStore:
                     entity_id TEXT NOT NULL,
                     obs_date TEXT NOT NULL,
                     vessel_calls REAL NOT NULL,
-                    teu_volume REAL NOT NULL,
+                    teu_volume REAL,
                     source TEXT NOT NULL,
+                    teu_source TEXT,
                     PRIMARY KEY (entity_id, obs_date)
                 )
                 """
             )
+            columns = {row["name"]: row for row in conn.execute("PRAGMA table_info(daily_port_observations)")}
+            if columns["teu_volume"]["notnull"]:
+                # SQLite cannot remove NOT NULL in place. Copy all observations
+                # transactionally so measured zero and unavailable remain distinct.
+                conn.execute("ALTER TABLE daily_port_observations RENAME TO port_observations_legacy")
+                conn.execute("CREATE TABLE daily_port_observations (entity_id TEXT NOT NULL, obs_date TEXT NOT NULL, vessel_calls REAL NOT NULL, teu_volume REAL, source TEXT NOT NULL, teu_source TEXT, PRIMARY KEY(entity_id,obs_date))")
+                conn.execute("INSERT INTO daily_port_observations (entity_id,obs_date,vessel_calls,teu_volume,source) SELECT entity_id,obs_date,vessel_calls,teu_volume,source FROM port_observations_legacy")
+                conn.execute("DROP TABLE port_observations_legacy")
+            elif "teu_source" not in columns:
+                conn.execute("ALTER TABLE daily_port_observations ADD COLUMN teu_source TEXT")
+            conn.execute("UPDATE daily_port_observations SET teu_volume=NULL WHERE source='IMF_PORTWATCH_LIVE_VESSEL_CALLS_ONLY' AND teu_source IS NULL")
+            conn.execute("UPDATE daily_port_observations SET teu_source=source WHERE teu_volume IS NOT NULL AND teu_source IS NULL")
             conn.commit()
 
     def _seed_baselines(self) -> None:
@@ -117,7 +132,7 @@ class TimeSeriesStore:
                     seeded_ids.add(entity_id)
                     conn.execute(
                         """
-                        INSERT OR REPLACE INTO port_baselines (
+                        INSERT OR IGNORE INTO port_baselines (
                             entity_id, daily_vessel_calls, daily_teu_capacity,
                             avg_dwell_time_days, anomaly_std_threshold
                         ) VALUES (?, ?, ?, ?, ?)
@@ -131,7 +146,7 @@ class TimeSeriesStore:
                     calls = round(max(2.0, cap / 700.0), 1)
                     conn.execute(
                         """
-                        INSERT OR REPLACE INTO port_baselines (
+                        INSERT OR IGNORE INTO port_baselines (
                             entity_id, daily_vessel_calls, daily_teu_capacity,
                             avg_dwell_time_days, anomaly_std_threshold
                         ) VALUES (?, ?, ?, ?, ?)
@@ -154,7 +169,7 @@ class TimeSeriesStore:
                 if self.registry.validate_id(entity_id):
                     conn.execute(
                         """
-                        INSERT OR REPLACE INTO recovery_curves (
+                        INSERT OR IGNORE INTO recovery_curves (
                             entity_id, hazard_type, day_offset, capacity_multiplier
                         ) VALUES (?, ?, ?, ?)
                         """,
@@ -246,10 +261,10 @@ class TimeSeriesStore:
             conn.execute(
                 """
                 INSERT OR REPLACE INTO daily_port_observations (
-                    entity_id, obs_date, vessel_calls, teu_volume, source
-                ) VALUES (?, ?, ?, ?, ?)
+                    entity_id, obs_date, vessel_calls, teu_volume, source, teu_source
+                ) VALUES (?, ?, ?, ?, ?, ?)
                 """,
-                (entity_id, eff_date, vessel_calls, observed_teu, "REALIZED_OUTCOME_FEEDBACK_L1"),
+                (entity_id, eff_date, vessel_calls, observed_teu, "REALIZED_OUTCOME_FEEDBACK_L1", "REALIZED_OUTCOME_FEEDBACK_L1"),
             )
             conn.commit()
 
@@ -267,6 +282,10 @@ class TimeSeriesStore:
     def ingest_observations(self, observations: list[PortObservation]) -> int:
         """Persist daily AIS/PortWatch observations after validating canonical entity IDs."""
         for obs in observations:
+            if not math.isfinite(obs.vessel_calls) or obs.vessel_calls < 0 or (
+                obs.teu_volume is not None and (not math.isfinite(obs.teu_volume) or obs.teu_volume < 0)
+            ):
+                raise ValueError("Observations must contain finite, nonnegative measurements")
             if not self.registry.validate_id(obs.entity_id):
                 raise ValueError(
                     f"Port observation references ungrounded entity ID '{obs.entity_id}'."
@@ -276,11 +295,18 @@ class TimeSeriesStore:
             for obs in observations:
                 conn.execute(
                     """
-                    INSERT OR REPLACE INTO daily_port_observations (
-                        entity_id, obs_date, vessel_calls, teu_volume, source
-                    ) VALUES (?, ?, ?, ?, ?)
+                    INSERT INTO daily_port_observations (
+                        entity_id, obs_date, vessel_calls, teu_volume, source, teu_source
+                    ) VALUES (?, ?, ?, ?, ?, ?)
+                    ON CONFLICT(entity_id,obs_date) DO UPDATE SET
+                        vessel_calls=excluded.vessel_calls,
+                        source=excluded.source,
+                        teu_volume=COALESCE(excluded.teu_volume,daily_port_observations.teu_volume),
+                        teu_source=CASE WHEN excluded.teu_volume IS NOT NULL THEN excluded.teu_source
+                                        ELSE daily_port_observations.teu_source END
                     """,
-                    (obs.entity_id, obs.obs_date, obs.vessel_calls, obs.teu_volume, obs.source),
+                    (obs.entity_id, obs.obs_date, obs.vessel_calls, obs.teu_volume, obs.source,
+                     (obs.teu_source or obs.source) if obs.teu_volume is not None else None),
                 )
             conn.commit()
         return len(observations)
@@ -290,7 +316,7 @@ class TimeSeriesStore:
         with self._get_connection() as conn:
             rows = conn.execute(
                 """
-                SELECT entity_id, obs_date, vessel_calls, teu_volume, source
+                SELECT entity_id, obs_date, vessel_calls, teu_volume, source, teu_source
                 FROM daily_port_observations
                 WHERE entity_id = ?
                 ORDER BY obs_date DESC
@@ -303,8 +329,9 @@ class TimeSeriesStore:
                 entity_id=r["entity_id"],
                 obs_date=r["obs_date"],
                 vessel_calls=float(r["vessel_calls"]),
-                teu_volume=float(r["teu_volume"]),
+                teu_volume=float(r["teu_volume"]) if r["teu_volume"] is not None else None,
                 source=r["source"],
+                teu_source=r["teu_source"],
             )
             for r in rows
         ]
@@ -339,7 +366,8 @@ class TimeSeriesStore:
             prior = series[:-1]
             if len(prior) >= 3:
                 mean_calls = sum(p.vessel_calls for p in prior) / len(prior)
-                mean_teu = sum(p.teu_volume for p in prior) / len(prior)
+                measured_teu = [p.teu_volume for p in prior if p.teu_volume is not None]
+                mean_teu = sum(measured_teu) / len(measured_teu) if measured_teu else None
                 variance = sum((p.vessel_calls - mean_calls) ** 2 for p in prior) / len(prior)
                 std_calls = max(0.35, math.sqrt(variance))
             elif baseline:
@@ -363,7 +391,7 @@ class TimeSeriesStore:
                         observed_calls=latest.vessel_calls,
                         baseline_calls=round(mean_calls, 2),
                         observed_teu=latest.teu_volume,
-                        baseline_teu=round(mean_teu, 2),
+                        baseline_teu=round(mean_teu, 2) if mean_teu is not None else None,
                         z_score=z_score,
                         drop_ratio=drop_ratio,
                     )

@@ -56,7 +56,8 @@ interface OutcomesPayload {
   recent_observations?: Array<{
     obs_date: string;
     vessel_calls: number;
-    teu_volume: number;
+    teu_volume: number | null;
+    teu_source?: string | null;
     source: string;
   }>;
 }

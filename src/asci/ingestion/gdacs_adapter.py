@@ -6,6 +6,7 @@ Parses GeoJSON cyclone/flood alerts and spatial footprints with local fallback r
 from __future__ import annotations
 
 import json
+import logging
 import os
 from datetime import UTC, datetime
 from pathlib import Path
@@ -41,7 +42,7 @@ class GDACSAdapter:
         self.last_error: str | None = None
         self.last_fetched_at: str | None = None
 
-    def fetch(self, use_fallback: bool = True) -> list[RawSignal]:
+    def fetch(self, use_fallback: bool = True, *, allow_fallback: bool = True) -> list[RawSignal]:
         """Fetch alerts from GDACS API or local replay JSON."""
         data: dict[str, Any] | None = None
         self.last_error = None
@@ -61,6 +62,10 @@ class GDACSAdapter:
                 self.last_error = f"{type(exc).__name__}: {exc}"
 
         if data is None:
+            if not use_fallback and not allow_fallback:
+                self.last_fetch_mode = "unavailable"
+                self.last_fetched_at = datetime.now(UTC).isoformat()
+                return []
             self.last_fetch_mode = "fallback"
             if not self.fallback_path.exists():
                 return []
@@ -73,6 +78,19 @@ class GDACSAdapter:
     @staticmethod
     def parse_feature_collection(payload: dict[str, Any]) -> list[RawSignal]:
         """Convert GeoJSON FeatureCollection into untrusted RawSignal containers."""
+        if not isinstance(payload, dict) or not isinstance(payload.get("features"), list):
+            raise ValueError("GDACS response must be a GeoJSON feature collection")
+        signals = []
+        for feature in payload["features"]:
+            try:
+                signals.extend(GDACSAdapter._parse_features_unchecked({"features": [feature]}))
+            except (ValueError, TypeError, AttributeError, KeyError, IndexError):
+                logging.getLogger(__name__).warning("Skipped malformed GDACS feature")
+        return signals
+
+    @staticmethod
+    def _parse_features_unchecked(payload: dict[str, Any]) -> list[RawSignal]:
+        """Parse a feature, with malformed-record isolation handled by the caller."""
         signals: list[RawSignal] = []
         for feature in payload.get("features", []):
             props = feature.get("properties", {})
@@ -147,7 +165,8 @@ class GDACSAdapter:
                     hint_event_type=hint_type,
                     hint_severity=severity,
                     hint_duration_days=duration_days,
-                    metadata={"alertlevel": alert_level, "gdacs_eventtype": event_code},
+                    metadata={"alertlevel": alert_level, "gdacs_eventtype": event_code,
+                              "publication_time_inferred": _parse_iso(from_str) is None},
                 )
             )
         return signals

@@ -7,6 +7,7 @@ Stage A (Perception) -> Stage B (Graph Risk) -> Stage C (Controller) -> Stage D 
 from __future__ import annotations
 
 import random
+from collections.abc import Callable
 
 from asci.core.contracts import OperatorResult, PipelineConfig
 from asci.core.registry import get_canonical_registry
@@ -94,6 +95,7 @@ class WalkingSkeletonPipeline:
         state: PipelineState,
         cfg: PipelineConfig,
         rng: random.Random | None = None,
+        on_step: Callable[[PipelineState], None] | None = None,
     ) -> tuple[PipelineState, list[OperatorResult]]:
         """
         Execute the full Stage A -> E pipeline sequentially and deterministically.
@@ -105,36 +107,46 @@ class WalkingSkeletonPipeline:
 
         # Stage A: Perception
         state, res_a = self.stage_a.run(state, cfg, rng)
+        if on_step and res_a.success:
+            on_step(state)
         results.append(res_a)
         if not res_a.success:
             return state, results
 
         # Stage B: Corridor Graph Analysis
         state, res_b = self.stage_b.run(state, cfg, rng)
+        if on_step and res_b.success:
+            on_step(state)
         results.append(res_b)
         if not res_b.success:
             return state, results
 
         if self.enable_propagate_step:
             state, res_prop = self.propagate.run(state, cfg, rng)
+            if on_step and res_prop.success:
+                on_step(state)
             results.append(res_prop)
             if not res_prop.success:
                 return state, results
 
         # Stage C: Controller & Scenarios
-        state, res_c = self.stage_c.run(state, cfg, rng)
+        state, res_c = self.stage_c.run(state, cfg, rng, on_step=on_step)
         results.append(res_c)
         if not res_c.success:
             return state, results
 
         # Stage D: Optimiser & L1-L3 Verifier
         state, res_d = self.stage_d.run(state, cfg, rng)
+        if on_step:
+            on_step(state)
         results.append(res_d)
         if not res_d.success:
             return state, results
 
         # Stage E: Dashboard Payload Serializer
         state, res_e = self.stage_e.run(state, cfg, rng)
+        if on_step:
+            on_step(state)
         results.append(res_e)
 
         return state, results

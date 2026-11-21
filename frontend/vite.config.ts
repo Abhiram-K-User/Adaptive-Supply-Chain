@@ -11,6 +11,7 @@ export default defineConfig({
       "/registry": "http://127.0.0.1:8000",
       "/network": "http://127.0.0.1:8000",
       "/evidence": "http://127.0.0.1:8000",
+      "/evaluations": "http://127.0.0.1:8000",
       "/events": "http://127.0.0.1:8000",
       "/feeds": "http://127.0.0.1:8000",
       "/ingest": "http://127.0.0.1:8000",

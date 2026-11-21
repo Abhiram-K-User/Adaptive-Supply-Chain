@@ -165,6 +165,7 @@ export interface ReplayIngestResponse {
 }
 
 export interface GeneratePlanPayload {
+  session_id?: string;
   lambda_cost_budget?: number;
   random_seed?: number;
   k_hop_neighborhood?: number;
@@ -290,6 +291,15 @@ export interface OperatorTraceEntry {
   cost: number;
   seed: number;
   timestamp: string;
+  metrics?: {
+    query?: string;
+    query_before?: string;
+    query_after?: string;
+    evidence_count?: number;
+    sufficiency_before?: number;
+    sufficiency_after?: number;
+    trigger_rewrite?: boolean;
+  };
 }
 
 export interface DashboardPayload {

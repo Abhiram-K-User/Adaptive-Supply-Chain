@@ -9,6 +9,7 @@ from __future__ import annotations
 import os
 import random
 import uuid
+from contextlib import asynccontextmanager
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Annotated, Any, Literal
@@ -19,6 +20,7 @@ from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
+from asci.api.evaluations import evaluation_router
 from asci.core.contracts import PipelineConfig
 from asci.core.registry import get_canonical_registry
 from asci.core.state import (
@@ -106,6 +108,7 @@ class GeneratePlanRequest(BaseModel):
     """Configuration overrides for pipeline execution."""
 
     lambda_cost_budget: float = Field(default=0.05, ge=0.0)
+    session_id: str | None = Field(default=None, pattern=r"^SESS_[A-Za-z0-9_-]{8,64}$")
     random_seed: int = Field(default=42)
     k_hop_neighborhood: int = Field(default=2, ge=1, le=4)
     risk_mode: Literal["DETERMINISTIC", "EXPECTED_COST", "CVAR"] = Field(default="EXPECTED_COST")
@@ -201,10 +204,19 @@ def create_app(
     Uses file-backed SQLite + JSONL persistence when `data_dir` (or env `ASCI_DATA_DIR`)
     is provided; falls back to in-memory stores for ephemeral testing.
     """
+    @asynccontextmanager
+    async def lifespan(_app: FastAPI):
+        try:
+            yield
+        finally:
+            for store in (event_store, decision_store, timeseries_store):
+                store._conn.close()
+
     api = FastAPI(
         title="Adaptive Supply Chain Intelligence Platform API",
         description="Agentic-RAG Decision Support for South India Automotive Logistics Corridor",
         version="2.0.0",
+        lifespan=lifespan,
     )
     api.add_middleware(
         CORSMiddleware,
@@ -213,6 +225,7 @@ def create_app(
         allow_methods=["*"],
         allow_headers=["*"],
     )
+    api.include_router(evaluation_router(Path(os.environ.get("ASCI_EVALUATION_DIR", "local_data/review/ablations"))))
 
     resolved_scale = network_scale or os.environ.get("ASCI_NETWORK_SCALE", "v0_core")
     if resolved_scale not in ("v0_core", "v1_corridor"):
@@ -550,7 +563,9 @@ def create_app(
                 detail=f"Event '{event_id}' not found.",
             )
 
-        session_id = f"SESS_{uuid.uuid4().hex[:8].upper()}"
+        session_id = req.session_id or f"SESS_{uuid.uuid4().hex.upper()}"
+        if session_id in state_cache or decision_store.get_traces_for_session(session_id):
+            raise HTTPException(status_code=409, detail="Session ID already exists")
         cfg = PipelineConfig(
             lambda_cost_budget=req.lambda_cost_budget,
             random_seed=req.random_seed,
@@ -572,7 +587,16 @@ def create_app(
             event=event,
         )
 
-        final_state, _ = pipeline.run(initial_state, cfg, rng)
+        state_cache[session_id] = initial_state
+        recorded_steps = 0
+
+        def record_progress(current: PipelineState) -> None:
+            nonlocal recorded_steps
+            decision_store.record_trace(session_id, current.trace[recorded_steps:])
+            recorded_steps = len(current.trace)
+            state_cache[session_id] = current
+
+        final_state, _ = pipeline.run(initial_state, cfg, rng, on_step=record_progress)
 
         if final_state.candidate_plan:
             decision_store.save_plan(
@@ -583,7 +607,7 @@ def create_app(
                 verification=final_state.verification_report,
             )
         state_cache[session_id] = final_state
-        decision_store.record_trace(session_id, final_state.trace)
+        record_progress(final_state)
 
         return PlanResponse(
             session_id=session_id,
@@ -836,6 +860,7 @@ def create_app(
                     "obs_date": s.obs_date,
                     "vessel_calls": s.vessel_calls,
                     "teu_volume": s.teu_volume,
+                    "teu_source": s.teu_source,
                     "source": s.source,
                 }
                 for s in series

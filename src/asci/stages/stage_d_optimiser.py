@@ -226,6 +226,42 @@ class StageDOptimiserAndVerifier:
             cvar_weight=float(cfg.cvar_weight),
         )
 
+    def evaluate_plan(self, state: PipelineState, cfg: PipelineConfig,
+                      plan: MitigationPlan, scenarios: list[Scenario]) -> list[dict]:
+        """Score a fixed allocation under held-out scenarios using the LP cost model.
+
+        Scenario capacity excess incurs the same soft spill penalty as optimization;
+        it is reported separately from base unmet demand. This is model regret,
+        not a physical dispatch/queue simulator or an assumed rerouting recourse.
+        """
+        inst = self._build_lp_instance(state, cfg)
+        delivered: dict[tuple[str, str], float] = defaultdict(float)
+        outgoing: dict[str, float] = defaultdict(float)
+        for allocation in plan.allocations:
+            delivered[(allocation.destination_id, allocation.commodity)] += allocation.flow_teu
+            for node in allocation.path[:-1]:
+                outgoing[node] += allocation.flow_teu
+        shortfalls = {pid: {name: max(0.0, demand - delivered[(pid, name)])
+                            for name, demand in demands.items()}
+                      for pid, demands in inst.plant_demands.items()}
+        transport = sum(a.total_cost for a in plan.allocations)
+        unmet_cost = sum(shortfalls[pid][name] * _UNMET_PENALTY_PER_TEU * weight
+                         for pid in inst.plants for name, weight in inst.commodities)
+        results = []
+        for scenario in scenarios:
+            spill = sum(max(0.0, outgoing[nid] - float(inst.node_caps[nid]) * multiplier)
+                        for nid, multiplier in scenario.capacity_multipliers.items()
+                        if nid in inst.node_caps and inst.node_caps[nid] is not None)
+            stops = {pid: max(0.0, scenario.duration_days * sum(shortfalls[pid].values()) /
+                              max(1.0, inst.plant_totals[pid]) - inst.plant_covers[pid]) for pid in inst.plants}
+            results.append({"scenario_id": scenario.scenario_id, "probability": scenario.probability,
+                            "cost": transport + unmet_cost + spill * _SCENARIO_SPILL_PENALTY_PER_TEU
+                            + sum(stops.values()) * inst.line_stop_penalty_per_day,
+                            "unmet_demand_teu": sum(sum(x.values()) for x in shortfalls.values()),
+                            "scenario_spill_teu": spill, "line_stop_days": sum(stops.values()),
+                            "line_stop_plants": sum(x > 1e-6 for x in stops.values())})
+        return results
+
     def _compute_cvar_scalar(
         self,
         scen_costs: tuple[float, ...],
